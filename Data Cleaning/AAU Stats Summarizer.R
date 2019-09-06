@@ -76,7 +76,12 @@ lower.player = gsub("\\s+", "-", lower.player)
 
 season.summary$player.id = lower.player
 
-season.summary$Season.x = season.summary$Season + 2002
+
+season.summary$player.id = gsub('-jr', 'jr', season.summary$player.id)
+season.summary$player.id = gsub('-ii', 'ii', season.summary$player.id)
+season.summary$player.id = gsub('-iii', 'iii', season.summary$player.id)
+season.summary$player.id = gsub('-iv', 'iv', season.summary$player.id)
+
 
 write.csv(season.summary, file = 'aau.season.summaries.csv', row.names = F)
 

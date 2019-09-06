@@ -7,7 +7,6 @@ library(readr)
 # rankings.247 <- read_csv(file = 'rankings.247.csv')
 # 
 # 
-# espn.247 <- full_join(rankings.espn, rankings.247, by = "player.id", 
 #                       suffix = c(".espn", ".247"))
 # 
 # 
@@ -17,6 +16,8 @@ library(readr)
 
 espn.247 <- read_csv(file = 'espn.2018.csv')
 
+
+#special exceptions and misspellings
 
 espn.247$School = gsub('San Jos\xe9 St', 'San Jose State', espn.247$School)
 
@@ -132,4 +133,4 @@ colnames(espn.247)[10] <- paste(colnames(espn.247)[10], 'espn', sep = ".")
 basketballdata <- wsscraper(data = espn.247)
 
 
-write.csv(basketballdata, file = 'espn.success.2018.csv', row.names = F)
+#write.csv(basketballdata, file = 'espn.success.2018.csv', row.names = F)

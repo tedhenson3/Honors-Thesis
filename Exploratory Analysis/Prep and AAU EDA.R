@@ -11,43 +11,50 @@ library(caretEnsemble)
 # # predict offense and defense seperate
 
 
-data = read_csv('espn.bball-ref.aau.prep.csv')
+data = read_csv('aau.prep.csv')
 
-plot(x = data$ppg.prep, y = data$aau.pts)
 data = data %>% dplyr::filter(!is.na(ppg.prep) | !is.na(aau.pts))
 
-data = data %>% dplyr::filter(!is.na(ws))
 
-data <- data %>% dplyr::filter(g > 10)
+data = data %>% mutate(prep.ppg.actual = I(PTS/gp.max),
+                       prep.mpg.actual = I(MIN/gp.max),
+                       prep.blkg.actual = I(BLK/gp.max),
+                       prep.stlg.actual = I(STL/gp.max),
+                       prep.astg.actual = I(AST/gp.max),
+                       prep.tov.actual = I(TO/gp.max),
+                     prep.rebg.actual = I(REB/gp.max),
+  prep.3pmg.actual = I(`3PM`/gp.max),
+  prep.fgmg.actual = I(FGM/gp.max),
+  prep.ftmg.actual = I(FTM/gp.max),
+  prep.3pm.actual = I(`3PM`*`3P%`),
+  prep.fgm.actual = I(FGM*fg.prep),
+  prep.ftm.actual = I(FTM*`FT%`))
 
-data = data %>% dplyr::select(-Name, -player.id,
-                       -Season, -g)
 
 
-
-
-train_ind <- createDataPartition(y = data$ws, p = .8, list = F)
+train_ind <- createDataPartition(y = data$ppg.prep, p = .8, list = F)
 
 train <- data[train_ind, ]
 
 
-featurePlot(x = train[, c('ppg.prep', 'HIGH', 'PTS', 
-                          'aau.pts', 'aau.max.pts', 'aau.sum.pts')],
-            y = train$ws)
-
-featurePlot(x = train[, c('ppg.prep')],
-            y = train$aau.pts)
+featurePlot(x = train[, c('aau.pts', 'aau.max.pts', 'aau.sum.pts')],
+            y = train$ppg.prep,
+            plot = 'pairs')
 
 
-featurePlot(x = train[, c('HIGH')],
-            y = train$aau.max.pts)
+train = train %>% dplyr::select(-player.id,
+                                   -Season,
+                                   -TEAM,
+                                   -Name)
 
 
-featurePlot(x = train[, c('PTS')],
-            y = train$aau.sum.pts)
-
+correlation.matrix = cor(train)
 
 test <- data[-train_ind, ]
+
+
+
+
 
 # 
 # 

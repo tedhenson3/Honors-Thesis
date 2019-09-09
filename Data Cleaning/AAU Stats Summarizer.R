@@ -38,6 +38,10 @@ aau.data.clean$actual.pts = as.numeric(word(
   end = 1,
   sep = '-'
 ))) + aau.data.clean$twos * 2
+
+
+aau.data.clean = aau.data.clean[-c(which(aau.data.clean$actual.pts == 159)),]
+
   
   
   
@@ -142,5 +146,9 @@ season.summary$player.id = gsub('-iii', 'iii', season.summary$player.id)
 season.summary$player.id = gsub('-iv', 'iv', season.summary$player.id)
 
 season.summary$Season = season.summary$Season + 2002
+
+season.summary[is.na(season.summary)] <- 0
+
+
 
 write.csv(season.summary, file = 'aau.season.summaries.csv', row.names = F)

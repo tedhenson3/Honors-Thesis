@@ -15,8 +15,11 @@ data = data %>% dplyr::filter(!is.na(ws))
 
 data <- data %>% dplyr::filter(g > 10)
 
-data = data %>% select(-Name, -player.id,
+data = data %>% dplyr::select(-Name, -player.id,
                        -Season, -g)
+
+
+
 
 
 train_ind <- createDataPartition(y = data$ws, p = .8, list = F)
@@ -34,6 +37,9 @@ knn.impute <- preProcess(train[,2:ncol(train)], method=c("knnImpute"))
 train[,2:ncol(train)] <- predict(knn.impute, newdata = train[,2:ncol(train)])
 
 
+
+#note to self: do not forget to add in recreated per game prep stats 
+# as given stats are inaccurate
 
 ws.formula = as.formula(
   'ws  ~ . ')

@@ -67,23 +67,34 @@ misses = aau[which(!(aau$player.id %in% data$player.id)), c('player.id',
                                                               'aau.sum.pts',
                                                               'Season')]
 
+#select only bball ref variables of interest
+
+
+data = data %>% select(Name, player.id, Season,
+                       ws, g)
+
+
+#select only bball ref variables of interest
+
+prep = prep %>% select(-Name, -TEAM)
+
+
+
 data = left_join(data, prep, by = c('player.id', 'Season'))
 
 aau = read_csv('aau.season.summaries.csv')
 
 
 
+aau = aau %>% select(-Player)
 
 data = left_join(x = data, y = aau, by = c('player.id', 'Season'))
 
 
 write.csv(data, 'espn.bball-ref.aau.prep.csv', row.names = F)
 
-data = data %>% dplyr::filter(!is.na(ppg.prep) | !is.na(aau.pts))
 
-data = data %>% dplyr::filter(!is.na(ws))
 
-data <- data %>% dplyr::filter(g > 10)
 
 
 

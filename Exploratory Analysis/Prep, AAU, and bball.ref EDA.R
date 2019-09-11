@@ -14,8 +14,7 @@ library(caretEnsemble)
 
 data = read_csv('espn.bball-ref.aau.prep.csv')
 
-data = data %>% dplyr::filter(!is.na(ppg.prep) & !is.na(aau.pts)
-                              & !is.na(ws))
+data = data %>% dplyr::filter(!is.na(ws))
 
 
 data = data %>% mutate(
@@ -37,7 +36,7 @@ data = data %>% mutate(
 
 
 train_ind <-
-  createDataPartition(y = data$ppg.prep,
+  createDataPartition(y = data$ws,
                       p = .8,
                       list = F)
 
@@ -49,14 +48,14 @@ train$image = c("http://images.clipartpanda.com/ball-20clip-20art-basketball_cli
 
 #train$ws.character = as.character(train$ws)
 
-ggplot(
-  train,
-  aes(
-    x = ppg.prep,
-    y = aau.pts,
-    label = ws)) +
-  geom_image(aes(image = image), size = .02) + theme_classic() + 
-  geom_text(nudge_y = 2) + ggtitle('AAU Points versus Prep Points (WS Label)')
+# ggplot(
+#   train,
+#   aes(
+#     x = ppg.prep,
+#     y = aau.pts,
+#     label = ws)) +
+#   geom_image(aes(image = image), size = .02) + theme_classic() + 
+#   geom_text(nudge_y = 2) + ggtitle('AAU Points versus Prep Points (WS Label)')
 
 
 ggplot(
@@ -73,9 +72,55 @@ ggplot(
   ggtitle('AAU Points versus Prep Points (OWS Label)')
 
 
-train = train %>% dplyr::select(-player.id,-Season,-TEAM,-Name)
+train$group <- ifelse(is.na(train$ppg.prep) & !is.na(train$aau.given.pts),
+                      'Only AAU', NA)
 
 
-correlation.matrix = cor(train)
+train$group <- ifelse(!is.na(train$ppg.prep) & is.na(train$aau.given.pts),
+                      'Only Prep',
+                      train$group)
 
-test <- data[-train_ind,]
+
+train$group <- ifelse(!is.na(train$ppg.prep) & !is.na(train$aau.given.pts),
+                      'Prep and AAU',
+                      train$group)
+
+
+train$group <- ifelse(is.na(train$group),
+                      'Neither',
+                      train$group)
+
+boxplots = train %>% dplyr::filter(Season != 2014)
+
+ggplot(boxplots, aes(y = ws, x = group)) + 
+  geom_boxplot(aes(group = group),
+               colour = 'skyblue') + 
+  theme_bw() + 
+  facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
+
+
+ggplot(boxplots, aes(y = ws)) + 
+  geom_violin(aes(x = group),
+              colour = 'skyblue') + 
+  theme_bw() + 
+  facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
+
+
+ggplot(boxplots, aes(y = ows)) + 
+  geom_violin(aes(x = group),
+              colour = 'skyblue') + 
+  theme_bw() + 
+  facet_grid(rows = vars(Season)) + ggtitle('OWS by Amount of Data')
+
+ggplot(boxplots, aes(y = dws)) + 
+  geom_violin(aes(x = group),
+              colour = 'skyblue') + 
+  theme_bw() + 
+  facet_grid(rows = vars(Season)) + ggtitle('DWS by Amount of Data')
+
+# train = train %>% dplyr::select(-player.id,-Season,-TEAM,-Name)
+# 
+# 
+# correlation.matrix = cor(train)
+# 
+# test <- data[-train_ind,]

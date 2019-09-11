@@ -38,15 +38,13 @@ data$fixed.height = (feet*12) + inches
 
 
 
-data = data %>% dplyr::arrange(desc(ws))
-
-
 data$player.id = word(data$player.id, start = 1, end = -2, sep = '-')
 
 
 data = data %>% 
   group_by(Name) %>% 
   filter(row_number()==1)
+data = data %>% dplyr::arrange(desc(ws))
 
 
 #verify only last college season
@@ -95,7 +93,7 @@ write.csv(data, 'espn.bball-ref.aau.prep.csv', row.names = F)
 
 
 
-
+## take out 2016 as all have NA values
 
 
 

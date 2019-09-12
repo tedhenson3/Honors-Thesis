@@ -55,26 +55,26 @@ prep = read_csv('Prep.Total.Final.Year.csv')
 
 
 
-misses = data[which(!(data$player.id %in% prep$player.id)), c('player.id',
-                                                              'espn.rating',
-                                                              'Season')]
-
-
-
-misses = aau[which(!(aau$player.id %in% data$player.id)), c('player.id',
-                                                              'aau.sum.pts',
-                                                              'Season')]
+# misses = data[which(!(data$player.id %in% prep$player.id)), c('player.id',
+#                                                               'espn.rating',
+#                                                               'Season')]
+# 
+# 
+# 
+# misses = aau[which(!(aau$player.id %in% data$player.id)), c('player.id',
+#                                                               'aau.sum.pts',
+#                                                               'Season')]
 
 #select only bball ref variables of interest
 
 
 data = data %>% select(Name, player.id, Season,
-                       ws, g)
+                       ws, ows, dws, g)
 
 
 #select only bball ref variables of interest
 
-prep = prep %>% select(-Name, -TEAM)
+prep = prep %>% select(-Name, -TEAM.prep)
 
 
 

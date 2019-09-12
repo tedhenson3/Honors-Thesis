@@ -18,19 +18,19 @@ data = data %>% dplyr::filter(!is.na(ws))
 
 
 data = data %>% mutate(
-  prep.ppg.actual = I(PTS / gp.max),
-  prep.mpg.actual = I(MIN / gp.max),
-  prep.blkg.actual = I(BLK / gp.max),
-  prep.stlg.actual = I(STL / gp.max),
-  prep.astg.actual = I(AST / gp.max),
-  prep.tov.actual = I(TO / gp.max),
-  prep.rebg.actual = I(REB / gp.max),
-  prep.3pmg.actual = I(`3PM` / gp.max),
-  prep.fgmg.actual = I(FGM / gp.max),
-  prep.ftmg.actual = I(FTM / gp.max),
-  prep.3pm.actual = I(`3PM` * `3P%`),
-  prep.fgm.actual = I(FGM * fg.prep),
-  prep.ftm.actual = I(FTM * `FT%`)
+  ppg.actual.prep = c(PTS.prep / gp.max.prep),
+  mpg.actual.prep = c(MIN.prep / gp.max.prep),
+  blkg.actual.prep = c(BLK.prep / gp.max.prep),
+  stlg.actual.prep = c(STL.prep / gp.max.prep),
+  astg.actual.prep = c(AST.prep / gp.max.prep),
+  tov.actual.prep = c(TO.prep / gp.max.prep),
+  rebg.actual.prep = c(REB.prep / gp.max.prep),
+  `3pmg.actual.prep` = c(`3PM.prep` / gp.max.prep),
+  fgmg.actual.prep = c(FGM.prep / gp.max.prep),
+  ftmg.actual.prep = c(FTM.prep / gp.max.prep),
+  `3pm.actual.prep` = c(`3PM.prep` * `3P%.prep`),
+  fgm.actual.prep = c(FGM.prep * fg.prep),
+  ftm.actual.prep = c(FTM.prep * `FT%.prep`)
 )
 
 
@@ -58,18 +58,18 @@ train$image = c("http://images.clipartpanda.com/ball-20clip-20art-basketball_cli
 #   geom_text(nudge_y = 2) + ggtitle('AAU Points versus Prep Points (WS Label)')
 
 
-ggplot(
-  train,
-  aes(
-    x = ppg.prep,
-    y = aau.pts,
-   # colour = ows,
-    label = ows)) +
-  #geom_image(aes(image = image), size = .02) + 
-  theme_classic() + 
-  #geom_point() + 
-  geom_text(nudge_y = 2, size = 3.5) + 
-  ggtitle('AAU Points versus Prep Points (OWS Label)')
+# ggplot(
+#   train,
+#   aes(
+#     x = ppg.actual.prep,
+#     y = aau.pts,
+#    # colour = ows,
+#     label = ows)) +
+#   #geom_image(aes(image = image), size = .02) + 
+#   theme_classic() + 
+#   #geom_point() + 
+#   geom_text(nudge_y = 2, size = 3.5) + 
+#   ggtitle('AAU Points versus Prep Points (OWS Label)')
 
 
 train$group <- ifelse(is.na(train$ppg.prep) & !is.na(train$aau.given.pts),
@@ -90,37 +90,33 @@ train$group <- ifelse(is.na(train$group),
                       'Neither',
                       train$group)
 
-boxplots = train %>% dplyr::filter(Season != 2014)
-
-ggplot(boxplots, aes(y = ws, x = group)) + 
-  geom_boxplot(aes(group = group),
-               colour = 'skyblue') + 
-  theme_bw() + 
-  facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
+train = train %>% dplyr::filter(Season != 2014)
 
 
-ggplot(boxplots, aes(y = ws)) + 
+train = train %>% group_by(Season, group) %>% mutate(group.num = n())
+
+
+# ggplot(boxplots, aes(y = ws, x = group)) + 
+#   geom_boxplot(aes(group = group),
+#                colour = 'skyblue') + 
+#   theme_bw() + 
+#   facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
+
+
+ggplot(train, aes(y = ws)) + 
   geom_violin(aes(x = group),
               colour = 'skyblue') + 
   theme_bw() + 
   facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
 
+group.freq = unique(train[, c('Season', 'group', 'group.num')])
+colnames(group.freq) = c('Season', 'Partition', 'Freq')
+group.freq = group.freq[order(-group.freq$Freq),]
+group.freq
 
-ggplot(boxplots, aes(y = ows)) + 
+
+ggplot(train, aes(y = ows)) + 
   geom_violin(aes(x = group),
               colour = 'skyblue') + 
   theme_bw() + 
   facet_grid(rows = vars(Season)) + ggtitle('OWS by Amount of Data')
-
-ggplot(boxplots, aes(y = dws)) + 
-  geom_violin(aes(x = group),
-              colour = 'skyblue') + 
-  theme_bw() + 
-  facet_grid(rows = vars(Season)) + ggtitle('DWS by Amount of Data')
-
-# train = train %>% dplyr::select(-player.id,-Season,-TEAM,-Name)
-# 
-# 
-# correlation.matrix = cor(train)
-# 
-# test <- data[-train_ind,]

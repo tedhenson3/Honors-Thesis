@@ -7,15 +7,17 @@ library(caret)
 library(caretEnsemble)
 
 
-# #note to self: do not forget to add in recreated per game prep stats
-# # as given stats are inaccurate
-# # predict offense and defense seperate
+
 
 
 data = read_csv('espn.bball-ref.aau.prep.csv')
 
 data = data %>% dplyr::filter(!is.na(ws))
 
+
+
+# # adding in recreated per game prep stats 
+# as given per game statistics are inaccurate
 
 data = data %>% mutate(
   ppg.actual.prep = c(PTS.prep / gp.max.prep),

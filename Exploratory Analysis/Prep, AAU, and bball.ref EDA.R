@@ -107,16 +107,32 @@ ggplot(train, aes(y = ws)) +
   geom_violin(aes(x = group),
               colour = 'skyblue') + 
   theme_bw() + 
-  facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
+  facet_grid(rows = vars(Season)) + 
+  ggtitle('WS by Amount of Data')
 
 group.freq = unique(train[, c('Season', 'group', 'group.num')])
 colnames(group.freq) = c('Season', 'Partition', 'Freq')
 group.freq = group.freq[order(-group.freq$Freq),]
-group.freq
+
+group.freq  = spread(group.freq, Partition , Freq)
+
+group.freq[is.na(group.freq)] = 0
+setwd('~/Honors Thesis/Exploratory Analysis')
+
+write.csv(group.freq, 'Data Availability by Season.csv',
+          row.names = F)
 
 
-ggplot(train, aes(y = ows)) + 
+ws.by.data = ggplot(train, aes(y = ws)) + 
   geom_violin(aes(x = group),
               colour = 'skyblue') + 
   theme_bw() + 
-  facet_grid(rows = vars(Season)) + ggtitle('OWS by Amount of Data')
+  facet_grid(rows = vars(Season)) + 
+  ggtitle('Player Win Shares by Data Availability') + 
+  ylab('Win Shares') + 
+  xlab('Available Data')
+
+
+
+ggsave(ws.by.data, 
+       filename = 'Player Win Shares by Data Availability.png')

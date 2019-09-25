@@ -105,36 +105,53 @@ train = train %>% group_by(Season, group) %>% mutate(group.num = n())
 #   facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
 
 
-ggplot(train, aes(y = ws)) + 
-  geom_violin(aes(x = group),
-              colour = 'skyblue') + 
-  theme_bw() + 
-  facet_grid(rows = vars(Season)) + 
-  ggtitle('WS by Amount of Data')
+# ggplot(train, aes(y = ws)) + 
+#   geom_violin(aes(x = group),
+#               colour = 'skyblue') + 
+#   theme_bw() + 
+#   facet_grid(rows = vars(Season)) + 
+#   ggtitle('WS by Amount of Data')
 
 group.freq = unique(train[, c('Season', 'group', 'group.num')])
 colnames(group.freq) = c('Season', 'Partition', 'Freq')
 group.freq = group.freq[order(-group.freq$Freq),]
 
+data.by.season = ggplot(group.freq, aes(Partition,  Freq)) + 
+  geom_bar(stat = 'identity',
+           fill = 'skyblue') + 
+  theme_bw() + theme(panel.grid.major.x = element_blank(),
+                     panel.grid.minor.y = element_blank()) + 
+  facet_grid(rows = vars(Season)) + 
+  ggtitle('Data Availability by Season') + 
+  ylab('Number of Players') + 
+  xlab('')
+
+
+setwd('~/Honors Thesis/Exploratory Analysis')
+
+ggsave(data.by.season, 
+       filename = 'Data Availability by Season.png')
+
+
+
 group.freq  = spread(group.freq, Partition , Freq)
 
 group.freq[is.na(group.freq)] = 0
-setwd('~/Honors Thesis/Exploratory Analysis')
 
 write.csv(group.freq, 'Data Availability by Season.csv',
           row.names = F)
 
 
-ws.by.data = ggplot(train, aes(y = ws)) + 
-  geom_violin(aes(x = group),
-              colour = 'skyblue') + 
-  theme_bw() + 
-  facet_grid(rows = vars(Season)) + 
-  ggtitle('Player Win Shares by Data Availability') + 
-  ylab('Win Shares') + 
-  xlab('Available Data')
-
-
-
-ggsave(ws.by.data, 
-       filename = 'Player Win Shares by Data Availability.png')
+# ws.by.data = ggplot(train, aes(y = ws)) + 
+#   geom_violin(aes(x = group),
+#               colour = 'skyblue') + 
+#   theme_bw() + 
+#   facet_grid(rows = vars(Season)) + 
+#   ggtitle('Player Win Shares by Data Availability') + 
+#   ylab('Win Shares') + 
+#   xlab('Available Data')
+# 
+# 
+# 
+# ggsave(ws.by.data, 
+#        filename = 'Player Win Shares by Data Availability.png')

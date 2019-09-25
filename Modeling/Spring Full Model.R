@@ -1,6 +1,4 @@
 
-setwd('~/Honors Thesis/Clean Data')
-
 options(readr.num_columns = 0)
 
 set.seed(200)
@@ -15,6 +13,7 @@ library(caret)
 
 #read in ggplot2 package for data visualization of model performance
 library(ggplot2)
+setwd('~/analytics/recruiting project')
 data <- read_csv("recruit.college.15-18.csv")
 rankings.247 = read_csv("rankings.247.csv")
 
@@ -331,7 +330,6 @@ train <- data[train_ind, ]
 test <- data[-train_ind, ]
 
 
-
 library(RANN)  # required for knnInpute
 
 
@@ -438,11 +436,19 @@ full.error.rf <- test$ws - rf.full
 full.error.brnn <- test$ws - brnn.full
 full.error.blasso <- test$ws - blasso.full
 
-rmse.stacked <- mean(sqrt((full.error.stacked^2)))
-rmse.bridge <- mean(sqrt((full.error.bridge^2)))
-rmse.rf <- mean(sqrt((full.error.rf^2)))
-rmse.brnn = mean(sqrt(full.error.brnn^2))
-rmse.blasso = mean(sqrt(full.error.blasso^2))
+rmse.stacked <- sqrt(mean(full.error.stacked^2))
+rmse.bridge <- sqrt(mean(full.error.bridge^2))
+rmse.rf <- sqrt(mean(full.error.rf^2))
+rmse.brnn = sqrt(mean(full.error.brnn^2))
+rmse.blasso = sqrt(mean(full.error.blasso^2))
+
+
+
+mae.stacked <- mean(abs(full.error.stacked))
+mae.bridge <- mean(abs(full.error.bridge))
+mae.rf <- mean(abs(full.error.rf))
+mae.brnn = mean(abs(full.error.brnn))
+mae.blasso = mean(abs(full.error.blasso))
 
 
 all.inputs.matrix = matrix(nrow = 5, ncol = 2)
@@ -452,15 +458,15 @@ all.inputs.matrix[3,1] = 'Random Forest'
 all.inputs.matrix[4,1] = 'Neural Network'
 all.inputs.matrix[5,1] = 'Bayesian Lasso'
 
-all.inputs.matrix[1,2] = rmse.stacked
-all.inputs.matrix[2,2] = rmse.bridge
-all.inputs.matrix[3,2] = rmse.rf
-all.inputs.matrix[4,2] = rmse.brnn
-all.inputs.matrix[5,2] = rmse.blasso
+all.inputs.matrix[1,2] = mae.stacked
+all.inputs.matrix[2,2] = mae.bridge
+all.inputs.matrix[3,2] = mae.rf
+all.inputs.matrix[4,2] = mae.brnn
+all.inputs.matrix[5,2] = mae.blasso
 
 all.inputs.matrix = as.data.frame(all.inputs.matrix)
 colnames(all.inputs.matrix)[1] = 'Model Type'
-colnames(all.inputs.matrix)[2] = 'RMSE'
+colnames(all.inputs.matrix)[2] = 'mae'
 print(all.inputs.matrix)
 
 library(monomvn)
@@ -470,8 +476,6 @@ plot(bl, which=c("coef"))
 
 ggplot() + 
   
-  #select type of plot (such as bar graph, histogram, etc.). set x and y = to your variables
-  
   geom_point(aes(x = stacked, y = full.error.stacked)
              , colour = 'skyblue',
              size = 2.5) + 
@@ -480,7 +484,7 @@ ggplot() +
   
   #set plot title and subtitles
   labs(title = 'Full Model (Stacked)', 
-       subtitle = paste('Out-of-Sample RMSE = ', round(rmse.stacked, 4), sep = '')) + 
+       subtitle = paste('Out-of-Sample MAE = ', round(mae.stacked, 4), sep = '')) + 
   
   #set x axis title
   xlab(label = 'Predicted Win Shares')  + ggtitle('Full Model (Stacked)') + 

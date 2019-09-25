@@ -1,6 +1,4 @@
 
-setwd('~/Honors Thesis/Clean Data')
-
 options(readr.num_columns = 0)
 
 set.seed(200)
@@ -15,6 +13,7 @@ library(caret)
 
 #read in ggplot2 package for data visualization of model performance
 library(ggplot2)
+setwd('~/analytics/recruiting project')
 data <- read_csv("recruit.college.15-18.csv")
 rankings.247 = read_csv("rankings.247.csv")
 
@@ -389,11 +388,18 @@ espn.error.rf <- test$ws - rf.espn
 espn.error.brnn <- test$ws - brnn.espn
 espn.error.blasso <- test$ws - blasso.espn
 
-rmse.stacked <- mean(sqrt((espn.error.stacked^2)))
-rmse.bridge <- mean(sqrt((espn.error.bridge^2)))
-rmse.rf <- mean(sqrt((espn.error.rf^2)))
-rmse.brnn = mean(sqrt(espn.error.brnn^2))
-rmse.blasso = mean(sqrt(espn.error.blasso^2))
+rmse.stacked <- sqrt(mean(espn.error.stacked^2))
+rmse.bridge <- sqrt(mean(espn.error.bridge^2))
+rmse.rf <- sqrt(mean(espn.error.rf^2))
+rmse.brnn = sqrt(mean(espn.error.brnn^2))
+rmse.blasso = sqrt(mean(espn.error.blasso^2))
+
+
+mae.stacked <- mean(abs(espn.error.stacked))
+mae.bridge <- mean(abs(espn.error.bridge))
+mae.rf <- mean(abs(espn.error.rf))
+mae.brnn = mean(abs(espn.error.brnn))
+mae.blasso = mean(abs(espn.error.blasso))
 
 
 espn.matrix = matrix(nrow = 5, ncol = 2)
@@ -403,15 +409,15 @@ espn.matrix[3,1] = 'Random Forest'
 espn.matrix[4,1] = 'Neural Network'
 espn.matrix[5,1] = 'Bayesian Lasso'
 
-espn.matrix[1,2] = rmse.stacked
-espn.matrix[2,2] = rmse.bridge
-espn.matrix[3,2] = rmse.rf
-espn.matrix[4,2] = rmse.brnn
-espn.matrix[5,2] = rmse.blasso
+espn.matrix[1,2] = mae.stacked
+espn.matrix[2,2] = mae.bridge
+espn.matrix[3,2] = mae.rf
+espn.matrix[4,2] = mae.brnn
+espn.matrix[5,2] = mae.blasso
 
 espn.matrix = as.data.frame(espn.matrix)
 colnames(espn.matrix)[1] = 'Model Type'
-colnames(espn.matrix)[2] = 'RMSE'
+colnames(espn.matrix)[2] = 'mae'
 espn.matrix = as.data.frame(espn.matrix)
 print(espn.matrix)
 
@@ -431,7 +437,7 @@ ggplot() +
   
   #set plot title and subtitles
   labs(title = 'ESPN Model (Stacked)', 
-       subtitle = paste('Out-of-Sample RMSE = ', round(rmse.stacked, 4), sep = '')) + 
+       subtitle = paste('Out-of-Sample MAE = ', round(mae.stacked, 4), sep = '')) + 
   
   #set x axis title
   xlab(label = 'Predicted Win Shares') + 

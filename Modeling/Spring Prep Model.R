@@ -1,6 +1,4 @@
 
-setwd('~/Honors Thesis/Clean Data')
-
 options(readr.num_columns = 0)
 
 
@@ -18,7 +16,7 @@ library(caret)
 
 #read in ggplot2 package for data visualization of model performance
 library(ggplot2)
-
+setwd('~/analytics/recruiting project')
 data <- read_csv("recruit.college.15-18.csv")
 rankings.247 = read_csv("rankings.247.csv")
 
@@ -441,11 +439,18 @@ prep.error.rf <- test$ws - rf.prep
 prep.error.brnn <- test$ws - brnn.prep
 prep.error.blasso <- test$ws - blasso.prep
 
-rmse.stacked <- mean(sqrt((prep.error.stacked^2)))
-rmse.bridge <- mean(sqrt((prep.error.bridge^2)))
-rmse.rf <- mean(sqrt((prep.error.rf^2)))
-rmse.brnn = mean(sqrt(prep.error.brnn^2))
-rmse.blasso = mean(sqrt(prep.error.blasso^2))
+rmse.stacked <- sqrt(mean(prep.error.stacked^2))
+rmse.bridge <- sqrt(mean(prep.error.bridge^2))
+rmse.rf <- sqrt(mean(prep.error.rf^2))
+rmse.brnn = sqrt(mean(prep.error.brnn^2))
+rmse.blasso = sqrt(mean(prep.error.blasso^2))
+
+
+mae.stacked <- mean(abs(prep.error.stacked))
+mae.bridge <- mean(abs(prep.error.bridge))
+mae.rf <- mean(abs(prep.error.rf))
+mae.brnn = mean(abs(prep.error.brnn))
+mae.blasso = mean(abs(prep.error.blasso))
 
 
 prep.inputs.matrix = matrix(nrow = 5, ncol = 2)
@@ -455,15 +460,15 @@ prep.inputs.matrix[3,1] = 'Random Forest'
 prep.inputs.matrix[4,1] = 'Neural Network'
 prep.inputs.matrix[5,1] = 'Bayesian Lasso'
 
-prep.inputs.matrix[1,2] = rmse.stacked
-prep.inputs.matrix[2,2] = rmse.bridge
-prep.inputs.matrix[3,2] = rmse.rf
-prep.inputs.matrix[4,2] = rmse.brnn
-prep.inputs.matrix[5,2] = rmse.blasso
+prep.inputs.matrix[1,2] = mae.stacked
+prep.inputs.matrix[2,2] = mae.bridge
+prep.inputs.matrix[3,2] = mae.rf
+prep.inputs.matrix[4,2] = mae.brnn
+prep.inputs.matrix[5,2] = mae.blasso
 
 prep.inputs.matrix = as.data.frame(prep.inputs.matrix)
 colnames(prep.inputs.matrix)[1] = 'Model Type'
-colnames(prep.inputs.matrix)[2] = 'RMSE'
+colnames(prep.inputs.matrix)[2] = 'mae'
 print(prep.inputs.matrix)
 
 library(monomvn)
@@ -480,7 +485,7 @@ ggplot() +
   
   #set plot title and subtitles
   labs(title = 'Prep Model', 
-       subtitle = paste('Out-of-Sample RMSE = ', round(rmse.bridge, 4), sep = '')) + 
+       subtitle = paste('Out-of-Sample MAE = ', round(mae.bridge, 4), sep = '')) + 
   
   #set x axis title
   xlab(label = 'Predicted Win Shares') + ggtitle('Prep Model (Bayesian Ridge)') + 

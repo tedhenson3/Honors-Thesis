@@ -5,16 +5,12 @@ options(readr.num_columns = 0)
 
 set.seed(200)
 #load in readr to easily load in csvs
-library(readr)
 
 #read in tidyverse package for easy data manipulation
+
+library(readr)
 library(tidyverse)
 
-#read in caret package for different model and resampling methods
-library(caret)
-
-#read in ggplot2 package for data visualization of model performance
-library(ggplot2)
 
 
 data <- read_csv("recruit.college.15-18.csv")
@@ -69,7 +65,10 @@ prep = read_csv('Prep.Total.Final.Year.csv')
 
 
 data = data %>% select(Name, player.id, Season,
-                       ws, ows, dws, g)
+                       ws, ows, dws, g,
+                       espn.rating, fixed.height, Weight,
+                       Position
+                       )
 
 
 #select only bball ref variables of interest
@@ -84,10 +83,14 @@ aau = read_csv('aau.season.summaries.csv')
 
 
 
-aau = aau %>% select(-Player)
+#aau = aau %>% select(-Player)
 
 data = left_join(x = data, y = aau, by = c('player.id', 'Season'))
 
+
+#2 wrong players scraped#
+data = data %>% dplyr::filter(Season != 1993 &
+                                Season != 2014)
 
 write.csv(data, 'espn.bball-ref.aau.prep.csv', row.names = F)
 

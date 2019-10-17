@@ -1,9 +1,16 @@
+---
+title: "Prep Circuit and AAU EDA, Basic Regression, and PCA"
+author: "Ted Henson"
+date: "10/17/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 
-
-
-
-
+```{r, echo = F, eval = T, include=F}
 setwd('~/Honors Thesis/Clean Data')
 library(readr)
 library(tidyverse)
@@ -17,14 +24,12 @@ library(caretEnsemble)
 data = read_csv('espn.bball-ref.aau.prep.csv')
 
 
-data = data %>% dplyr::filter(g > 10)
-# data = data %>% dplyr::select(-g)
-
-data = data %>% dplyr::select(-total.given.pts.aau,
-                              -given.pts.aau)
+#2 wrong players scraped#
+data = data %>% dplyr::filter(Season != 1993 & Season != 2014)
 
 
-# # adding in recreated per game prep stats
+# this prior hypothesis is no longer believed to be true:
+# # adding in recreated per game prep stats 
 # as given per game statistics are inaccurate
 
 # data = data %>% mutate(
@@ -42,6 +47,88 @@ data = data %>% dplyr::select(-total.given.pts.aau,
 #   fgm.actual.prep = c(FGM.prep * fg.prep),
 #   ftm.actual.prep = c(FTM.prep * `FT%.prep`)
 # )
+
+
+
+data$group <- ifelse(is.na(data$ppg.prep) & !is.na(data$pts.aau),
+                      'Only AAU', NA)
+
+
+data$group <- ifelse(!is.na(data$ppg.prep) & is.na(data$pts.aau),
+                      'Only Prep',
+                      data$group)
+
+
+data$group <- ifelse(!is.na(data$ppg.prep) & !is.na(data$pts.aau),
+                      'Prep and AAU',
+                      data$group)
+
+
+data$group <- ifelse(is.na(data$group),
+                      'Neither',
+                      data$group)
+
+
+data = data %>% group_by(Season, group) %>% mutate(group.num = n())
+
+
+# ggplot(boxplots, aes(y = ws, x = group)) + 
+#   geom_boxplot(aes(group = group),
+#                colour = 'skyblue') + 
+#   theme_bw() + 
+#   facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
+
+
+# ggplot(data, aes(y = ws)) + 
+#   geom_violin(aes(x = group),
+#               colour = 'skyblue') + 
+#   theme_bw() + 
+#   facet_grid(rows = vars(Season)) + 
+#   ggtitle('WS by Amount of Data')
+
+group.freq = unique(data[, c('Season', 'group', 'group.num')])
+colnames(group.freq) = c('Season', 'Partition', 'Freq')
+group.freq = group.freq[order(-group.freq$Freq),]
+
+data.by.season = ggplot(group.freq, aes(Partition,  Freq)) + 
+  geom_bar(stat = 'identity',
+           fill = 'skyblue') + 
+  theme_bw() + theme(panel.grid.major.x = element_blank(),
+                     panel.grid.minor.y = element_blank()) + 
+  facet_grid(rows = vars(Season)) + 
+  ggtitle('Data Availability by Season') + 
+  ylab('Number of Players') + 
+  xlab('')
+```
+
+
+```{r, echo = F, eval = T, include=F}
+
+
+
+
+group.freq  = spread(group.freq, Partition , Freq)
+
+group.freq[is.na(group.freq)] = 0
+
+
+library(pander)
+```
+
+# Data Availability by Season
+`r pander(group.freq)`
+```{r, echo = F}
+data.by.season
+```
+
+
+```{r, echo = F, eval = T, include=F}
+
+
+# data = data %>% dplyr::select(-g)
+
+data = data %>% dplyr::select(-total.given.pts.aau,
+                              -given.pts.aau)
 
 
 
@@ -120,18 +207,18 @@ data$fts.high.school = data$total.fts.high.school /
 
 #HIGH SCHOOL MAX
 
-my.max = function(x) {
-  return(max(x, na.rm = T))
-}
-
-data$max.pts.high.school = apply(X = data[, c('HIGH.prep', 'max.pts.aau')],
-                                 FUN = my.max,
-                                 MARGIN = c(1))
-
-
-data$max.pts.high.school = ifelse(is.infinite(data$max.pts.high.school),
-                                  NA,
-                                  data$max.pts.high.school)
+# my.max = function(x) {
+#   return(max(x, na.rm = T))
+# }
+# 
+# data$max.pts.high.school = apply(X = data[, c('HIGH.prep', 'max.pts.aau')],
+#                                  FUN = my.max,
+#                                  MARGIN = c(1))
+# 
+# 
+# data$max.pts.high.school = ifelse(is.infinite(data$max.pts.high.school),
+#                                   NA,
+#                                   data$max.pts.high.school)
 
 
 
@@ -184,6 +271,8 @@ prep = prep %>% dplyr::select(ws,
                             spg.prep,
                             tov.prep)
 
+colnames(prep) = c('WS', 'Points.PerGame.Prep', 'Minutes.PerGame.Prep', 'Max.Points.Prep', 'Rebounds.PerGame.Prep', 'Blocks.PerGame.Prep', 'Steals.PerGame.Prep', 'Turnovers.PerGame.Prep')
+
 #aau
 aau = data[,which(grepl('aau', colnames(data)))]
 
@@ -203,27 +292,36 @@ aau = aau %>% dplyr::select(ws,
                             to.aau
                             )
 
+colnames(aau) = c('WS', 'Points.PerGame.AAU', 'Minutes.PerGame.AAU', 'Max.Points.AAU', 'Rebounds.PerGame.AAU', 'Blocks.PerGame.AAU', 'Steals.PerGame.AAU', 'Turnovers.PerGame.AAU')
+
 library(glmnet)
 
 
 
 set.seed(123) 
-train.control <- trainControl(method = "cv", number = 5)
+train.control <- trainControl(method = "LOOCV")
 
 
 ### AAU regression Model
 
-aau.lm <- train(ws ~., data = aau, method = "lm",
+aau.lm <- train(WS ~., data = aau, method = "lm",
                trControl = train.control)
 
 
+```
+
+# AAU Leave One Out CV Linear Regression
+```{r, echo = F}
 summary(aau.lm)
 
 
+```
 
+# Prep Leave One Out CV Linear Regression
+```{r, echo = F}
 ### Prep regression Model
 
-prep.lm <- train(ws ~., data = prep, method = "lm",
+prep.lm <- train(WS ~., data = prep, method = "lm",
                  trControl = train.control)
 
 
@@ -231,7 +329,11 @@ summary(prep.lm)
 
 
 
-### AAU PCA
+```
+
+# AAU PCA
+
+```{r, echo = F}
 
 aau.pca <- prcomp(aau, center = T, scale = T)
 
@@ -239,11 +341,16 @@ aau.pca <- prcomp(aau, center = T, scale = T)
 aau.pca$rotation
 
 
+```
 
-### Prep PCA
+# Prep PCA
+```{r, echo = F}
 
 prep.pca <- prcomp(prep, center = T, scale = T)
 
 
 prep.pca$rotation
+
+
+```
 

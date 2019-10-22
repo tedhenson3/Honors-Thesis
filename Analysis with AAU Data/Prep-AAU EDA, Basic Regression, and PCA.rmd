@@ -11,7 +11,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r, echo = F, eval = T, include=F}
-setwd('~/Honors Thesis/Clean Data')
 library(readr)
 library(tidyverse)
 library(caret)
@@ -21,7 +20,7 @@ library(caretEnsemble)
 
 
 
-data = read_csv('espn.bball-ref.aau.prep.csv')
+data = read_csv('~/Honors Thesis/Clean Data/espn.bball-ref.aau.prep.csv')
 
 
 #2 wrong players scraped#
@@ -130,6 +129,10 @@ data.by.season
 data = data %>% dplyr::select(-total.given.pts.aau,
                               -given.pts.aau)
 
+data$ws.per.game = data$ws / data$g
+
+
+colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
 
@@ -250,49 +253,101 @@ data = data %>% dplyr::select(Name,
                               Season,
                               everything())
 
+data$GamesPlayed.prep = data$gp.max.prep
+
+data$GamesPlayed.aau = data$total.games.aau
+
 data = data[, which(grepl('gp.', colnames(data)) == 0)]
+
+
+data$Position.Basic = ifelse(data$Position %in% c('PG', 'SG'),
+                       'G', 0)
+
+data$Position.Basic = ifelse(data$Position %in% c('SF', 'PF'),
+                         'F', data$Position.Basic)
+
+
+data$Position.Basic = ifelse(data$Position == 'C',
+                        'C', data$Position.Basic)
+
+data$Position = as.factor(data$Position)
+data$Position = plyr::revalue(data$Position,
+                              c(
+                                'PG' = 1,
+                                'SG' = 2,
+                                'SF' = 3,
+                                'PF' = 4,
+                                'C' = 5))
+
+
+data$Position = as.numeric(data$Position)
 
 
 ###prep 
 prep = data[,which(grepl('prep', colnames(data)))]
 
-prep = cbind(data$ws, prep)
-colnames(prep)[1] = 'ws'
+prep = cbind(data$ws.per.game, data$Position,
+             data$Position.Basic, data$Height, prep)
+colnames(prep)[1:4] = c('ws.per.game', 'Position', 'Position.Basic', 'Height')
+
 
 prep = prep[complete.cases(prep),]
 
 
-prep = prep %>% dplyr::select(ws,
+prep = prep %>% dplyr::select(ws.per.game,
                             ppg.prep,
                             mpg.prep,
                             HIGH.prep,
                             reb.prep,
                             blk.prep,
                             spg.prep,
-                            tov.prep)
+                            tov.prep,
+                            GamesPlayed.prep,
+                            Position,
+                            Position.Basic,
+                            Height)
 
-colnames(prep) = c('WS', 'Points.PerGame.Prep', 'Minutes.PerGame.Prep', 'Max.Points.Prep', 'Rebounds.PerGame.Prep', 'Blocks.PerGame.Prep', 'Steals.PerGame.Prep', 'Turnovers.PerGame.Prep')
+colnames(prep) = c('ws.per.game', 'Points.PerGame.Prep', 'Minutes.PerGame.Prep', 'Max.Points.Prep', 'Rebounds.PerGame.Prep', 'Blocks.PerGame.Prep', 'Steals.PerGame.Prep', 'Turnovers.PerGame.Prep', 'GamesPlayed.Prep',
+                   'Position',
+                   'Position.Basic',
+                   'Height')
+
 
 #aau
 aau = data[,which(grepl('aau', colnames(data)))]
 
-aau = cbind(data$ws, aau)
-colnames(aau)[1] = 'ws'
+
+aau = cbind(data$ws.per.game,
+            data$Position, data$Position.Basic, data$Height, aau)
+
+colnames(aau)[1:4] = c('ws.per.game', 'Position', 'Position.Basic', 'Height')
+
+
 aau = aau[complete.cases(aau),]
 
 aau = aau[,which(grepl('total', colnames(aau)) == 0)]
 
-aau = aau %>% dplyr::select(ws,
+aau = aau %>% dplyr::select(ws.per.game,
                             pts.aau,
                             mp.aau,
                             max.pts.aau,
                             reb.aau,
                             blk.aau,
                             stl.aau,
-                            to.aau
+                            to.aau,
+                            GamesPlayed.aau,
+                            Position,
+                            Position.Basic,
+                            Height
                             )
 
-colnames(aau) = c('WS', 'Points.PerGame.AAU', 'Minutes.PerGame.AAU', 'Max.Points.AAU', 'Rebounds.PerGame.AAU', 'Blocks.PerGame.AAU', 'Steals.PerGame.AAU', 'Turnovers.PerGame.AAU')
+colnames(aau) = c('ws.per.game', 'Points.PerGame.AAU', 'Minutes.PerGame.AAU', 'Max.Points.AAU', 'Rebounds.PerGame.AAU', 'Blocks.PerGame.AAU', 'Steals.PerGame.AAU', 'Turnovers.PerGame.AAU', 'GamesPlayed.AAU',
+                  'Position',
+                   'Position.Basic',
+                  'Height')
+
+
+
 
 library(glmnet)
 
@@ -302,31 +357,40 @@ set.seed(123)
 train.control <- trainControl(method = "LOOCV")
 
 
-### AAU regression Model
 
-aau.lm <- train(WS ~., data = aau, method = "lm",
+
+
+```
+
+# AAU Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
+```{r, echo = F}
+
+### AAU regression Model on Win Shares Per Game
+
+aau.lm <- train(ws.per.game ~., data = aau, method = "lm",
                trControl = train.control)
 
-
-```
-
-# AAU Leave One Out CV Linear Regression
-```{r, echo = F}
 summary(aau.lm)
 
+ plot(predict(aau.lm),aau$ws.per.game,
+      xlab="predicted",ylab="actual")
+ abline(a=0,b=1)
+
 
 ```
 
-# Prep Leave One Out CV Linear Regression
+# Prep Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
 ```{r, echo = F}
 ### Prep regression Model
 
-prep.lm <- train(WS ~., data = prep, method = "lm",
+prep.lm <- train(ws.per.game ~ ., data = prep, method = "lm",
                  trControl = train.control)
 
 
 summary(prep.lm)
-
+ plot(predict(prep.lm),prep$ws.per.game,
+      xlab="predicted",ylab="actual")
+ abline(a=0,b=1)
 
 
 ```
@@ -335,6 +399,7 @@ summary(prep.lm)
 
 ```{r, echo = F}
 
+aau = aau %>% dplyr::select(-Position.Basic)
 aau.pca <- prcomp(aau, center = T, scale = T)
 
 
@@ -345,6 +410,9 @@ aau.pca$rotation
 
 # Prep PCA
 ```{r, echo = F}
+
+prep = prep %>% dplyr::select(-Position.Basic)
+
 
 prep.pca <- prcomp(prep, center = T, scale = T)
 

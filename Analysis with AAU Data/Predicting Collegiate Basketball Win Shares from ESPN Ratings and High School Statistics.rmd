@@ -11,115 +11,13 @@ fontsize: 12pt
 \openup 1em
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r, echo = F, eval = T, include=F}
-library(readr)
-library(tidyverse)
-library(caret)
-library(caretEnsemble)
-
-
-
-
-
-data = read_csv('~/Honors Thesis/Clean Data/espn.bball-ref.aau.prep.csv')
-
-
-#2 wrong players scraped#
-data = data %>% dplyr::filter(Season != 1993 & Season != 2014)
-
-
-# this prior hypothesis is no longer believed to be true:
-# # adding in recreated per game prep stats 
-# as given per game statistics are inaccurate
-
-# data = data %>% mutate(
-#   ppg.actual.prep = c(PTS.prep / gp.max.prep),
-#   mpg.actual.prep = c(MIN.prep / gp.max.prep),
-#   blkg.actual.prep = c(BLK.prep / gp.max.prep),
-#   stlg.actual.prep = c(STL.prep / gp.max.prep),
-#   astg.actual.prep = c(AST.prep / gp.max.prep),
-#   tov.actual.prep = c(TO.prep / gp.max.prep),
-#   rebg.actual.prep = c(REB.prep / gp.max.prep),
-#   `3pmg.actual.prep` = c(`3PM.prep` / gp.max.prep),
-#   fgmg.actual.prep = c(FGM.prep / gp.max.prep),
-#   ftmg.actual.prep = c(FTM.prep / gp.max.prep),
-#   `3pm.actual.prep` = c(`3PM.prep` * `3P%.prep`),
-#   fgm.actual.prep = c(FGM.prep * fg.prep),
-#   ftm.actual.prep = c(FTM.prep * `FT%.prep`)
-# )
-
-
-
-data$group <- ifelse(is.na(data$ppg.prep) & !is.na(data$pts.aau),
-                      'Only AAU', NA)
-
-
-data$group <- ifelse(!is.na(data$ppg.prep) & is.na(data$pts.aau),
-                      'Only Prep',
-                      data$group)
-
-
-data$group <- ifelse(!is.na(data$ppg.prep) & !is.na(data$pts.aau),
-                      'Prep and AAU',
-                      data$group)
-
-
-data$group <- ifelse(is.na(data$group),
-                      'Neither',
-                      data$group)
-
-
-data = data %>% group_by(Season, group) %>% mutate(group.num = n())
-
-
-# ggplot(boxplots, aes(y = ws, x = group)) + 
-#   geom_boxplot(aes(group = group),
-#                colour = 'skyblue') + 
-#   theme_bw() + 
-#   facet_grid(rows = vars(Season)) + ggtitle('WS by Amount of Data')
-
-
-# ggplot(data, aes(y = ws)) + 
-#   geom_violin(aes(x = group),
-#               colour = 'skyblue') + 
-#   theme_bw() + 
-#   facet_grid(rows = vars(Season)) + 
-#   ggtitle('WS by Amount of Data')
-
-group.freq = unique(data[, c('Season', 'group', 'group.num')])
-colnames(group.freq) = c('Season', 'Partition', 'Freq')
-group.freq = group.freq[order(-group.freq$Freq),]
-
-data.by.season = ggplot(group.freq, aes(Partition,  Freq)) + 
-  geom_bar(stat = 'identity',
-           fill = 'skyblue') + 
-  theme_bw() + theme(panel.grid.major.x = element_blank(),
-                     panel.grid.minor.y = element_blank()) + 
-  facet_grid(rows = vars(Season)) + 
-  ggtitle('Data Availability by Season') + 
-  ylab('Number of Players') + 
-  xlab('')
-```
-
-
-
-
-```{r, echo = F, eval = T, include=F}
-
-
-
-
-group.freq  = spread(group.freq, Partition , Freq)
-
-group.freq[is.na(group.freq)] = 0
-
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 library(pander)
 ```
 
-
+```{r, echo = F, eval = T, include=F}
+source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
+```
 # Introduction
 
 The goal of this project is to predict collegiate win shares from ESPN recruiting ratings [1] and high school statistics provided by Prep Circuit [2] and AAUStats [3]. As it stands, there is little research on predicting individual players’ collegiate performance. In 2010, Jamie McNeilly used recruiting ranking quartiles to predict PER and other barometers of success [3]; however, the models presented did not consider high school statistics as an input, nor did they consider predicting win shares, which is a more authentic measurement of how a player contributes to overall team success as shown by basketball reference [5].  
@@ -155,7 +53,8 @@ From a basketball perspective, these players arguably had some of the best seaso
   
   Prior analyses used k nearest neighbor imputation to deal with players missing a given statistic, such as rebounds in Prep Circuit. Below is a table of the number of Prep Circuit players that had points per game, but were missing another per game statistics.
 ```{r, echo = F, fig.align = 'center'}
-Prep_NA_Counts <- read_csv("Prep.NA.Counts.csv")
+
+Prep_NA_Counts <- read_csv("~/Honors Thesis/Figure and Table Generators/Prep.NA.Counts.csv")
 colnames(Prep_NA_Counts)[1] = 'Per Game Statistic'
 ```
 `r pander(Prep_NA_Counts)`
@@ -163,6 +62,7 @@ colnames(Prep_NA_Counts)[1] = 'Per Game Statistic'
   Although this knn imputation was effective for seasons past, it will not be the best method going forward, as the amount and quality of data has improved drastically over the past few years. Below is a table and histogram of the number of players that have each of our data sources by season.
 `r pander(group.freq)`
 ```{r, echo = F, fig.align = 'center', out.height='80%', out.width='70%'}
+source("~/Honors Thesis/Figure and Table Generators/Data Availability by Season.R")
 data.by.season
 ```
 
@@ -193,294 +93,15 @@ where
 
 ```{r, echo = F, eval = T, include=F}
 
-
-# data = data %>% dplyr::select(-g)
-
-data = data %>% dplyr::select(-total.given.pts.aau,
-                              -given.pts.aau)
-
-
-
-
-
-data$ws.per.game = data$ws / data$g
-
-
-colnames(data)[colnames(data)=="fixed.height"] <- "Height"
-
-
-
-
-#data = data[ , colSums(is.na(data)) == 0]
-
-#data[is.na(data)] = 0
-
-
-
-#data$Season = ifelse(data$Season == 2019, 1, 0)
-
-# data = data %>% select(-ows, -dws,
-#                        -Season)
-
-
-
-#AAU PTS PER MIN
-data$pts.per.min.aau = data$total.pts.aau / data$total.mp.aau
-
-
-#need to justify later
-data$pts.per.min.aau = ifelse(is.infinite(data$pts.per.min.aau),
-                              NA,
-                              data$pts.per.min.aau)
-
-#HIGH SCHOOL POINTS
-
-data$total.pts.high.school = data$PTS.prep + data$total.pts.aau
-
-data$ppg.high.school = (data$total.pts.high.school) /
-  (data$gp.ppg.prep + data$total.games.aau)
-
-data$mean.pts.high.school = (data$ppg.prep + data$pts.aau) / 2
-
-
-#HIGH SCHOOL REBOUNDS
-
-data$total.rebs.high.school = data$REB.prep + data$total.reb.aau
-
-data$rebs.high.school = data$total.rebs.high.school /
-  (data$total.games.aau + data$gp.reb.prep)
-
-
-#HIGH SCHOOL BLOCKS
-
-data$total.blks.high.school = data$blk.aau + data$BLK.prep
-
-data$blks.high.school = data$total.blks.high.school /
-  (data$total.games.aau + data$gp.misc.prep)
-
-
-
-
-#HIGH SCHOOL STEALS
-
-data$total.stls.high.school = data$STL.prep + data$total.stl.aau
-
-data$stls.high.school = data$total.stls.high.school /
-  (data$total.games.aau + data$gp.misc.prep)
-
-
-
-#HIGH SCHOOL FTs
-
-data$total.fts.high.school = data$FTM.prep + data$total.ft.made.aau
-
-data$fts.high.school = data$total.fts.high.school /
-  (data$total.games.aau + data$gp.ppg.prep)
-
-
-
-
-
-
-#HIGH SCHOOL MAX
-
-# my.max = function(x) {
-#   return(max(x, na.rm = T))
-# }
-# 
-# data$max.pts.high.school = apply(X = data[, c('HIGH.prep', 'max.pts.aau')],
-#                                  FUN = my.max,
-#                                  MARGIN = c(1))
-# 
-# 
-# data$max.pts.high.school = ifelse(is.infinite(data$max.pts.high.school),
-#                                   NA,
-#                                   data$max.pts.high.school)
-
-
-
-#HIGH SCHOOL tos
-
-data$total.tos.high.school = data$TO.prep + data$total.to.aau
-
-data$tovs.high.school = data$total.tos.high.school /
-  (data$total.games.aau + data$gp.misc.prep)
-
-
-
-#HIGH SCHOOL 3ps
-
-data$total.3ps.high.school = data$`3PM.prep` + data$threep.made.aau
-
-data$`3ps.high.school` = data$total.3ps.high.school /
-  (data$total.games.aau + data$gp.ppg.prep)
-
-#data[,7:ncol(data)][data[,7:ncol(data)] == 0] <- NA
-
-
-data = data %>% dplyr::select(Name,
-                              player.id,
-                              Position,
-                              ws,
-                              ows,
-                              dws,
-                              Season,
-                              everything())
-
-data$GamesPlayed.prep = data$gp.max.prep
-
-data$GamesPlayed.aau = data$total.games.aau
-
-data = data[, which(grepl('gp.', colnames(data)) == 0)]
-
-
-data$Position.Basic = ifelse(data$Position %in% c('PG', 'SG'),
-                       'G', 0)
-
-data$Position.Basic = ifelse(data$Position %in% c('SF', 'PF'),
-                         'F', data$Position.Basic)
-
-
-data$Position.Basic = ifelse(data$Position == 'C',
-                        'C', data$Position.Basic)
-
-data$Position = as.factor(data$Position)
-data$Position = plyr::revalue(data$Position,
-                              c(
-                                'PG' = 1,
-                                'SG' = 2,
-                                'SF' = 3,
-                                'PF' = 4,
-                                'C' = 5))
-
-
-data$Position = as.numeric(data$Position)
-
-
-###prep 
-prep = data[,which(grepl('prep', colnames(data)))]
-
-prep = cbind(data$ws.per.game, data$Position,
-             data$Position.Basic, data$Height, data$ws,
-                                              data$g,
-              prep)
-colnames(prep)[1:6] = c('ws.per.game', 'Position', 'Position.Basic', 'Height',
-                        'ws', 'g')
-
-
-prep = prep[complete.cases(prep),]
-
-
-prep.win.shares = prep$ws
-
-prep.games = prep$g
-
-
-prep = prep %>% dplyr::select(ws.per.game,
-                            ppg.prep,
-                            mpg.prep,
-                            HIGH.prep,
-                            reb.prep,
-                            blk.prep,
-                            spg.prep,
-                            tov.prep,
-                            GamesPlayed.prep,
-                            Position,
-                            Position.Basic,
-                            Height)
-
-colnames(prep) = c('ws.per.game', 'Points.PerGame.Prep', 'Minutes.PerGame.Prep', 'Max.Points.Prep', 'Rebounds.PerGame.Prep', 'Blocks.PerGame.Prep', 'Steals.PerGame.Prep', 'Turnovers.PerGame.Prep', 'GamesPlayed.Prep',
-                   'Position',
-                   'Position.Basic',
-                   'Height')
-
-
-#aau
-aau = data[,which(grepl('aau', colnames(data)))]
-
-
-aau = cbind(data$ws.per.game,
-            data$Position, data$Position.Basic, data$Height,
-            data$ws, data$g,
-            aau)
-
-colnames(aau)[1:6] = c('ws.per.game', 'Position', 'Position.Basic', 'Height',
-                       'ws', 'g')
-
-
-aau = aau[complete.cases(aau),]
-
-aau.win.shares = aau$ws
-
-aau.games = aau$g
-
-aau = aau[,which(grepl('total', colnames(aau)) == 0)]
-
-
-
-aau = aau %>% dplyr::select(ws.per.game,
-                            pts.aau,
-                            mp.aau,
-                            max.pts.aau,
-                            reb.aau,
-                            blk.aau,
-                            stl.aau,
-                            to.aau,
-                            GamesPlayed.aau,
-                            Position,
-                            Position.Basic,
-                            Height
-                            )
-
-colnames(aau) = c('ws.per.game', 'Points.PerGame.AAU', 'Minutes.PerGame.AAU', 'Max.Points.AAU', 'Rebounds.PerGame.AAU', 'Blocks.PerGame.AAU', 'Steals.PerGame.AAU', 'Turnovers.PerGame.AAU', 'GamesPlayed.AAU',
-                  'Position',
-                   'Position.Basic',
-                  'Height')
-
-
-
-
-library(glmnet)
-
-
-
-set.seed(123) 
-train.control <- trainControl(method = "LOOCV")
-
-
-
-
-
 ```
 
 # AAU Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
 ```{r, echo = F}
 
-### AAU regression Model on Win Shares Per Game
-
-aau.lm <- train(ws.per.game ~., data = aau, method = "lm",
-               trControl = train.control)
-
+source('~/Honors Thesis/Modeling/Basic Linear Regressions.R')
 summary(aau.lm)
 
-pred = predict(aau.lm, aau)
 
-pred = pred*aau.games
-
-rmse = round(sqrt(mean((aau.win.shares - pred)^2)), 2)
-
-
-
-dat = as.data.frame(cbind(pred, aau.win.shares))
-colnames(dat) = c('pred', 'ws')
-
-aau.graph = ggplot(dat) + geom_point(aes(x = pred, y = ws),
-                         colour = 'skyblue') + xlab("Predicted") + 
-  
-  ylab("Actual") + labs(title = 'AAU Model Predicted versus Actual Win Shares',
-                           subtitle = paste('RMSE=', rmse, sep = '')) + 
- geom_abline(intercept=0,slope = 1) + xlim(-1, 8) + 
-                                      ylim(-1, 8) + theme_bw()
 
 
 ```
@@ -490,35 +111,7 @@ aau.graph = ggplot(dat) + geom_point(aes(x = pred, y = ws),
 
 # Prep Circuit Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
 ```{r, echo = F}
-### Prep regression Model
-
-prep.lm <- train(ws.per.game ~ ., data = prep, method = "lm",
-                 trControl = train.control)
-
-
 summary(prep.lm)
-pred = predict(prep.lm, prep)
-
-pred = pred*prep.games
-
-rmse = round(sqrt(mean((prep.win.shares - pred)^2)), 2)
-
-
-
-dat = as.data.frame(cbind(pred, prep.win.shares))
-colnames(dat) = c('pred', 'ws')
-
-
-prep.graph = ggplot(dat) + geom_point(aes(x = pred, y = ws),
-                         colour = 'skyblue') + xlab("Predicted") + 
-  
-  ylab("Actual") + labs(title = 'Prep Circuit Model Predicted versus Actual Win Shares',
-                           subtitle = paste('RMSE=', rmse, sep = '')) + 
- geom_abline(intercept=0,slope = 1) + xlim(-1, 8) + 
-                                      ylim(-1, 8) + theme_bw()
-
-
-
 ```
 
   For M_{PREP}, points was by far the most significant, as was the number of games played. The only other significant variable was the number of blocks per game. The only variable that was significant in both $M_{AAU}$ and $M_{PREP}$ was the number of blocks per game. Minutes were not significant at all in $M_{PREP}$, whereas the opposite was true in $M_{AAU}$. Steals and rebounds were also not significant in this case (although steals were almost significant at the .05 level), whereas they were significant at the .01 level in the $M_{AAU}$ These results support some hypotheses generated during web scraping and exploratory analysis: the AAU data is more accurate and has more significant variables across the board, whereas the Prep Circuit data is highly erratic, but still achieves a very similar RMSE. Below are the plots of predicted versus fitted values for both models.
@@ -533,44 +126,23 @@ prep.graph
 # AAU PC Scores
 
 ```{r, echo = F}
-
-aau = aau %>% dplyr::select(-Position.Basic)
-aau.pca <- prcomp(aau, center = T, scale = T)
-
-
-aau.pca$rotation
-
-
+source('~/Honors Thesis/Modeling/Principal Component Analysis.R')
+aau.pca$rotation[,1:2]
 ```
 
 # Prep Circuit PC Scores
 ```{r, echo = F}
-
-prep = prep %>% dplyr::select(-Position.Basic)
-
-
-prep.pca <- prcomp(prep, center = T, scale = T)
-
-
-prep.pca$rotation
-
-
+prep.pca$rotation[,1:2]
 ```
 
   For the first principle component, the weight on win shares per game, points, and blocks, are nearly identical between the Prep Circuit and AAU model. Although points was not highly significant for the AAU model, the first principal component shows that the majority of the variation in the AAU data is in the same direction as the Prep Circuit data. Scree plots also showed that the overall variation in the data can be captured by a similar number of principal components. Below are the cumulative scree plots for the two models.
 
 
 ```{r, echo = F, fig.align = 'center', out.height='30%', out.width='50%'}
-pr.var <- aau.pca$sdev^2
-pve = pr.var / sum(pr.var)
 
-plot(cumsum(pve), xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0, 1), type = 'b',
+plot(cumsum(pve.aau), xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0, 1), type = 'b',
      main = 'AAU')
-
-pr.var <- prep.pca$sdev^2
-pve = pr.var / sum(pr.var)
-
-plot(cumsum(pve), xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0, 1), type = 'b',
+plot(cumsum(pve.prep), xlab = "Principal Component", ylab = "Proportion of Variance Explained", ylim = c(0, 1), type = 'b',
      main = 'Prep Circuit')
 
 ```

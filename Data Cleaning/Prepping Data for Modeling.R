@@ -57,13 +57,89 @@ data$group <- ifelse(is.na(data$group),
 
 data = data %>% group_by(Season, group) %>% mutate(group.num = n())
 
-#### model specific transformations ####
+data.for.graph = data
 
-# data = data %>% dplyr::select(-g)
 
-data = data %>% dplyr::select(-total.given.pts.aau,
-                              -given.pts.aau)
 
+
+#### Getting rid of variables for all models ####
+
+#saving these for later in case needed later
+ows = data$ows
+dws = data$dws
+name = data$Name
+player.id = data$player.id
+weight = data$Weight
+
+#creating for top ws table
+data.ws = data
+
+
+#getting rid of some bio stuff
+data = data %>% ungroup() %>% dplyr::select(-ows,
+                                            -Season,
+                              -dws,
+                              -Name,
+                              -Weight,
+                              -player.id,
+                              -group,
+                              -group.num)
+
+
+#getting rid of total prep stats
+data = data %>% dplyr::select(-gp.reb.prep,
+                              -gp.ppg.prep,
+                              -gp.misc.prep,
+                              -gp.min.prep,
+                              -gp.average.prep,
+                              -REB.prep,
+                              -MIN.prep,
+                              -PTS.prep,
+                              -AST.prep,
+                              -FTA.prep,
+                              -FTM.prep,
+                              -`3PM.prep`,
+                              -`3PA.prep`,
+                              -`FGA.prep`,
+                              -`FGM.prep`,
+                              -`STL.prep`,
+                              -`BLK.prep`,
+                              -`TO.prep`)
+
+
+#getting rid of total aau stats other than games
+games.played.aau = data$total.games.aau
+
+
+data = data[,-c(which(grepl('total.', colnames(data))))]
+
+
+#getting rid of some more aau stats not in prep
+data = data %>% dplyr::select(-given.pts.aau,
+                              -pf.aau,
+                              -threep.made.aau,
+                              -ft.made.aau,
+                              -fg.made.aau)
+
+#getting rid of some prep stats not in current aau summary
+
+data = data %>% dplyr::select(-`FT%.prep`,
+                              -`3P%.prep`,
+                              -fg.prep,
+                              -apg.prep)
+
+#getting rid of max pts variable
+data = data %>% dplyr::select(-HIGH.prep,
+                              -max.pts.aau)
+
+                              
+         
+#renaming some columns                     
+colnames(data)[which(colnames(data) == 'gp.max.prep')] = 'GamesPlayed.prep'
+
+data$GamesPlayed.aau = games.played.aau
+
+colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
 
@@ -71,132 +147,143 @@ data = data %>% dplyr::select(-total.given.pts.aau,
 data$ws.per.game = data$ws / data$g
 
 
-colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
-
-
-#data = data[ , colSums(is.na(data)) == 0]
-
-#data[is.na(data)] = 0
-
-
-
-#data$Season = ifelse(data$Season == 2019, 1, 0)
-
-# data = data %>% select(-ows, -dws,
-#                        -Season)
-
-
-
-#AAU PTS PER MIN
-data$pts.per.min.aau = data$total.pts.aau / data$total.mp.aau
-
-
-#need to justify later
-data$pts.per.min.aau = ifelse(is.infinite(data$pts.per.min.aau),
-                              NA,
-                              data$pts.per.min.aau)
-
-#HIGH SCHOOL POINTS
-
-data$total.pts.high.school = data$PTS.prep + data$total.pts.aau
-
-data$ppg.high.school = (data$total.pts.high.school) /
-  (data$gp.ppg.prep + data$total.games.aau)
-
-data$mean.pts.high.school = (data$ppg.prep + data$pts.aau) / 2
-
-
-#HIGH SCHOOL REBOUNDS
-
-data$total.rebs.high.school = data$REB.prep + data$total.reb.aau
-
-data$rebs.high.school = data$total.rebs.high.school /
-  (data$total.games.aau + data$gp.reb.prep)
-
-
-#HIGH SCHOOL BLOCKS
-
-data$total.blks.high.school = data$blk.aau + data$BLK.prep
-
-data$blks.high.school = data$total.blks.high.school /
-  (data$total.games.aau + data$gp.misc.prep)
-
-
-
-
-#HIGH SCHOOL STEALS
-
-data$total.stls.high.school = data$STL.prep + data$total.stl.aau
-
-data$stls.high.school = data$total.stls.high.school /
-  (data$total.games.aau + data$gp.misc.prep)
-
-
-
-#HIGH SCHOOL FTs
-
-data$total.fts.high.school = data$FTM.prep + data$total.ft.made.aau
-
-data$fts.high.school = data$total.fts.high.school /
-  (data$total.games.aau + data$gp.ppg.prep)
-
-
-
-
-
-
-#HIGH SCHOOL MAX
-
-# my.max = function(x) {
-#   return(max(x, na.rm = T))
-# }
+#### High School Stat manipulations (commented for now) ####
 # 
-# data$max.pts.high.school = apply(X = data[, c('HIGH.prep', 'max.pts.aau')],
-#                                  FUN = my.max,
-#                                  MARGIN = c(1))
+# #AAU PTS PER MIN
+# data$pts.per.min.aau = data$total.pts.aau / data$total.mp.aau
 # 
 # 
-# data$max.pts.high.school = ifelse(is.infinite(data$max.pts.high.school),
-#                                   NA,
-#                                   data$max.pts.high.school)
-
-
-
-#HIGH SCHOOL tos
-
-data$total.tos.high.school = data$TO.prep + data$total.to.aau
-
-data$tovs.high.school = data$total.tos.high.school /
-  (data$total.games.aau + data$gp.misc.prep)
-
-
-
-#HIGH SCHOOL 3ps
-
-data$total.3ps.high.school = data$`3PM.prep` + data$threep.made.aau
-
-data$`3ps.high.school` = data$total.3ps.high.school /
-  (data$total.games.aau + data$gp.ppg.prep)
-
+# #need to justify later
+# data$pts.per.min.aau = ifelse(is.infinite(data$pts.per.min.aau),
+#                               NA,
+#                               data$pts.per.min.aau)
+# 
+# #HIGH SCHOOL POINTS
+# 
+# data$total.pts.high.school = data$PTS.prep + data$total.pts.aau
+# 
+# data$ppg.high.school = (data$total.pts.high.school) /
+#   (data$gp.ppg.prep + data$total.games.aau)
+# 
+# data$mean.pts.high.school = (data$ppg.prep + data$pts.aau) / 2
+# 
+# 
+# #HIGH SCHOOL REBOUNDS
+# 
+# data$total.rebs.high.school = data$REB.prep + data$total.reb.aau
+# 
+# data$rebs.high.school = data$total.rebs.high.school /
+#   (data$total.games.aau + data$gp.reb.prep)
+# 
+# 
+# #HIGH SCHOOL BLOCKS
+# 
+# data$total.blks.high.school = data$blk.aau + data$BLK.prep
+# 
+# data$blks.high.school = data$total.blks.high.school /
+#   (data$total.games.aau + data$gp.misc.prep)
+# 
+# 
+# 
+# 
+# #HIGH SCHOOL STEALS
+# 
+# data$total.stls.high.school = data$STL.prep + data$total.stl.aau
+# 
+# data$stls.high.school = data$total.stls.high.school /
+#   (data$total.games.aau + data$gp.misc.prep)
+# 
+# 
+# 
+# #HIGH SCHOOL FTs
+# 
+# data$total.fts.high.school = data$FTM.prep + data$total.ft.made.aau
+# 
+# data$fts.high.school = data$total.fts.high.school /
+#   (data$total.games.aau + data$gp.ppg.prep)
+# 
+# 
+# 
+# 
+# 
+# 
+# #HIGH SCHOOL MAX
+# 
+# # my.max = function(x) {
+# #   return(max(x, na.rm = T))
+# # }
+# # 
+# # data$max.pts.high.school = apply(X = data[, c('HIGH.prep', 'max.pts.aau')],
+# #                                  FUN = my.max,
+# #                                  MARGIN = c(1))
+# # 
+# # 
+# # data$max.pts.high.school = ifelse(is.infinite(data$max.pts.high.school),
+# #                                   NA,
+# #                                   data$max.pts.high.school)
+# 
+# 
+# 
+# #HIGH SCHOOL tos
+# 
+# data$total.tos.high.school = data$TO.prep + data$total.to.aau
+# 
+# data$tovs.high.school = data$total.tos.high.school /
+#   (data$total.games.aau + data$gp.misc.prep)
+# 
+# 
+# 
+# #HIGH SCHOOL 3ps
+# 
+# data$total.3ps.high.school = data$`3PM.prep` + data$threep.made.aau
+# 
+# data$`3ps.high.school` = data$total.3ps.high.school /
+#   (data$total.games.aau + data$gp.ppg.prep)
+#
 #data[,7:ncol(data)][data[,7:ncol(data)] == 0] <- NA
 
+#### End ####
 
-data = data %>% dplyr::select(Name,
-                              player.id,
+
+
+data = data %>% dplyr::select(ws,
                               Position,
-                              ws,
-                              ows,
-                              dws,
-                              Season,
                               everything())
 
-data$GamesPlayed.prep = data$gp.max.prep
 
-data$GamesPlayed.aau = data$total.games.aau
 
-data = data[, which(grepl('gp.', colnames(data)) == 0)]
+library(data.table)
+#changing prep columns names
+data = setnames(data, old = c('ppg.prep',
+                              'mpg.prep',
+                              'reb.prep',
+                              'blk.prep',
+                              'spg.prep',
+                              'tov.prep'), 
+                new = c('Points.prep',
+                        'Minutes.prep',
+                        'Rebounds.prep',
+                        'Blocks.prep',
+                        'Steals.prep',
+                        'Turnovers.prep'))
+
+
+#changing aau columns
+data = setnames(data, old = c('pts.aau',
+                              'mp.aau',
+                              'reb.aau',
+                              'blk.aau',
+                              'stl.aau',
+                              'to.aau'), 
+                new = c('Points.aau',
+                        'Minutes.aau',
+                        'Rebounds.aau',
+                        'Blocks.aau',
+                        'Steals.aau',
+                        'Turnovers.aau'))
+
 
 
 data$Position.Basic = ifelse(data$Position %in% c('PG', 'SG'),
@@ -222,12 +309,15 @@ data$Position = plyr::revalue(data$Position,
 data$Position = as.numeric(data$Position)
 
 
+
+
+
 ###prep 
 prep = data[,which(grepl('prep', colnames(data)))]
 
 prep = cbind(data$ws.per.game, data$Position,
              data$Position.Basic, data$Height, data$ws,
-             data$g,
+             data$g, 
              prep)
 colnames(prep)[1:6] = c('ws.per.game', 'Position', 'Position.Basic', 'Height',
                         'ws', 'g')
@@ -242,22 +332,17 @@ prep.games = prep$g
 
 
 prep = prep %>% dplyr::select(ws.per.game,
-                              ppg.prep,
-                              mpg.prep,
-                              HIGH.prep,
-                              reb.prep,
-                              blk.prep,
-                              spg.prep,
-                              tov.prep,
+                              Points.prep,
+                              Minutes.prep,
+                              Rebounds.prep,
+                              Blocks.prep,
+                              Steals.prep,
+                              Turnovers.prep,
                               GamesPlayed.prep,
                               Position,
                               Position.Basic,
                               Height)
 
-colnames(prep) = c('ws.per.game', 'Points.PerGame.Prep', 'Minutes.PerGame.Prep', 'Max.Points.Prep', 'Rebounds.PerGame.Prep', 'Blocks.PerGame.Prep', 'Steals.PerGame.Prep', 'Turnovers.PerGame.Prep', 'GamesPlayed.Prep',
-                   'Position',
-                   'Position.Basic',
-                   'Height')
 
 
 #aau
@@ -279,28 +364,23 @@ aau.win.shares = aau$ws
 
 aau.games = aau$g
 
-aau = aau[,which(grepl('total', colnames(aau)) == 0)]
 
 
 
 aau = aau %>% dplyr::select(ws.per.game,
-                            pts.aau,
-                            mp.aau,
-                            max.pts.aau,
-                            reb.aau,
-                            blk.aau,
-                            stl.aau,
-                            to.aau,
+                            Points.aau,
+                            Minutes.aau,
+                            Rebounds.aau,
+                            Blocks.aau,
+                            Steals.aau,
+                            Turnovers.aau,
                             GamesPlayed.aau,
                             Position,
                             Position.Basic,
                             Height
 )
 
-colnames(aau) = c('ws.per.game', 'Points.PerGame.AAU', 'Minutes.PerGame.AAU', 'Max.Points.AAU', 'Rebounds.PerGame.AAU', 'Blocks.PerGame.AAU', 'Steals.PerGame.AAU', 'Turnovers.PerGame.AAU', 'GamesPlayed.AAU',
-                  'Position',
-                  'Position.Basic',
-                  'Height')
+
 
 #### End ####
 

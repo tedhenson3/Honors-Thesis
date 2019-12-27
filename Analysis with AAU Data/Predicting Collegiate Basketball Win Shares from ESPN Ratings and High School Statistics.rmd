@@ -11,7 +11,11 @@ fontsize: 12pt
 \openup 1em
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+knitr::opts_chunk$set(echo = F, 
+                      eval = T,
+                      message = F, 
+                      warning = F)
+#load to display tables
 library(pander)
 ```
 
@@ -34,7 +38,7 @@ knitr::include_graphics("ACC Basketball WS.png")
 
   College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. To further justify the use of win shares as the response, below are the top 10 players in terms of win shares in our data.
 ```{r, echo = F, eval = T, include=F}
-top.ws = data %>% arrange(desc(ws)) %>% select(Name, ws, Season)
+top.ws = data.ws %>% arrange(desc(ws)) %>% select(Name, ws, Season)
 top.10.ws = top.ws[1:10,]
 ```
 `r pander(top.10.ws)`
@@ -99,14 +103,14 @@ where
 ```{r, echo = F}
 
 source('~/Honors Thesis/Modeling/Basic Linear Regressions.R')
-summary(aau.lm)
-
-
-
-
+summary(aau.lm$finalModel)
 ```
 
-  Minutes, rebounds, and steals were significant at the  .01 level, and blocks and whether or not a player was a forward were significant at the .05 level.  Points was almost under that threshold, at about .06. These results are somewhat surprising, almost the inverse of what one might expect. Minutes may simply be indicative that a good player plays a lot, particularly in AAU games that one would think are more competitive than high school games on the whole. Points may not be as predictive as you would expect as AAU teams are sometimes loaded with talent. Good teams may share the ball more, and distribute the scoring more evenly in order to win. Notably, assists are not tracked at all in the AAU stats. They may have elected to not track it due to difficulties with accuracy. Prep Circuit, however, does track assists. This may not be reliable based on AAU's decision to not track it, and the appearance of some star players with zero assists, such as Zion Williamson. It was included in the regression anyway to assess whether it holds any value. The results from $M_{PREP}$ differed significantly. Below are the same summary statistics for $M_{PREP}$.
+  Minutes, rebounds, points, and steals were significant at the  .01 level, and blocks and whether or not a player was a forward were significant at the .05 level. The significance of the minutes variable was somewhat suprising. Minutes may be indicative that a player who plays a lot of minutes has an advantage logging good per game statistics. Below are the confidence intervals for the coefficients.
+```{r}
+confint(aau.lm$finalModel)
+```
+  As shown above, the variables that had highly significant p values all had either strictly positive or negative confidence intervals. Notably, assists are not tracked at all in the AAU stats. They may have elected to not track it due to difficulties with accuracy. Prep Circuit, however, does track assists. This may not be reliable based on AAU's decision to not track it, and the appearance of some star players with zero assists, such as Zion Williamson. It was not included in the regression as it appeared to be inaccurate. The results from $M_{PREP}$ differed significantly. Below are the same summary statistics for $M_{PREP}$.
 
 
 # Prep Circuit Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
@@ -114,14 +118,18 @@ summary(aau.lm)
 summary(prep.lm)
 ```
 
-  For M_{PREP}, points was by far the most significant, as was the number of games played. The only other significant variable was the number of blocks per game. The only variable that was significant in both $M_{AAU}$ and $M_{PREP}$ was the number of blocks per game. Minutes were not significant at all in $M_{PREP}$, whereas the opposite was true in $M_{AAU}$. Steals and rebounds were also not significant in this case (although steals were almost significant at the .05 level), whereas they were significant at the .01 level in the $M_{AAU}$ These results support some hypotheses generated during web scraping and exploratory analysis: the AAU data is more accurate and has more significant variables across the board, whereas the Prep Circuit data is highly erratic, but still achieves a very similar RMSE. Below are the plots of predicted versus fitted values for both models.
+  For $M_{PREP}$, points was by far the most significant, as was the number of games played. The only other significant variable was the number of blocks per game, which was significant in both $M_{AAU}$ and $M_{PREP}$. Minutes were not significant at all in $M_{PREP}$, whereas the opposite was true in $M_{AAU}$. Steals and rebounds were also not significant in this case (although steals were almost significant at the .05 level), whereas they were significant at the .01 level in the $M_{AAU}$. As shown below, the signifcant variables had confidence intervals that did not contain zero.
+```{r}
+confint(prep.lm$finalModel)
+```
+  These results support some hypotheses generated during web scraping and exploratory analysis: the AAU data is more accurate and has more significant variables across the board, whereas the Prep Circuit data is highly erratic, but still achieves a similar RMSE. Below are the plots of predicted versus fitted values for both models.
 ```{r, echo = F, fig.align = 'center', out.height='80%', out.width='70%'}
 aau.graph
 prep.graph
 ```
 
 ## Principal Component Analysis
-  Principal component analysis also revealed some interesting insights into the two data sources as well. Below are the principal components after removing the position variables and scaling the data.
+  Principal component analysis also revealed some interesting insights into the two data sources as well. Below are the principal components after removing the categorial position and season variables and scaling the data.
 
 # AAU PC Scores
 

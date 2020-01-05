@@ -156,6 +156,40 @@ plot(cumsum(pve.prep), xlab = "Principal Component", ylab = "Proportion of Varia
 ```
 
 ## Regularized Linear Methods
+### Lasso
+```{r, echo = F}
+source('~/Honors Thesis/Modeling/Ridge and Lasso.R')
+```
+Lasso Prep Error=`r min(lasso.prep$cvm)`
+
+
+Lasso AAU Error=`r min(lasso.aau$cvm)`
+
+
+Lasso Prep Coefficients 
+```{r}
+coef(lasso.prep)
+```
+Lasso AAU Coefficients
+```{r}
+coef(lasso.aau)
+```
+
+### Ridge
+Ridge Prep Error=`r min(ridge.prep$cvm)`
+
+
+Ridge AAu Error=`r min(ridge.aau$cvm)`
+
+
+Ridge Prep Coefficients 
+```{r}
+coef(ridge.prep)
+```
+Ridge AAU Coefficients
+```{r}
+coef(ridge.aau)
+```
 
 ## Tree Based Methods
 

@@ -309,10 +309,44 @@ data$Position = plyr::revalue(data$Position,
 data$Position = as.numeric(data$Position)
 
 
+#### Creating ESPN dataset ####
+
+espn = data %>% dplyr::select(ws.per.game,
+                              Position,
+                              Position.Basic,
+                              Height,
+                              espn.rating,
+                              ws,
+                              g)
+
+espn = espn[complete.cases(espn),]
 
 
+espn.win.shares = espn$ws
 
-###prep 
+espn.games = espn$g
+
+espn = espn %>% dplyr::select(-ws,
+                              -g)
+
+#### End ####
+
+
+#### Creating a dataset with all information ####
+
+full = data[complete.cases(data),]
+
+full.win.shares = full$ws
+
+full.games = full$g
+
+full = full %>% dplyr::select(-ws,
+                              -g)
+
+#### End ####
+
+
+#### creating prep dataset ####
 prep = data[,which(grepl('prep', colnames(data)))]
 
 prep = cbind(data$ws.per.game, data$Position,
@@ -343,9 +377,10 @@ prep = prep %>% dplyr::select(ws.per.game,
                               Position.Basic,
                               Height)
 
+#### End ####
 
 
-#aau
+#### creating aau dataset ####
 aau = data[,which(grepl('aau', colnames(data)))]
 
 

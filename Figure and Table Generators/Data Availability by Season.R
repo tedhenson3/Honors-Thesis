@@ -14,7 +14,7 @@
 
 
 #### Data Availability by Season ####
-group.freq = unique(data[, c('Season', 'group', 'group.num')])
+group.freq = unique(data.for.graph[, c('Season', 'group', 'group.num')])
 colnames(group.freq) = c('Season', 'Partition', 'Freq')
 group.freq = group.freq[order(-group.freq$Freq),]
 

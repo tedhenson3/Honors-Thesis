@@ -121,7 +121,20 @@ data = data %>% dplyr::select(-given.pts.aau,
                               -ft.made.aau,
                               -fg.made.aau)
 
+
 #getting rid of some prep stats not in current aau summary
+
+
+scat.data = data %>% dplyr::select(`FT%.prep`,
+                                   `3P%.prep`,
+                                   fg.prep,
+                                   apg.prep,
+                                   ws,
+                                   g)
+scat.data$ws.per.game = scat.data$ws / scat.data$g
+scat.data = scat.data %>% dplyr::select(-ws,
+                                        -g)
+
 
 data = data %>% dplyr::select(-`FT%.prep`,
                               -`3P%.prep`,
@@ -324,10 +337,12 @@ espn = espn[complete.cases(espn),]
 
 espn.win.shares = espn$ws
 
+
 espn.games = espn$g
 
 espn = espn %>% dplyr::select(-ws,
                               -g)
+espn.scat.data = espn %>% dplyr::select(-Position.Basic)
 
 #### End ####
 
@@ -377,6 +392,8 @@ prep = prep %>% dplyr::select(ws.per.game,
                               Position.Basic,
                               Height)
 
+prep.scat.data = prep %>% dplyr::select(-Position.Basic)
+
 #### End ####
 
 
@@ -414,6 +431,11 @@ aau = aau %>% dplyr::select(ws.per.game,
                             Position.Basic,
                             Height
 )
+
+aau.scat.data = aau %>% dplyr::select(-Position.Basic)
+
+
+
 
 
 

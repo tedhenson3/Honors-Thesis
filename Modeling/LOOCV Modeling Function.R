@@ -2,7 +2,7 @@
 #### Define function and standard arguments ####
 loocv.modeler = function(data = full, 
                          model = 'lm', 
-                         cbb.games = full.games, 
+                         cbb.games = full.games,
                          cbb.win.shares = full.win.shares){
 
 
@@ -33,12 +33,17 @@ is.fact <- sapply(data, is.factor)
 num.data <- data[, -c(which(is.fact))]
 #### End ####
 
+
+#### Hyperparamter tuning ####
+
+set.seed(2020)
+
+
 if(model == 'lasso'){
   
 
 #### Find best lambda for lasso and ridge ####
   
-  set.seed(2020)
   
   data = num.data
   
@@ -71,6 +76,30 @@ min.ridge.lambda = ridge.cv$lambda.min
 }
 #### End ####
 
+
+
+if(model == 'rf'){
+  library(randomForest)
+  
+  bestmtry <- tuneRF(data[,2:ncol(data)],
+                     data[,1], 
+                     stepFactor=1.5,
+                     improve=1e-7, ntree=1000)
+  #print(bestmtry)
+  
+  optim.num.predictors = as.numeric(bestmtry[which.min(bestmtry[,2]), 1])
+}
+
+
+#### dummy vars for nnet ####
+
+if(model == 'nnet'){
+  library(mlr)
+
+  data = createDummyFeatures(data, cols = c('Position.Basic'))
+
+}
+
 #### Loop through every observation, train model on other obs, and predict on held out ####
 for(j in 1:num.obs){
   
@@ -92,14 +121,21 @@ for(j in 1:num.obs){
   formula = as.formula('ws.per.game~.')
   #### End ####
   
-  if(model == 'nnet::nnet'){
+  if(model == 'nnet'){
     
+  library(nnet)
+    hidden.layers = floor((1/2)*c(ncol(train.data)-1))
+    
+  train.fit=avNNet(train.X,
+                   train.y,
+                   linout = T,
+                   size = hidden.layers)
   
-    hidden.layers = floor((2/3)*c(ncol(train.data)-1)+1)
-  train.fit=nnet::nnet(formula,
-                       data=train.data,
-                       size = hidden.layers)
+  data.pred=predict(train.fit, test.X)*cbb.games[testIndexes]
+  print(data.pred)
+  predictions = c(predictions, data.pred)
   }
+  
   
   if(model == 'lm'){
     train.fit = lm(formula, data = train.data)
@@ -133,11 +169,11 @@ predictions = c(predictions, data.pred)
   
   if(model == 'rf'){
     
-    train.fit = train(form = formula,
+    
+    train.fit = randomForest(formula = formula,
               data= train.data,
-              method = 'rf',
-               metric = 'RMSE',
-               maximize = F
+              ntree = 500,
+              mtry = optim.num.predictors
                )
     data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
     predictions = c(predictions, data.pred)
@@ -154,6 +190,8 @@ predictions = c(predictions, data.pred)
     data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
     predictions = c(predictions, data.pred)
   }
+  
+
   
 }
 

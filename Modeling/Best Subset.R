@@ -2,24 +2,24 @@
 
 library(leaps)
 
-num.folds = 10
+num.folds = nrow(aau)
 
-aau.folds = createFolds(aau$ws.per.game,
-                      k = num.folds,
-                      )
+# aau.folds = createFolds(aau$ws.per.game,
+#                       k = num.folds,
+#                       )
 
 set.seed(2020)
 #Randomly shuffle the data
 aau.data<-aau[sample(nrow(aau)),]
 
 #Create 10 equally size folds
-aau.folds <- cut(seq(1,nrow(aau.data)),breaks=10,labels=FALSE)
+aau.folds <- cut(seq(1,nrow(aau.data)),breaks=nrow(aau.data),labels=FALSE)
 
 nvar.aau = c(ncol(aau)-1)
 nvar.prep = c(ncol(prep)-1)
 
 
-for(j in 1:num.folds){
+for(j in 1:2){
   
   testIndexes <- which(aau.folds==j)
   test.data <- aau.data[testIndexes, ]
@@ -38,6 +38,7 @@ for(j in 1:num.folds){
       mat[, names(coefi)] %*% coefi
     }
    aau.pred=predict.regsubsets(aau.best.fit, test.data, id =i)*aau.games[testIndexes]
+   print(aau.pred)
     aau.reg.sub.error = aau.win.shares[testIndexes]  - aau.pred
     # 
     aau.reg.sub.rmse = sqrt(mean(aau.reg.sub.error^2))

@@ -4,10 +4,10 @@ source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
 source('~/Honors Thesis/Modeling/LOOCV Modeling Function.R')
 
 
-prep.pred.lm = loocv.modeler(model = 'nnet',
-              data = prep,
-              cbb.games = prep.games,
-              cbb.win.shares =  prep.win.shares)
+prep.pred.lm = loocv.modeler(model = 'xgbDART',
+              data = full,
+              cbb.games = full.games,
+              cbb.win.shares =  full.win.shares)
 
 prep.pred.lm
 

@@ -64,12 +64,13 @@ colnames(Prep_NA_Counts)[1] = 'Per Game Statistic'
 `r pander(Prep_NA_Counts)`
   
   Although this knn imputation was effective for seasons past, it will not be the best method going forward, as the amount and quality of data has improved drastically over the past few years. Below is a table and histogram of the number of players that have each of our data sources by season.
+```{r, echo = F}
+source("~/Honors Thesis/Figure and Table Generators/Data Availability by Season.R")
+```
 `r pander(group.freq)`
 ```{r, echo = F, fig.align = 'center', out.height='80%', out.width='70%'}
-source("~/Honors Thesis/Figure and Table Generators/Data Availability by Season.R")
 data.by.season
 ```
-
   As shown by the graph above, in 2016, the data sources presented did not even exist. By 2019, most ESPN rated players had both AAU and Prep Circuit statistics. This includes players that are rated poorly. Additionally, by the time this project will complete, the 2019-2020 college basketball season will be over. Their data could be incorporated into the training set or held out as a test set. 
   
 # Models

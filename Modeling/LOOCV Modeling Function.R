@@ -33,6 +33,9 @@ is.fact <- sapply(data, is.factor)
 num.data <- data[, -c(which(is.fact))]
 #### End ####
 
+#### Creating formula variable ####
+formula = as.formula('ws.per.game~.')
+#### End ####
 
 #### Hyperparamter tuning ####
 
@@ -91,6 +94,15 @@ if(model == 'rf'){
 }
 
 
+if(model == 'svm'){
+  
+  svm_tune <- tune(svm, formula, data=data,kernel ="radial", 
+                   ranges = list(cost=c(0.001, 0.01,0.1, 1, 10, 100)))
+  
+  opt.c = summary(svm_tune)[[1]]
+}
+
+
 #### dummy vars for nnet ####
 
 if(model == 'nnet'){
@@ -98,6 +110,32 @@ if(model == 'nnet'){
 
   data = createDummyFeatures(data, cols = c('Position.Basic'))
 
+}
+
+resample.method <- trainControl(method = "cv",
+                                  number = 5)
+
+
+if(model == 'xgbDART'){
+  
+  best.xgboost <- train(formula,
+                        data = data,
+                        method = "xgbDART",
+                        savePredictions = T,
+                        trControl = resample.method)  
+  #best.xgboost = best.xgboost[4]
+  best.xgboost = as.data.frame(best.xgboost$results)
+  #colnames(best.xgboost) = gsub('results.', '', best.xgboost)
+  opt.nrounds = as.numeric(best.xgboost[which.min(best.xgboost$RMSE), 'nrounds'])
+  print(opt.nrounds)
+  opt.max.depth = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'max_depth'])
+  opt.eta = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'eta'])
+  opt.gamma = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'gamma'])
+  opt.colsample_bytree = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'colsample_bytree'])
+  opt.min_child_weight = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'min_child_weight'])
+  opt.subsample = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'subsample'])
+  opt.skip_drop = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'skip_drop'])
+  opt.rate_drop = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'rate_drop'])
 }
 
 #### Loop through every observation, train model on other obs, and predict on held out ####
@@ -117,9 +155,7 @@ for(j in 1:num.obs){
   #### create X / y without factors ####
   #### End ####
   
-  #### Creating formula variable ####
-  formula = as.formula('ws.per.game~.')
-  #### End ####
+  
   
   if(model == 'nnet'){
     
@@ -134,6 +170,16 @@ for(j in 1:num.obs){
   data.pred=predict(train.fit, test.X)*cbb.games[testIndexes]
   print(data.pred)
   predictions = c(predictions, data.pred)
+  }
+  
+  if(model == 'svm'){
+    library(e1071)
+    train.fit = svm(formula, data = train.data,
+                          type = 'eps-regression',
+                          kernel = 'radial')
+    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    predictions = c(predictions, data.pred)
+    
   }
   
   
@@ -179,6 +225,27 @@ predictions = c(predictions, data.pred)
     predictions = c(predictions, data.pred)
   }
   
+  
+  if(model == 'xgbDART'){
+    train.fit = train(form = formula,
+                             data= train.data,
+                      method = 'xgbDART',
+                      nrounds = opt.nrounds,
+                        max_depth = opt.max_depth,
+                        eta = opt.eta,
+                        gamma = opt.gamma,
+                        subsample = opt.subsample,
+                        colsample_bytree = opt.colsample_bytree,
+                        min_child_weight = opt.min_child_weight,
+                      skip_drop= opt.skip_drop,
+                      rate_drop = opt.rate_drop
+    )
+    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    predictions = c(predictions, data.pred)
+
+
+  }
+  # 
   if(model == 'earth'){
     
     train.fit = train(form = formula,
@@ -199,6 +266,5 @@ predictions = c(predictions, data.pred)
 
 return(predictions)
 }
-
 
 

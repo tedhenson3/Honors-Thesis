@@ -6,10 +6,8 @@ loocv.modeler = function(data = full,
                          cbb.win.shares = full.win.shares){
 
 
-
 #### load packages for built in models ####
 library(glmnet)
-library(caret)
 #### End ####
   
 #### Grab number of obs ####
@@ -25,7 +23,7 @@ folds <- cut(seq(1,nrow(data)),breaks=num.obs,labels=FALSE)
 #### End ####
 
 #### Create empty vector for predictions ####
-predictions = c(0)
+predictions = c()
 #### End ####
 
 #### Create dataset of numeric predictors ####
@@ -34,13 +32,12 @@ num.data <- data[, -c(which(is.fact))]
 #### End ####
 
 #### Creating formula variable ####
-formula = as.formula('ws.per.game~.')
+formula = as.formula(sqrt.ws ~ .)
 #### End ####
 
 #### Hyperparamter tuning ####
 
 set.seed(2020)
-
 
 if(model == 'lasso'){
   
@@ -48,7 +45,9 @@ if(model == 'lasso'){
 #### Find best lambda for lasso and ridge ####
   
   
-  data = num.data
+  #data = num.data
+  library(mlr)
+  data = createDummyFeatures(data, cols = c('Position.Basic'))
   
   
 lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
@@ -64,7 +63,9 @@ min.lasso.lambda = lasso.cv$lambda.min
 if(model == 'ridge'){
   
   set.seed(2020)
-  data = num.data
+ # data = num.data
+  library(mlr)
+  data = createDummyFeatures(data, cols = c('Position.Basic'))
   
 ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       data[,1],
@@ -95,7 +96,7 @@ if(model == 'rf'){
 
 
 if(model == 'svm'){
-  
+  library(e1071)
   svm_tune <- tune(svm, formula, data=data,kernel ="radial", 
                    ranges = list(cost=c(0.001, 0.01,0.1, 1, 10, 100)))
   
@@ -112,23 +113,26 @@ if(model == 'nnet'){
 
 }
 
-resample.method <- trainControl(method = "cv",
-                                  number = 5)
+
 
 
 if(model == 'xgbDART'){
-  
-  best.xgboost <- train(formula,
-                        data = data,
+  resample.method <- trainControl(method = "cv",
+                                  number = 2)
+  library(caret)
+  best.xgboost <- caret::train(form = formula,
+                               data = data,
+                               metric = 'RMSE',
+                               maximize = F,
                         method = "xgbDART",
-                        savePredictions = T,
-                        trControl = resample.method)  
+                        trControl = resample.method) 
+
   #best.xgboost = best.xgboost[4]
+ 
   best.xgboost = as.data.frame(best.xgboost$results)
   #colnames(best.xgboost) = gsub('results.', '', best.xgboost)
-  opt.nrounds = as.numeric(best.xgboost[which.min(best.xgboost$RMSE), 'nrounds'])
-  print(opt.nrounds)
-  opt.max.depth = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'max_depth'])
+  opt.nrounds = as.numeric(best.xgboost[which.min(best.xgboost$RMSE), 'nrounds'][1])
+  opt.max_depth = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'max_depth'])
   opt.eta = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'eta'])
   opt.gamma = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'gamma'])
   opt.colsample_bytree = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'colsample_bytree'])
@@ -136,6 +140,17 @@ if(model == 'xgbDART'){
   opt.subsample = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'subsample'])
   opt.skip_drop = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'skip_drop'])
   opt.rate_drop = as.numeric(best.xgboost[which.min(best.xgboost[,'RMSE']), 'rate_drop'])
+  params <- list(max_depth = opt.max_depth,
+                eta = opt.eta, 
+                gamma = opt.gamma,
+                colsample_bytree = opt.colsample_bytree,
+                min_child_weight = opt.min_child_weight,
+                subsample = opt.subsample,
+                skip_drop = opt.skip_drop,
+                opt.rate_drop = opt.rate_drop,
+                verbose = 0, 
+                nthread = 2,
+                objective = "reg:squarederror")
 }
 
 #### Loop through every observation, train model on other obs, and predict on held out ####
@@ -146,11 +161,11 @@ for(j in 1:num.obs){
   train.data = data[-testIndexes, ]
   
   #### create X and y datasets / vectors ####
-  train.y = train.data$ws.per.game
-  train.X = train.data %>% dplyr::select(-ws.per.game)
+  train.y = train.data$sqrt.ws
+  train.X = train.data %>% dplyr::select(-sqrt.ws)
   
-  test.y= test.data$ws.per.game
-  test.X = test.data %>% dplyr::select(-ws.per.game)
+  test.y= test.data$sqrt.ws
+  test.X = test.data %>% dplyr::select(-sqrt.ws)
   
   #### create X / y without factors ####
   #### End ####
@@ -165,10 +180,10 @@ for(j in 1:num.obs){
   train.fit=avNNet(train.X,
                    train.y,
                    linout = T,
+                   trace = F,
                    size = hidden.layers)
   
-  data.pred=predict(train.fit, test.X)*cbb.games[testIndexes]
-  print(data.pred)
+  data.pred=predict(train.fit, test.X)
   predictions = c(predictions, data.pred)
   }
   
@@ -177,7 +192,7 @@ for(j in 1:num.obs){
     train.fit = svm(formula, data = train.data,
                           type = 'eps-regression',
                           kernel = 'radial')
-    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    data.pred=predict(train.fit, test.data)
     predictions = c(predictions, data.pred)
     
   }
@@ -185,7 +200,7 @@ for(j in 1:num.obs){
   
   if(model == 'lm'){
     train.fit = lm(formula, data = train.data)
-    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    data.pred=predict(train.fit, test.data)
     predictions = c(predictions, data.pred)
 }
 
@@ -197,7 +212,7 @@ if(model == 'lasso'){
                      alpha  = 1,
                      lambda = min.lasso.lambda,
                      family = 'gaussian')
-data.pred=as.numeric(predict(train.fit, as.matrix(test.X)))*cbb.games[testIndexes]
+data.pred=as.numeric(predict(train.fit, as.matrix(test.X)))
 predictions = c(predictions, data.pred)
 }
   
@@ -209,7 +224,7 @@ predictions = c(predictions, data.pred)
                        alpha  = 0,
                        lambda = min.ridge.lambda,
                        family = 'gaussian')
-    data.pred=as.numeric(predict(train.fit, as.matrix(test.X)))*cbb.games[testIndexes]
+    data.pred=as.numeric(predict(train.fit, as.matrix(test.X)))
     predictions = c(predictions, data.pred)
   }
   
@@ -221,26 +236,23 @@ predictions = c(predictions, data.pred)
               ntree = 500,
               mtry = optim.num.predictors
                )
-    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    data.pred=predict(train.fit, test.data)
     predictions = c(predictions, data.pred)
   }
   
   
   if(model == 'xgbDART'){
-    train.fit = train(form = formula,
-                             data= train.data,
-                      method = 'xgbDART',
-                      nrounds = opt.nrounds,
-                        max_depth = opt.max_depth,
-                        eta = opt.eta,
-                        gamma = opt.gamma,
-                        subsample = opt.subsample,
-                        colsample_bytree = opt.colsample_bytree,
-                        min_child_weight = opt.min_child_weight,
-                      skip_drop= opt.skip_drop,
-                      rate_drop = opt.rate_drop
+    library(mlr)
+    library(xgboost)
+    train.data = createDummyFeatures(train.data, cols = c('Position.Basic'))
+    test.data = createDummyFeatures(test.data, cols = c('Position.Basic'))
+    train.fit = xgboost(data= as.matrix(train.data[,2:ncol(train.data)]),
+                          label = train.data[,1],
+                        param = params,
+                        verbose = 0,
+                        nrounds = opt.nrounds
     )
-    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    data.pred=predict(train.fit, as.matrix(test.data[,2:ncol(test.data)]))
     predictions = c(predictions, data.pred)
 
 
@@ -254,7 +266,7 @@ predictions = c(predictions, data.pred)
                       metric = 'RMSE',
                       maximize = F
     )
-    data.pred=predict(train.fit, test.data)*cbb.games[testIndexes]
+    data.pred=predict(train.fit, test.data)
     predictions = c(predictions, data.pred)
   }
   

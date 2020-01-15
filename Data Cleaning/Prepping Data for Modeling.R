@@ -122,7 +122,7 @@ data = data %>% dplyr::select(-given.pts.aau,
                               -fg.made.aau)
 
 
-#getting rid of some prep stats not in current aau summary
+#getting rid of some prep stats not in current aau summary and weren't predictive
 
 
 scat.data = data %>% dplyr::select(`FT%.prep`,
@@ -131,7 +131,7 @@ scat.data = data %>% dplyr::select(`FT%.prep`,
                                    apg.prep,
                                    ws,
                                    g)
-scat.data$ws.per.game = scat.data$ws / scat.data$g
+scat.data$sqrt.ws = scat.data$ws / scat.data$g
 scat.data = scat.data %>% dplyr::select(-ws,
                                         -g)
 
@@ -139,7 +139,9 @@ scat.data = scat.data %>% dplyr::select(-ws,
 data = data %>% dplyr::select(-`FT%.prep`,
                               -`3P%.prep`,
                               -fg.prep,
-                              -apg.prep)
+                              -apg.prep,
+                              -mpg.prep,
+                              -reb.prep)
 
 #getting rid of max pts variable
 data = data %>% dplyr::select(-HIGH.prep,
@@ -155,9 +157,12 @@ data$GamesPlayed.aau = games.played.aau
 colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
+data = data %>% dplyr::filter(espn.rating > 80)
+data$sqrt.ws = data$ws^(1/3)
+# data$sqrt.ws[is.nan(data$sqrt.ws)] = 0
 
+#data$ws.per.game = data$ws / data$g
 
-data$ws.per.game = data$ws / data$g
 
 
 
@@ -270,14 +275,10 @@ data = data %>% dplyr::select(ws,
 library(data.table)
 #changing prep columns names
 data = setnames(data, old = c('ppg.prep',
-                              'mpg.prep',
-                              'reb.prep',
                               'blk.prep',
                               'spg.prep',
                               'tov.prep'), 
                 new = c('Points.prep',
-                        'Minutes.prep',
-                        'Rebounds.prep',
                         'Blocks.prep',
                         'Steals.prep',
                         'Turnovers.prep'))
@@ -309,6 +310,8 @@ data$Position.Basic = ifelse(data$Position %in% c('SF', 'PF'),
 data$Position.Basic = ifelse(data$Position == 'C',
                              'C', data$Position.Basic)
 
+data$Position.Basic = as.factor(data$Position.Basic)
+
 data$Position = as.factor(data$Position)
 data$Position = plyr::revalue(data$Position,
                               c(
@@ -324,7 +327,7 @@ data$Position = as.numeric(data$Position)
 
 #### Creating ESPN dataset ####
 
-espn = data %>% dplyr::select(ws.per.game,
+espn = data %>% dplyr::select(sqrt.ws,
                               Position,
                               Position.Basic,
                               Height,
@@ -355,20 +358,21 @@ full.win.shares = full$ws
 
 full.games = full$g
 
+
 full = full %>% dplyr::select(-ws,
                               -g)
-
+full = full %>% dplyr::select(sqrt.ws, everything())
 #### End ####
 
 
 #### creating prep dataset ####
 prep = data[,which(grepl('prep', colnames(data)))]
 
-prep = cbind(data$ws.per.game, data$Position,
+prep = cbind(data$sqrt.ws, data$Position,
              data$Position.Basic, data$Height, data$ws,
              data$g, 
              prep)
-colnames(prep)[1:6] = c('ws.per.game', 'Position', 'Position.Basic', 'Height',
+colnames(prep)[1:6] = c('sqrt.ws', 'Position', 'Position.Basic', 'Height',
                         'ws', 'g')
 
 
@@ -380,10 +384,8 @@ prep.win.shares = prep$ws
 prep.games = prep$g
 
 
-prep = prep %>% dplyr::select(ws.per.game,
+prep = prep %>% dplyr::select(sqrt.ws,
                               Points.prep,
-                              Minutes.prep,
-                              Rebounds.prep,
                               Blocks.prep,
                               Steals.prep,
                               Turnovers.prep,
@@ -401,12 +403,12 @@ prep.scat.data = prep %>% dplyr::select(-Position.Basic)
 aau = data[,which(grepl('aau', colnames(data)))]
 
 
-aau = cbind(data$ws.per.game,
+aau = cbind(data$sqrt.ws,
             data$Position, data$Position.Basic, data$Height,
             data$ws, data$g,
             aau)
 
-colnames(aau)[1:6] = c('ws.per.game', 'Position', 'Position.Basic', 'Height',
+colnames(aau)[1:6] = c('sqrt.ws', 'Position', 'Position.Basic', 'Height',
                        'ws', 'g')
 
 
@@ -419,7 +421,7 @@ aau.games = aau$g
 
 
 
-aau = aau %>% dplyr::select(ws.per.game,
+aau = aau %>% dplyr::select(sqrt.ws,
                             Points.aau,
                             Minutes.aau,
                             Rebounds.aau,
@@ -438,6 +440,15 @@ aau.scat.data = aau %>% dplyr::select(-Position.Basic)
 
 
 
+
+#### End ####
+
+#### Converting all tbl to dataframes - caused many issues! ####
+
+espn = as.data.frame(espn)
+aau = as.data.frame(aau)
+prep = as.data.frame(prep)
+full = as.data.frame(full)
 
 #### End ####
 

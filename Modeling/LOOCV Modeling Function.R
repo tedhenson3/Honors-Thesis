@@ -115,7 +115,7 @@ if(model == 'nnet'){
 
 if(model == 'xgbDART'){
   resample.method <- trainControl(method = "cv",
-                                  number = 2)
+                                  number = 5)
   library(caret)
   best.xgboost <- caret::train(form = formula,
                                data = data,
@@ -148,6 +148,28 @@ if(model == 'xgbDART'){
                 verbose = 0, 
                 nthread = 2,
                 objective = "reg:squarederror")
+}
+
+
+if(model == 'earth'){
+  library(caret)
+  resample.method <- trainControl(method = "cv",
+                                  number = 5)
+  library(caret)
+  best.earth <- caret::train(form = formula,
+                               data = data,
+                               metric = 'RMSE',
+                               maximize = F,
+                               method = "earth",
+                               trControl = resample.method) 
+  
+  #best.earth = best.earth[4]
+  
+  best.earth = as.data.frame(best.earth$results)
+  #colnames(best.earth) = gsub('results.', '', best.earth)
+  opt.nprune = as.numeric(best.earth[which.min(best.earth$RMSE), 'nprune'][1])
+  opt.degree = as.numeric(best.earth[which.min(best.earth$RMSE), 'degree'][1])
+  
 }
 
 #### Loop through every observation, train model on other obs, and predict on held out ####
@@ -256,13 +278,21 @@ predictions = c(predictions, data.pred)
   }
   # 
   if(model == 'earth'){
-    
-    train.fit = train(form = formula,
+    library(caret)
+    # train.fit = caret::train(form = formula,
+    #                   data= train.data,
+    #                   method = 'earth',
+    #                   metric = 'RMSE',
+    #                   maximize = F,
+    #                   nprune = opt.nprune,
+    #                   degree = opt.degree
+    # )
+    train.fit = earth(formula = formula,
                       data= train.data,
-                      method = 'earth',
-                      metric = 'RMSE',
-                      maximize = F
+                      nprune = opt.nprune,
+                      degree = opt.degree
     )
+    
     data.pred=predict(train.fit, test.data)
     predictions = c(predictions, data.pred)
   }

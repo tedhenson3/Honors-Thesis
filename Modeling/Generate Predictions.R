@@ -5,171 +5,148 @@ source('~/Honors Thesis/Modeling/LOOCV Modeling Function.R')
 
 
 prep.pred.lasso = loocv.modeler(model = 'lasso',
-                                data = prep,
-                                cbb.games = prep.games,
-                                cbb.win.shares =  full.win.shares)
+                                data = prep)
 
 
 aau.pred.lasso = loocv.modeler(model = 'lasso',
-                               data = aau,
-                               cbb.games = aau.games,
-                               cbb.win.shares =  aau.win.shares)
+                               data = aau)
 
 
 espn.pred.lasso = loocv.modeler(model = 'lasso',
-                                data = espn,
-                                cbb.games = espn.games,
-                                cbb.win.shares =  espn.win.shares)
+                                data = espn)
 
 full.pred.lasso = loocv.modeler(model = 'lasso',
-                                data = full,
-                                cbb.games = full.games,
-                                cbb.win.shares =  full.win.shares)
+                                data = full)
 
 
 prep.pred.ridge = loocv.modeler(model = 'ridge',
-                                data = prep,
-                                cbb.games = prep.games,
-                                cbb.win.shares =  full.win.shares)
+                                data = prep)
 
 
 aau.pred.ridge = loocv.modeler(model = 'ridge',
-                               data = aau,
-                               cbb.games = aau.games,
-                               cbb.win.shares =  aau.win.shares)
+                               data = aau)
 
 
 espn.pred.ridge = loocv.modeler(model = 'ridge',
-                                data = espn,
-                                cbb.games = espn.games,
-                                cbb.win.shares =  espn.win.shares)
+                                data = espn)
 
 full.pred.ridge = loocv.modeler(model = 'ridge',
-                                data = full,
-                                cbb.games = full.games,
-                                cbb.win.shares =  full.win.shares)
+                                data = full)
 
 
 
 prep.pred.svm = loocv.modeler(model = 'svm',
-                              data = prep,
-                              cbb.games = prep.games,
-                              cbb.win.shares =  full.win.shares)
+                              data = prep)
 
 
 aau.pred.svm = loocv.modeler(model = 'svm',
-                             data = aau,
-                             cbb.games = aau.games,
-                             cbb.win.shares =  aau.win.shares)
+                             data = aau)
 
 
 espn.pred.svm = loocv.modeler(model = 'svm',
-                              data = espn,
-                              cbb.games = espn.games,
-                              cbb.win.shares =  espn.win.shares)
+                              data = espn)
 
 full.pred.svm = loocv.modeler(model = 'svm',
-                              data = full,
-                              cbb.games = full.games,
-                              cbb.win.shares =  full.win.shares)
+                              data = full)
 
 
 
 
 prep.pred.nnet = loocv.modeler(model = 'nnet',
-                               data = prep,
-                               cbb.games = prep.games,
-                               cbb.win.shares =  full.win.shares)
+                               data = prep)
 
 
 aau.pred.nnet = loocv.modeler(model = 'nnet',
-                              data = aau,
-                              cbb.games = aau.games,
-                              cbb.win.shares =  aau.win.shares)
+                              data = aau)
 
 
 espn.pred.nnet = loocv.modeler(model = 'nnet',
-                               data = espn,
-                               cbb.games = espn.games,
-                               cbb.win.shares =  espn.win.shares)
+                               data = espn)
 
 full.pred.nnet = loocv.modeler(model = 'nnet',
-                               data = full,
-                               cbb.games = full.games,
-                               cbb.win.shares =  full.win.shares)
+                               data = full)
 
 
 
 prep.pred.lm = loocv.modeler(model = 'lm',
-                             data = prep,
-                             cbb.games = prep.games,
-                             cbb.win.shares =  full.win.shares)
+                             data = prep)
 
 
 aau.pred.lm = loocv.modeler(model = 'lm',
-                            data = aau,
-                            cbb.games = aau.games,
-                            cbb.win.shares =  aau.win.shares)
+                            data = aau)
 
 
 espn.pred.lm = loocv.modeler(model = 'lm',
-                             data = espn,
-                             cbb.games = espn.games,
-                             cbb.win.shares =  espn.win.shares)
+                             data = espn)
 
 full.pred.lm = loocv.modeler(model = 'lm',
-                             data = full,
-                             cbb.games = full.games,
-                             cbb.win.shares =  full.win.shares)
+                             data = full)
 
 
 
 
 prep.pred.xgbDART = loocv.modeler(model = 'xgbDART',
-              data = prep,
-              cbb.games = prep.games,
-              cbb.win.shares =  full.win.shares)
+              data = prep)
 
 
 aau.pred.xgbDART = loocv.modeler(model = 'xgbDART',
-              data = aau,
-              cbb.games = aau.games,
-              cbb.win.shares =  aau.win.shares)
+              data = aau)
 
 
 espn.pred.xgbDART = loocv.modeler(model = 'xgbDART',
-              data = espn,
-              cbb.games = espn.games,
-              cbb.win.shares =  espn.win.shares)
+              data = espn)
 
 full.pred.xgbDART = loocv.modeler(model = 'xgbDART',
-                             data = full,
-                             cbb.games = full.games,
-                             cbb.win.shares =  full.win.shares)
+                             data = full)
 
 
 
 prep.pred.rf = loocv.modeler(model = 'rf',
-                             data = prep,
-                             cbb.games = prep.games,
-                             cbb.win.shares =  full.win.shares)
+                             data = prep)
 
 
 aau.pred.rf = loocv.modeler(model = 'rf',
-                            data = aau,
-                            cbb.games = aau.games,
-                            cbb.win.shares =  aau.win.shares)
+                            data = aau)
 
 
 espn.pred.rf = loocv.modeler(model = 'rf',
-                             data = espn,
-                             cbb.games = espn.games,
-                             cbb.win.shares =  espn.win.shares)
+                             data = espn)
 
 full.pred.rf = loocv.modeler(model = 'rf',
-                             data = full,
-                             cbb.games = full.games,
-                             cbb.win.shares =  full.win.shares)
+                             data = full)
+
+
+aau.espn.pred.lasso = loocv.modeler(model = 'lasso',
+                                    data = aau.espn)
+
+
+aau.espn.pred.ridge = loocv.modeler(model = 'ridge',
+                                    data = aau.espn)
+
+
+aau.espn.pred.svm = loocv.modeler(model = 'svm',
+                                  data = aau.espn)
+
+
+
+
+aau.espn.pred.nnet = loocv.modeler(model = 'nnet',
+                                   data = aau.espn)
+
+
+
+
+aau.espn.pred.lm = loocv.modeler(model = 'lm',
+                                 data = aau.espn)
+
+aau.espn.pred.xgbDART = loocv.modeler(model = 'xgbDART',
+                                      data = aau.espn)
+
+
+
+aau.espn.pred.rf = loocv.modeler(model = 'rf',
+                                 data = aau.espn)
+
 
 
 
@@ -198,14 +175,24 @@ aau.predictions = data.frame(lm = aau.pred.lm^3,
                                  svm.radial = aau.pred.svm^3,
                                  xgbDART = aau.pred.xgbDART^3)
 
-full.predictions = data.frame(lm = full.pred.lm,
-                                  lasso = full.pred.lasso,
-                                  ridge = full.pred.ridge,
-                                  rf = full.pred.rf,
-                                  nnet = full.pred.nnet,
-                                  svm.radial = full.pred.svm,
-                                  xgbDART = full.pred.xgbDART
+full.predictions = data.frame(lm = full.pred.lm^3,
+                                  lasso = full.pred.lasso^3,
+                                  ridge = full.pred.ridge^3,
+                                  rf = full.pred.rf^3,
+                                  nnet = full.pred.nnet^3,
+                                  svm.radial = full.pred.svm^3,
+                                  xgbDART = full.pred.xgbDART^3
                               )
+
+
+aau.espn.predictions = data.frame(lm = aau.espn.pred.lm^3,
+                              lasso = aau.espn.pred.lasso^3,
+                              ridge = aau.espn.pred.ridge^3,
+                              rf = aau.espn.pred.rf^3,
+                              nnet = aau.espn.pred.nnet^3,
+                              svm.radial = aau.espn.pred.svm^3,
+                              xgbDART = aau.espn.pred.xgbDART^3
+)
 
 
 espn.errors = data.frame(lm = espn.win.shares - espn.pred.lm,
@@ -240,6 +227,14 @@ full.errors = data.frame(lm = full.win.shares - full.pred.lm,
                         nnet = full.win.shares - full.pred.nnet,
                         svm.radial = full.win.shares - full.pred.svm,
                         xgbDART = full.win.shares - full.pred.xgbDART)
+
+aau.espn.errors = data.frame(lm = aau.espn.win.shares - aau.espn.pred.lm,
+                         lasso = aau.espn.win.shares - aau.espn.pred.lasso,
+                         ridge = aau.espn.win.shares - aau.espn.pred.ridge,
+                         rf = aau.espn.win.shares - aau.espn.pred.rf,
+                         nnet = aau.espn.win.shares - aau.espn.pred.nnet,
+                         svm.radial = aau.espn.win.shares - aau.espn.pred.svm,
+                         xgbDART = aau.espn.win.shares - aau.espn.pred.xgbDART)
 
 
 espn.rmse = data.frame(lm = sqrt(mean((espn.errors$lm)^2)), 
@@ -276,8 +271,22 @@ full.rmse = data.frame(lm = sqrt(mean((full.errors$lm)^2)),
                       svm.radial = sqrt(mean((full.errors$svm.radial)^2)),
                       xgbDART = sqrt(mean((full.errors$xgbDART)^2)))
 
-final.rmse = cbind(t(espn.rmse), t(prep.rmse), t(aau.rmse), t(full.rmse))
-colnames(final.rmse) = c('espn', 'prep', 'aau', 'full')
+
+
+aau.espn.rmse = data.frame(lm = sqrt(mean((aau.espn.errors$lm)^2)), 
+                       lasso = sqrt(mean((aau.espn.errors$lasso)^2)),
+                       ridge = sqrt(mean((aau.espn.errors$ridge)^2)),
+                       rf = sqrt(mean((aau.espn.errors$rf)^2)),
+                       nnet = sqrt(mean((aau.espn.errors$nnet)^2)),
+                       svm.radial = sqrt(mean((aau.espn.errors$svm.radial)^2)),
+                       xgbDART = sqrt(mean((aau.espn.errors$xgbDART)^2)))
+
+final.rmse = cbind(t(espn.rmse), 
+                   t(prep.rmse), 
+                   t(aau.rmse), 
+                   t(full.rmse),
+                   t(aau.espn.rmse))
+colnames(final.rmse) = c('espn', 'prep', 'aau', 'full', 'aau.espn')
 final.rmse
 
 

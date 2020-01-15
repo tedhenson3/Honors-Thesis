@@ -1,9 +1,7 @@
 
 #### Define function and standard arguments ####
 loocv.modeler = function(data = full, 
-                         model = 'lm', 
-                         cbb.games = full.games,
-                         cbb.win.shares = full.win.shares){
+                         model = 'lm'){
 
 
 #### load packages for built in models ####
@@ -85,10 +83,9 @@ min.ridge.lambda = ridge.cv$lambda.min
 if(model == 'rf'){
   library(randomForest)
   
-  bestmtry <- tuneRF(data[,2:ncol(data)],
-                     data[,1], 
-                     stepFactor=1.5,
-                     improve=1e-7, ntree=1000)
+  bestmtry <- randomForest::tuneRF(x = data[,2:ncol(data)],
+                     y = data$sqrt.ws, 
+                     stepFactor=1.5, ntree=1000)
   #print(bestmtry)
   
   optim.num.predictors = as.numeric(bestmtry[which.min(bestmtry[,2]), 1])

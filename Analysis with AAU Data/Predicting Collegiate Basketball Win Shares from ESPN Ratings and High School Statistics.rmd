@@ -77,16 +77,15 @@ data.by.season
   In order to assess the predictive value of high school statistics, several different models will be constructed using different sources of information. As shown by the graph above, not every model can be considered on every player as not all players have all sources of information. Therefore, for a given model, only players with complete information will be considered. The models are the following:
   
   
-  \[M_{AAU}:=  \hat{ws} = f_{AAU}(X_{AAU})*gp_{bball-ref}+ \epsilon\]
-  \[M_{PREP}:= \hat{ws} = f_{PREP}(X_{PREP})*gp_{bball-ref} + \epsilon\]
-  \[M_{ESPN}:= \hat{ws} = f_{ESPN}(X_{ESPN})*gp_{bball-ref} + \epsilon\]
-  \[M_{FULL}:= \hat{ws} = f_{FULL}(X_{AAU},X_{PREP}, X_{ESPN})*gp_{bball-ref} + \epsilon \]
+  \[M_{AAU}:=  \hat{ws} = f_{AAU}(X_{AAU})+ \epsilon\]
+  \[M_{PREP}:= \hat{ws} = f_{PREP}(X_{PREP}) + \epsilon\]
+  \[M_{ESPN}:= \hat{ws} = f_{ESPN}(X_{ESPN}) + \epsilon\]
+  \[M_{FULL}:= \hat{ws} = f_{FULL}(X_{AAU},X_{PREP}, X_{ESPN}) + \epsilon \]
 where
 \begin{itemize}
 \item $\hat{ws}\:is\:the\:predicted\:win\:shares\:of\:a\:given\:player,$
 \item  $X_{AAU},\:X_{Prep},\:and\:X_{ESPN}\:are\:the\:data\:matrices\:for\:each\:data\:source,$
 \item $f_{AAU},\:f_{Prep},\:f_{ESPN},\:and\:f_{FULL}\:are\:functions\:that\:output\:predicted\:win\:shares\:per\:game\:using\:one\:or\:all\:three\:data sources,$
-\item $gp_{bball-ref}\:is\:the\:number\:of\:games\:played\:in\:a\:player's\:first\:season,$
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
 

@@ -8,7 +8,7 @@ bball.ref.16 <- read_csv("bball.ref.data.16.csv")
 
 bball.ref.17 <- read_csv("bball.ref.data.17.csv")
 
-bball.2018 = read_csv(file = 'bball.ref.18.csv')
+bball.2018 = read_csv(file = 'bball.ref.18(updated).csv')
 
 
 library(plyr)

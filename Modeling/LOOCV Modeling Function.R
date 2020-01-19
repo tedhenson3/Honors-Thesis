@@ -103,12 +103,12 @@ if(model == 'svm'){
 
 #### dummy vars for nnet ####
 
-if(model == 'nnet'){
-  library(mlr)
-
-  data = createDummyFeatures(data, cols = c('Position.Basic'))
-
-}
+# if(model == 'nnet'){
+#   library(mlr)
+# 
+#   data = createDummyFeatures(data, cols = c('Position.Basic'))
+# 
+# }
 
 
 
@@ -191,20 +191,20 @@ for(j in 1:num.obs){
   
   
   
-  if(model == 'nnet'){
-    
-  library(nnet)
-    hidden.layers = floor((1/2)*c(ncol(train.data)-1))
-    
-  train.fit=avNNet(train.X,
-                   train.y,
-                   linout = T,
-                   trace = F,
-                   size = hidden.layers)
-  
-  data.pred=predict(train.fit, test.X)
-  predictions = c(predictions, data.pred)
-  }
+  # if(model == 'nnet'){
+  #   
+  # library(nnet)
+  #   hidden.layers = floor((1/2)*c(ncol(train.data)-1))
+  #   
+  # train.fit=avNNet(train.X,
+  #                  train.y,
+  #                  linout = T,
+  #                  trace = F,
+  #                  size = hidden.layers)
+  # 
+  # data.pred=predict(train.fit, test.X)
+  # predictions = c(predictions, data.pred)
+  # }
   
   if(model == 'svm'){
     library(e1071)

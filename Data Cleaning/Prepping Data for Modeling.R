@@ -158,7 +158,11 @@ colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
 data = data %>% dplyr::filter(espn.rating > 80)
-data$sqrt.ws = data$ws^(1/3)
+data$sqrt.ws = data$ws
+
+#data$sqrt.ws = data$ws^3
+
+
 # data$sqrt.ws[is.nan(data$sqrt.ws)] = 0
 
 #data$ws.per.game = data$ws / data$g
@@ -364,6 +368,57 @@ full = full %>% dplyr::select(-ws,
 full = full %>% dplyr::select(sqrt.ws, everything())
 #### End ####
 
+
+#### Creating ESPN and Prep dataset ####
+
+prep.espn = data[,-c(which(grepl('aau', colnames(data))))]
+
+prep.espn = prep.espn[complete.cases(prep.espn),]
+
+prep.espn.win.shares = prep.espn$ws
+
+prep.espn.games = prep.espn$g
+
+
+prep.espn = prep.espn %>% dplyr::select(-ws,
+                              -g)
+prep.espn = prep.espn %>% dplyr::select(sqrt.ws, everything())
+
+#### End ####
+
+
+#### Creating aau and espn dataset ####
+aau.espn = data[,-c(which(grepl('prep', colnames(data))))]
+
+aau.espn = aau.espn[complete.cases(aau.espn),]
+
+aau.espn.win.shares = aau.espn$ws
+
+aau.espn.games = aau.espn$g
+
+
+aau.espn = aau.espn %>% dplyr::select(-ws,
+                                      -g)
+aau.espn = aau.espn %>% dplyr::select(sqrt.ws, everything())
+
+
+#### End ####
+
+#### Creating AAU and Prep Dataset ####
+aau.prep = data[,-c(which(grepl('espn', colnames(data))))]
+
+aau.prep = aau.prep[complete.cases(aau.prep),]
+
+aau.prep.win.shares = aau.prep$ws
+
+aau.prep.games = aau.prep$g
+
+
+aau.prep = aau.prep %>% dplyr::select(-ws,
+                                      -g)
+aau.prep = aau.prep %>% dplyr::select(sqrt.ws, everything())
+
+#### End ####
 
 #### creating prep dataset ####
 prep = data[,which(grepl('prep', colnames(data)))]

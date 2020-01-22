@@ -90,7 +90,14 @@ where
 \end{itemize}
 
 
-# Methodology
+# Results
+```{r, echo = F, eval = T, include=F}
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered).csv")
+colnames(rmse.table)[1] = 'Model'
+rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
+rmse.table = t(rmse.table)
+```
+`r pander(rmse.table)`
 ## Basic Linear Regression
 
   Many methods will be considered for each model, but to start, linear models will be considered as they are the most interpretable. First and foremost, deciphering which variables are of interest, and where the variation in the data lies will lead to better predictive modeling. To evaluate the predictive value of the data and each variable, a full linear regression was trained using leave one out cross validation using only either complete AAU data or Prep Circuit statistics. Win shares was the response variable. Discussions were made to predict on win shares per game to control for injuries; however, there was no way to determine whether a player was not playing because he got injured or because he was not effective, so total win shares was chosen as the response. Below are the summary statistics for the linear $M_{AAU}$.

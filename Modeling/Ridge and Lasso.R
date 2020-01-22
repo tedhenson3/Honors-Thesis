@@ -3,10 +3,10 @@ library(glmnet)
 
 
 #### Lasso AAU ####
-aau.predictors = model.matrix(ws.per.game ~ .,
+aau.predictors = model.matrix(sqrt.ws ~ .,
                               aau)
 lasso.aau = cv.glmnet(x = aau.predictors[,2:dim(aau.predictors)[2]],
-                  y = aau$ws.per.game,
+                  y = aau$sqrt.ws,
                   keep = T,
                   alpha = 1, nfolds = 10)
 
@@ -18,7 +18,7 @@ lasso.aau = cv.glmnet(x = aau.predictors[,2:dim(aau.predictors)[2]],
 #             sep = ''))
 
 aau.lasso.pred = 
-  lasso.aau$fit.preval[, lasso.aau$lambda == lasso.aau$lambda.min]*aau.games
+  lasso.aau$fit.preval[, lasso.aau$lambda == lasso.aau$lambda.min]
 
 aau.lasso.error = aau.win.shares  - aau.lasso.pred
 
@@ -42,10 +42,10 @@ aau.lasso.rmse = sqrt(mean(aau.lasso.error^2))
 
 
 #### Lasso Prep ####
-prep.predictors = model.matrix(ws.per.game ~ .,
+prep.predictors = model.matrix(sqrt.ws ~ .,
                               prep)
 lasso.prep = cv.glmnet(x = prep.predictors[,2:dim(prep.predictors)[2]],
-                      y = prep$ws.per.game,
+                      y = prep$sqrt.ws,
                       alpha = 1, nfolds = 10)
 
 
@@ -59,10 +59,10 @@ lasso.prep = cv.glmnet(x = prep.predictors[,2:dim(prep.predictors)[2]],
 
 
 #### Ridge AAU ####
-aau.predictors = model.matrix(ws.per.game ~ .,
+aau.predictors = model.matrix(sqrt.ws ~ .,
                               aau)
 ridge.aau = cv.glmnet(x = aau.predictors[,2:dim(aau.predictors)[2]],
-                      y = aau$ws.per.game,
+                      y = aau$sqrt.ws,
                       keep = T,
                       alpha = 0, nfolds = 10)
 
@@ -74,7 +74,7 @@ ridge.aau = cv.glmnet(x = aau.predictors[,2:dim(aau.predictors)[2]],
 #             sep = ''))
 
 aau.ridge.pred = 
-  ridge.aau$fit.preval[, ridge.aau$lambda == ridge.aau$lambda.min]*aau.games
+  ridge.aau$fit.preval[, ridge.aau$lambda == ridge.aau$lambda.min]
 
 aau.ridge.error = aau.win.shares  - aau.ridge.pred
 
@@ -98,10 +98,10 @@ aau.ridge.rmse = sqrt(mean(aau.ridge.error^2))
 
 
 #### ridge Prep ####
-prep.predictors = model.matrix(ws.per.game ~ .,
+prep.predictors = model.matrix(sqrt.ws ~ .,
                                prep)
 ridge.prep = cv.glmnet(x = prep.predictors[,2:dim(prep.predictors)[2]],
-                       y = prep$ws.per.game,
+                       y = prep$sqrt.ws,
                        alpha = 0, nfolds = 10)
 
 

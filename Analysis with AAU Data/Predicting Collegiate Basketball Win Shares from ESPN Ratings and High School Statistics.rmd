@@ -93,13 +93,13 @@ where
 # Methodology
 ## Basic Linear Regression
 
-  Many methods will be considered for each model, but to start, linear models will be considered as they are the most interpretable. First and foremost, deciphering which variables are of interest, and where the variation in the data lies will lead to better predictive modeling. To evaluate the predictive value of the data and each variable, a full linear regression was trained using leave one out cross validation using only either complete AAU data or Prep Circuit statistics. Win shares per game was the response variable. The predictions by the number of games played by the player. This allows for players who suffered injuries to be used in modeling, but not decrease the accuracy of the results. Below are the summary statistics for the linear $M_{AAU}$.
+  Many methods will be considered for each model, but to start, linear models will be considered as they are the most interpretable. First and foremost, deciphering which variables are of interest, and where the variation in the data lies will lead to better predictive modeling. To evaluate the predictive value of the data and each variable, a full linear regression was trained using leave one out cross validation using only either complete AAU data or Prep Circuit statistics. Win shares was the response variable. Discussions were made to predict on win shares per game to control for injuries; however, there was no way to determine whether a player was not playing because he got injured or because he was not effective, so total win shares was chosen as the response. Below are the summary statistics for the linear $M_{AAU}$.
 
 ```{r, echo = F, eval = T, include=F}
 
 ```
 
-# AAU Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
+# AAU Leave One Out CV Linear Regression (Predicting Win Shares)
 ```{r, echo = F}
 
 source('~/Honors Thesis/Modeling/Basic Linear Regressions.R')
@@ -113,7 +113,7 @@ confint(aau.lm$finalModel)
   As shown above, the variables that had highly significant p values all had either strictly positive or negative confidence intervals. Notably, assists are not tracked at all in the AAU stats. They may have elected to not track it due to difficulties with accuracy. Prep Circuit, however, does track assists. This may not be reliable based on AAU's decision to not track it, and the appearance of some star players with zero assists, such as Zion Williamson. It was not included in the regression as it appeared to be inaccurate. The results from $M_{PREP}$ differed significantly. Below are the same summary statistics for $M_{PREP}$.
 
 
-# Prep Circuit Leave One Out CV Linear Regression (Predicting Win Shares Per Game)
+# Prep Circuit Leave One Out CV Linear Regression
 ```{r, echo = F}
 summary(prep.lm)
 ```

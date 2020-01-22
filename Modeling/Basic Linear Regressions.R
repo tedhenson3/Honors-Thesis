@@ -11,13 +11,12 @@ train.control <- trainControl(method = "LOOCV")
 
 
 
-aau.lm <- train(ws.per.game ~., data = aau, method = "lm",
+aau.lm <- train(sqrt.ws ~., data = aau, method = "lm",
                 trControl = train.control)
 
 
 pred = predict(aau.lm, aau)
 
-pred = pred*aau.games
 
 rmse = round(sqrt(mean((aau.win.shares - pred)^2)), 2)
 
@@ -40,13 +39,12 @@ aau.graph = ggplot(dat) + geom_point(aes(x = pred, y = ws),
 
 #### Prep regression Model ####
 
-prep.lm <- train(ws.per.game ~ ., data = prep, method = "lm",
+prep.lm <- train(sqrt.ws ~ ., data = prep, method = "lm",
                  trControl = train.control)
 
 
 pred = predict(prep.lm, prep)
 
-pred = pred*prep.games
 
 rmse = round(sqrt(mean((prep.win.shares - pred)^2)), 2)
 

@@ -463,7 +463,6 @@ final.rmse = cbind(t(espn.rmse),
                    t(aau.prep.rmse))
 colnames(final.rmse) = c('espn', 'prep', 'aau', 'full', 'aau.espn', 
                          'prep.espn', 'aau.prep')
-final.rmse
 
 n.espn = nrow(espn)
 n.prep = nrow(prep)
@@ -479,6 +478,8 @@ rmse.col.names = paste(colnames(final.rmse),' ',
                        'n=',n.vec, sep = '')
 
 colnames(final.rmse) = rmse.col.names
+final.rmse
+
 
 save.image("~/Honors Thesis/Predictions/All Predictions (espn.rating 80 filtered).RData")
 

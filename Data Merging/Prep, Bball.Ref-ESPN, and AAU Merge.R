@@ -13,7 +13,7 @@ library(tidyverse)
 
 
 
-data <- read_csv("recruit.college.15-18.csv")
+data <- read_csv("recruit.college.15-18(updated).csv")
 
 colnames(data)[colnames(data) == 'Rating'] <- 'espn.rating'
 
@@ -92,7 +92,7 @@ data = left_join(x = data, y = aau, by = c('player.id', 'Season'))
 data = data %>% dplyr::filter(Season != 1993 &
                                 Season != 2014)
 
-write.csv(data, 'espn.bball-ref.aau.prep.csv', row.names = F)
+write.csv(data, 'espn.bball-ref.aau.prep(updated).csv', row.names = F)
 
 
 

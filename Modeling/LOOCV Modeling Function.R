@@ -30,7 +30,7 @@ num.data <- data[, -c(which(is.fact))]
 #### End ####
 
 #### Creating formula variable ####
-formula = as.formula(sqrt.ws ~ .)
+formula = as.formula(ws ~ .)
 #### End ####
 
 #### Hyperparamter tuning ####
@@ -84,7 +84,7 @@ if(model == 'rf'){
   library(randomForest)
   
   bestmtry <- randomForest::tuneRF(x = data[,2:ncol(data)],
-                     y = data$sqrt.ws, 
+                     y = data$ws, 
                      stepFactor=1.5, ntree=1000)
   #print(bestmtry)
   
@@ -180,11 +180,11 @@ for(j in 1:num.obs){
   train.data = data[-testIndexes, ]
   
   #### create X and y datasets / vectors ####
-  train.y = train.data$sqrt.ws
-  train.X = train.data %>% dplyr::select(-sqrt.ws)
+  train.y = train.data$ws
+  train.X = train.data %>% dplyr::select(-ws)
   
-  test.y= test.data$sqrt.ws
-  test.X = test.data %>% dplyr::select(-sqrt.ws)
+  test.y= test.data$ws
+  test.X = test.data %>% dplyr::select(-ws)
   
   #### create X / y without factors ####
   #### End ####

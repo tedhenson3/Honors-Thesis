@@ -25,7 +25,7 @@ colnames(espn.16) = colnames(espn.15)
 espn.17 <- read_csv("successfull.scrapes.17.csv")
 
 
-espn.18 = read_csv("espn.success.2018.csv")
+espn.18 = read_csv("espn.success.2018(updated).csv")
 
 colnames(espn.18) = colnames(espn.15)
 
@@ -33,9 +33,13 @@ colnames(espn.18) = colnames(espn.15)
 
 colnames(espn.17) = colnames(espn.15)
 
-colnames(espn.18)[2] = 'holder'
-colnames(espn.18)[12] = 'Name'
-colnames(espn.18)[2] = 'Name_1'
+espn.18[,2] = espn.18$Name_1
+# colnames(espn.18)[2] = 'holder'
+# colnames(espn.18)[2] = 'School'
+# 
+# colnames(espn.18)[12] = 'Name'
+
+# espn.18 = espn.18 %>% dplyr::select(National.Ranking, Name, everything())
 
 
 
@@ -55,7 +59,8 @@ return(player.id)
 espn.total$player.id = sapply(espn.total$link, FUN = id.fix)
 
 library(tidyverse)
-total.data = merge(espn.total, bball.ref.total)
+espn.total = espn.total %>% dplyr::select(-Name)
+total.data = left_join(bball.ref.total, espn.total, by = 'player.id')
 
 
 #total.data = total.data[sort(total.data$Rating, decreasing = F),]
@@ -67,7 +72,7 @@ total.data = total.data %>% dplyr::select(Name, Rating, ws, ws.conf, ws_per_40, 
 
 setwd("~/Honors Thesis/Clean Data")
 
-write.csv(total.data, file = 'recruit.college.15-18.csv', row.names = F)
+write.csv(total.data, file = 'recruit.college.15-18(updated).csv', row.names = F)
 
 
 # preview = total.data[1:30,]
@@ -95,7 +100,6 @@ all.espn.17 <- read_csv("espn.top.state.2017.csv")
 
 
 colnames(all.espn.17) = colnames(all.espn.15)
-
 all.espn.total  = rbind.fill(all.espn.15, all.espn.16, all.espn.17)
 
 all.espn.total = all.espn.total %>% dplyr::filter(School != 'unknown')

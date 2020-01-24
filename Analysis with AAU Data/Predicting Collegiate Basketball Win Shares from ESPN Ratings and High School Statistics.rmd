@@ -36,13 +36,13 @@ Every statistic listed on a player’s college basketball reference page was col
 knitr::include_graphics("ACC Basketball WS.png")
 ```
 
-  College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. To further justify the use of win shares as the response, below are the top 10 players in terms of win shares in our data.
+  College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were ploted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the concencus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in our data.
 ```{r, echo = F, eval = T, include=F}
 top.ws = data.ws %>% arrange(desc(ws)) %>% select(Name, ws, Season)
 top.10.ws = top.ws[1:10,]
 ```
 `r pander(top.10.ws)`
-From a basketball perspective, these players arguably had some of the best seasons over the past few years, and Zion in particular has been widely regarded as having the best season from a statistical and basketball perspective. This gives more confidence and validitiy to win shares as an overall barometer of success.
+From a basketball perspective, these players had some of the best freshman seasons over the past few years. Zion in particular has been widely regarded as having the best season from a statistical and basketball perspective. This gives more confidence and validitiy to win shares as an overall barometer of success.
 
 ## ESPN
   The ESPN data gathered contained players’ overall rating from 55 to 100. Only the classes from 2016 to 2018 were used in this analysis due to the lack of Prep Circuit data before the 2016 high school season. In terms of grabbing the basketball reference data, the ESPN data played a critical role. There was no feasible or swift way to accurately gather a high school player’s collegiate win shares without knowing where he went to college, which was not in the Prep Circuit data. Also gathered from ESPN were players' height, weight, and position. 

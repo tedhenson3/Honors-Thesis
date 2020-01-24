@@ -76,14 +76,16 @@ data.ws = data
 
 
 #getting rid of some bio stuff
-data = data %>% ungroup() %>% dplyr::select(-ows,
+data = data %>% ungroup() %>% dplyr::select(-ws,
                                             -Season,
-                              -dws,
-                              -Name,
-                              -Weight,
-                              -player.id,
-                              -group,
-                              -group.num)
+                                            -dws,
+                                            -Name,
+                                            -Weight,
+                                            -player.id,
+                                            -group,
+                                            -group.num)
+data$ws = data$ows
+data = data %>% dplyr::select(-ows)
 
 
 #getting rid of total prep stats
@@ -145,8 +147,8 @@ data = data %>% dplyr::select(-`FT%.prep`,
 data = data %>% dplyr::select(-HIGH.prep,
                               -max.pts.aau)
 
-                              
-         
+
+
 #renaming some columns                     
 colnames(data)[which(colnames(data) == 'gp.max.prep')] = 'GamesPlayed.prep'
 

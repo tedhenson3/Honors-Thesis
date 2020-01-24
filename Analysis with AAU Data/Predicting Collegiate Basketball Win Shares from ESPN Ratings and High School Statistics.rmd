@@ -38,7 +38,7 @@ knitr::include_graphics("ACC Basketball WS.png")
 
   College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were ploted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the concencus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in our data.
 ```{r, echo = F, eval = T, include=F}
-top.ws = data.ws %>% arrange(desc(ws)) %>% select(Name, ws, Season)
+top.ws = data.ws %>% arrange(desc(ws)) %>% select(player.id, ws, Season)
 top.10.ws = top.ws[1:10,]
 ```
 `r pander(top.10.ws)`
@@ -90,9 +90,18 @@ where
 \end{itemize}
 
 
-# Results
+## Leave One Out Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
 rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered).csv")
+colnames(rmse.table)[1] = 'Model'
+rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
+rmse.table = t(rmse.table)
+```
+`r pander(rmse.table)`
+
+## Leave One Out Offensive + Defensive Win Share RMSEs
+```{r, echo = F, eval = T, include=F}
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered ows+dws).csv")
 colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
 rmse.table = t(rmse.table)

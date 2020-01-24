@@ -11,7 +11,7 @@ data = read_csv('~/Honors Thesis/Clean Data/espn.bball-ref.aau.prep(updated).csv
 
 
 #2 wrong players scraped#
-data = data %>% dplyr::filter(Season != 1993 & Season != 2014)
+data = data %>% dplyr::filter(Season != 1993 & Season != 2014 & Season != 2020)
 
 
 # this prior hypothesis is no longer believed to be true:
@@ -55,10 +55,11 @@ data$group <- ifelse(is.na(data$group),
                      data$group)
 
 
-data = data %>% group_by(Season, group) %>% mutate(group.num = n())
+data = as.data.frame(data)
+
+data = data %>% group_by(Season, group) %>% dplyr::mutate(group.num = n())
 
 data.for.graph = data
-
 
 
 

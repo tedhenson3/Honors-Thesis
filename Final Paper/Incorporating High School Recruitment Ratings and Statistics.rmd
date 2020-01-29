@@ -1,6 +1,5 @@
 ---
-title: 'Predicting Collegiate Basketball Win Shares from ESPN Ratings, High School
-  Statistics, and AAU Data'
+title: 'Incorporating High School Recruitment Ratings and Statistics in Predictive Models for Collegiate Basketball Success'
 author: "Ted Henson and Mario Giacomazzo"
 date: "11/19/2019"
 output: pdf_document
@@ -92,19 +91,17 @@ where
 
 ## Leave One Out Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
-rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered).csv")
-colnames(rmse.table)[1] = 'Model'
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (complete players).csv")
+#colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
-rmse.table = t(rmse.table)
 ```
 `r pander(rmse.table)`
 
 ## Leave One Out Offensive + Defensive Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
 rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered ows+dws).csv")
-colnames(rmse.table)[1] = 'Model'
+#colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
-rmse.table = t(rmse.table)
 ```
 `r pander(rmse.table)`
 

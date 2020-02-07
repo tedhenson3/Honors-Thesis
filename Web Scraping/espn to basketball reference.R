@@ -41,7 +41,7 @@ espn.247$Name = gsub("Jaekwon Carlisle", "Jaekwon Carliyle", espn.247$Name)
 
 
  
-espn.247$School <- gsub("North Carolina", "UNC", espn.247$School)
+espn.247$School <- gsub("N Carolina", "UNC", espn.247$School)
 
 espn.247$School <- gsub("S Carolina", "South Carolina", espn.247$School)
 
@@ -133,4 +133,4 @@ colnames(espn.247)[10] <- paste(colnames(espn.247)[10], 'espn', sep = ".")
 basketballdata <- wsscraper(data = espn.247)
 
 
-#write.csv(basketballdata, file = 'espn.success.2018.csv', row.names = F)
+write.csv(basketballdata, file = 'espn.success.2018(updated).csv', row.names = F)

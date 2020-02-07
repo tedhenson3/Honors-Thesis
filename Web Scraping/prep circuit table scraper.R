@@ -10,11 +10,7 @@ setwd('~/Honors Thesis/Raw Data')
 
 library(rvest)
 
-#prep.circuit <- 'https://www.prepcircuit.com/stats/league_instance/58521?subseason=412391'
-
-prep <- c("https://www.prepcircuit.com/stats/league_instance/34558?subseason=245525")
-
-prep = c("https://www.prepcircuit.com/stats/league_instance/58521?subseason=412391")
+prep = c("https://www.prepcircuit.com/stats/league_instance/73984?subseason=522618")
 
 library(RSelenium)
 rD <- rsDriver(browser = 'firefox')
@@ -58,9 +54,9 @@ colnames(init.fixed.stats)[1] = 'x'
 next.class  <- '.paginationElement:nth-child(1) .current+ a'
 
 
-for(i in 1:77){
+for(i in 1:74){
   
-print(i*100/77)
+print(i/74 * 100)
   
   #Sys.sleep(time = 2)
   
@@ -97,4 +93,4 @@ init.fixed.stats = rbind(fixed.stats, init.fixed.stats)
 
 }
 
-write.csv(init.fixed.stats, file = 'prep.ppg.16-17.csv', row.names = F)
+write.csv(init.fixed.stats, file = 'prep.ppg.18-19.csv', row.names = F)

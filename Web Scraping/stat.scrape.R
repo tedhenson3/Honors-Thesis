@@ -4,11 +4,11 @@ setwd('~/Honors Thesis/Raw Data')
 library(rowr)
 library(readr)
 library(plyr)
-players <- read_csv(file = "espn.success.2018.csv")
+players <- read_csv(file = "espn.success.2018(updated).csv")
 for(y in 1:length(players$link)){
   
   
-
+print(y/length(players$link))
 
   sexton <- players$link[y]
   
@@ -293,4 +293,4 @@ else {
 }
 
 
-write.csv(college.stats, file = 'bball.ref.18.csv', row.names = F)
+write.csv(college.stats, file = 'bball.ref.18(updated).csv', row.names = F)

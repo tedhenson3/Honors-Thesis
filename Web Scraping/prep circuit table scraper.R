@@ -54,9 +54,9 @@ colnames(init.fixed.stats)[1] = 'x'
 next.class  <- '.paginationElement:nth-child(1) .current+ a'
 
 
-for(i in 1:74){
+for(i in 1:53){
   
-print(i/74 * 100)
+print(i/53 * 100)
   
   #Sys.sleep(time = 2)
   
@@ -93,4 +93,4 @@ init.fixed.stats = rbind(fixed.stats, init.fixed.stats)
 
 }
 
-write.csv(init.fixed.stats, file = 'prep.ppg.18-19.csv', row.names = F)
+write.csv(init.fixed.stats, file = 'prep.reb.18-19.csv', row.names = F)

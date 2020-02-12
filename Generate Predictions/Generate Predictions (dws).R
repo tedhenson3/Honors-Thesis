@@ -214,32 +214,6 @@ aau.prep.pred.xgbDART = loocv.modeler(model = 'xgbDART',
 aau.prep.pred.rf = loocv.modeler(model = 'rf',
                                  data = aau.prep)
 
-source('~/Honors Thesis/Modeling/LOOCV Modeling Function (Stacked).R')
-
-prep.pred.stacked  = loocv.stacked.modeler(preds = prep.dws.predictions,
-                                           ws = prep.win.shares)
-
-
-aau.pred.stacked = loocv.stacked.modeler(preds = aau.dws.predictions,
-                                         ws = aau.win.shares)
-
-
-espn.pred.stacked = loocv.stacked.modeler(preds = espn.dws.predictions,
-                                          ws = espn.win.shares)
-
-full.pred.stacked = loocv.stacked.modeler(preds = full.dws.predictions,
-                                          ws = full.win.shares)
-
-
-aau.espn.pred.stacked = loocv.stacked.modeler(preds = aau.espn.dws.predictions,
-                                              ws = aau.espn.win.shares)
-
-prep.espn.pred.stacked = loocv.stacked.modeler(preds = prep.espn.dws.predictions,
-                                               ws = prep.espn.win.shares)
-
-aau.prep.pred.stacked = loocv.stacked.modeler(preds = aau.prep.dws.predictions,
-                                              ws = aau.prep.win.shares)
-
 
 espn.dws.predictions = data.frame(lm = espn.pred.lm,
                                   lasso = espn.pred.lasso,
@@ -302,6 +276,106 @@ aau.prep.dws.predictions = data.frame(lm = aau.prep.pred.lm,
                                       svm.radial = aau.prep.pred.svm,
                                       xgbDART = aau.prep.pred.xgbDART
 )
+
+
+
+
+source('~/Honors Thesis/Modeling/LOOCV Modeling Function (Stacked).R')
+
+prep.pred.stacked  = loocv.stacked.modeler(preds = prep.dws.predictions,
+                                           ws = prep.win.shares)
+
+
+aau.pred.stacked = loocv.stacked.modeler(preds = aau.dws.predictions,
+                                         ws = aau.win.shares)
+
+
+espn.pred.stacked = loocv.stacked.modeler(preds = espn.dws.predictions,
+                                          ws = espn.win.shares)
+
+full.pred.stacked = loocv.stacked.modeler(preds = full.dws.predictions,
+                                          ws = full.win.shares)
+
+
+aau.espn.pred.stacked = loocv.stacked.modeler(preds = aau.espn.dws.predictions,
+                                              ws = aau.espn.win.shares)
+
+prep.espn.pred.stacked = loocv.stacked.modeler(preds = prep.espn.dws.predictions,
+                                               ws = prep.espn.win.shares)
+
+aau.prep.pred.stacked = loocv.stacked.modeler(preds = aau.prep.dws.predictions,
+                                              ws = aau.prep.win.shares)
+
+espn.dws.predictions = data.frame(lm = espn.pred.lm,
+                                  lasso = espn.pred.lasso,
+                                  ridge = espn.pred.ridge,
+                                  rf = espn.pred.rf,
+                                  earth = espn.pred.earth,
+                                  svm.radial = espn.pred.svm,
+                                  xgbDART = espn.pred.xgbDART,
+                                  stacked = espn.pred.stacked)
+
+prep.dws.predictions = data.frame(lm = prep.pred.lm,
+                                  lasso = prep.pred.lasso,
+                                  ridge = prep.pred.ridge,
+                                  rf = prep.pred.rf,
+                                  earth = prep.pred.earth,
+                                  svm.radial = prep.pred.svm,
+                                  xgbDART = prep.pred.xgbDART,
+                                  stacked = prep.pred.stacked)
+
+aau.dws.predictions = data.frame(lm = aau.pred.lm,
+                                 lasso = aau.pred.lasso,
+                                 ridge = aau.pred.ridge,
+                                 rf = aau.pred.rf,
+                                 earth = aau.pred.earth,
+                                 svm.radial = aau.pred.svm,
+                                 xgbDART = aau.pred.xgbDART,
+                                 stacked = aau.pred.stacked)
+
+full.dws.predictions = data.frame(lm = full.pred.lm,
+                                  lasso = full.pred.lasso,
+                                  ridge = full.pred.ridge,
+                                  rf = full.pred.rf,
+                                  earth = full.pred.earth,
+                                  svm.radial = full.pred.svm,
+                                  xgbDART = full.pred.xgbDART,
+                                  stacked = full.pred.stacked
+                                  
+)
+
+
+aau.espn.dws.predictions = data.frame(lm = aau.espn.pred.lm,
+                                      lasso = aau.espn.pred.lasso,
+                                      ridge = aau.espn.pred.ridge,
+                                      rf = aau.espn.pred.rf,
+                                      earth = aau.espn.pred.earth,
+                                      svm.radial = aau.espn.pred.svm,
+                                      xgbDART = aau.espn.pred.xgbDART,
+                                      stacked = aau.espn.pred.stacked
+)
+
+prep.espn.dws.predictions = data.frame(lm = prep.espn.pred.lm,
+                                       lasso = prep.espn.pred.lasso,
+                                       ridge = prep.espn.pred.ridge,
+                                       rf = prep.espn.pred.rf,
+                                       earth = prep.espn.pred.earth,
+                                       svm.radial = prep.espn.pred.svm,
+                                       xgbDART = prep.espn.pred.xgbDART,
+                                       stacked = prep.espn.pred.stacked
+)
+
+
+aau.prep.dws.predictions = data.frame(lm = aau.prep.pred.lm,
+                                      lasso = aau.prep.pred.lasso,
+                                      ridge = aau.prep.pred.ridge,
+                                      rf = aau.prep.pred.rf,
+                                      earth = aau.prep.pred.earth,
+                                      svm.radial = aau.prep.pred.svm,
+                                      xgbDART = aau.prep.pred.xgbDART,
+                                      stacked = aau.prep.pred.stacked
+)
+
 
 
 
@@ -459,9 +533,9 @@ rmse.col.names = paste(colnames(final.rmse),' ',
 
 colnames(final.rmse) = rmse.col.names
 
-save.image("~/Honors Thesis/MOdel Environments/All Predictions (espn.rating 80 filtered dws).RData")
+save.image("~/Honors Thesis/Model Environments/All Predictions (complete players dws).RData")
 
 write.csv(final.rmse,
-          file = '~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered dws).csv')
+          file = '~/Honors Thesis/Predictions/All RMSEs (complete players dws).csv')
 
 

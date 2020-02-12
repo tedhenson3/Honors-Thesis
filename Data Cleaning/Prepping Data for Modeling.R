@@ -115,12 +115,13 @@ games.played.aau = data$total.games.aau
 data = data[,-c(which(grepl('total.', colnames(data))))]
 
 
-#getting rid of some more aau stats not in prep
-data = data %>% dplyr::select(-given.pts.aau,
-                              -pf.aau,
-                              -threep.made.aau,
-                              -ft.made.aau,
-                              -fg.made.aau)
+data = data %>% dplyr::select(-given.pts.aau
+                              # ,
+                              # -pf.aau,
+                              # -threep.made.aau,
+                              # -ft.made.aau,
+                              # -fg.made.aau
+                              )
 
 
 #getting rid of some prep stats not in current aau summary and weren't predictive
@@ -156,7 +157,7 @@ data$GamesPlayed.aau = games.played.aau
 colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
-data = data %>% dplyr::filter(espn.rating > 80)
+data = data[complete.cases(data),]
 
 
 
@@ -324,9 +325,7 @@ espn = data %>% dplyr::select(ws,
                               Position,
                               Position.Basic,
                               Height,
-                              espn.rating,
-                              ws,
-                              g)
+                              espn.rating)
 
 espn = espn[complete.cases(espn),]
 
@@ -334,10 +333,16 @@ espn = espn[complete.cases(espn),]
 espn.win.shares = espn$ws
 
 
-espn.games = espn$g
+espn.raw = data %>% dplyr::select(ws,
+                              espn.rating)
 
-espn = espn %>% dplyr::select(-g)
-espn.scat.data = espn %>% dplyr::select(-Position.Basic)
+espn.raw = espn.raw[complete.cases(espn.raw),]
+
+
+espn.raw.win.shares = espn.raw$ws
+
+
+#espn.scat.data = espn %>% dplyr::select(-Position.Basic)
 
 #### End ####
 

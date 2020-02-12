@@ -214,6 +214,110 @@ aau.prep.pred.xgbDART = loocv.modeler(model = 'xgbDART',
 aau.prep.pred.rf = loocv.modeler(model = 'rf',
                                  data = aau.prep)
 
+#### ESPN RAW ####
+
+
+espn.raw.pred.svm = loocv.modeler(model = 'svm',
+                                  data = espn.raw)
+
+
+
+
+espn.raw.pred.earth = loocv.modeler(model = 'earth',
+                                    data = espn.raw)
+
+
+
+
+espn.raw.pred.lm = loocv.modeler(model = 'lm',
+                                 data = espn.raw)
+
+espn.raw.pred.xgbDART = loocv.modeler(model = 'xgbDART',
+                                      data = espn.raw)
+
+
+
+espn.raw.pred.rf = loocv.modeler(model = 'rf',
+                                 data = espn.raw)
+
+
+
+espn.predictions = data.frame(lm = espn.pred.lm,
+                              lasso = espn.pred.lasso,
+                              ridge = espn.pred.ridge,
+                              rf = espn.pred.rf,
+                              earth = espn.pred.earth,
+                              svm.radial = espn.pred.svm,
+                              xgbDART = espn.pred.xgbDART)
+
+prep.predictions = data.frame(lm = prep.pred.lm,
+                              lasso = prep.pred.lasso,
+                              ridge = prep.pred.ridge,
+                              rf = prep.pred.rf,
+                              earth = prep.pred.earth,
+                              svm.radial = prep.pred.svm,
+                              xgbDART = prep.pred.xgbDART)
+
+aau.predictions = data.frame(lm = aau.pred.lm,
+                             lasso = aau.pred.lasso,
+                             ridge = aau.pred.ridge,
+                             rf = aau.pred.rf,
+                             earth = aau.pred.earth,
+                             svm.radial = aau.pred.svm,
+                             xgbDART = aau.pred.xgbDART)
+
+full.predictions = data.frame(lm = full.pred.lm,
+                              lasso = full.pred.lasso,
+                              ridge = full.pred.ridge,
+                              rf = full.pred.rf,
+                              earth = full.pred.earth,
+                              svm.radial = full.pred.svm,
+                              xgbDART = full.pred.xgbDART
+)
+
+
+aau.espn.predictions = data.frame(lm = aau.espn.pred.lm,
+                                  lasso = aau.espn.pred.lasso,
+                                  ridge = aau.espn.pred.ridge,
+                                  rf = aau.espn.pred.rf,
+                                  earth = aau.espn.pred.earth,
+                                  svm.radial = aau.espn.pred.svm,
+                                  xgbDART = aau.espn.pred.xgbDART
+)
+
+prep.espn.predictions = data.frame(lm = prep.espn.pred.lm,
+                                   lasso = prep.espn.pred.lasso,
+                                   ridge = prep.espn.pred.ridge,
+                                   rf = prep.espn.pred.rf,
+                                   earth = prep.espn.pred.earth,
+                                   svm.radial = prep.espn.pred.svm,
+                                   xgbDART = prep.espn.pred.xgbDART
+)
+
+
+aau.prep.predictions = data.frame(lm = aau.prep.pred.lm,
+                                  lasso = aau.prep.pred.lasso,
+                                  ridge = aau.prep.pred.ridge,
+                                  rf = aau.prep.pred.rf,
+                                  earth = aau.prep.pred.earth,
+                                  svm.radial = aau.prep.pred.svm,
+                                  xgbDART = aau.prep.pred.xgbDART
+)
+
+
+espn.raw.predictions = data.frame(lm = espn.raw.pred.lm,
+                                  lasso = NULL,
+                                  ridge = NULL,
+                                  rf = espn.raw.pred.rf,
+                                  earth = espn.raw.pred.earth,
+                                  svm.radial = espn.raw.pred.svm,
+                                  xgbDART = espn.raw.pred.xgbDART
+)
+
+
+
+
+
 source('~/Honors Thesis/Modeling/LOOCV Modeling Function (Stacked).R')
 
 prep.pred.stacked  = loocv.stacked.modeler(preds = prep.predictions,
@@ -239,6 +343,10 @@ prep.espn.pred.stacked = loocv.stacked.modeler(preds = prep.espn.predictions,
 
 aau.prep.pred.stacked = loocv.stacked.modeler(preds = aau.prep.predictions,
                                          ws = aau.prep.win.shares)
+
+
+espn.raw.pred.stacked = loocv.stacked.modeler(preds = espn.raw.predictions,
+                                              ws = espn.raw.win.shares)
 
 
 espn.predictions = data.frame(lm = espn.pred.lm,
@@ -312,6 +420,17 @@ aau.prep.predictions = data.frame(lm = aau.prep.pred.lm,
 
 
 
+espn.raw.predictions = data.frame(lm = espn.raw.pred.lm,
+                                  lasso = espn.raw.pred.lasso,
+                                  ridge = espn.raw.pred.ridge,
+                                  rf = espn.raw.pred.rf,
+                                  earth = espn.raw.pred.earth,
+                                  svm.radial = espn.raw.pred.svm,
+                                  xgbDART = espn.raw.pred.xgbDART,
+                                  stacked = espn.raw.pred.stacked
+)
+
+
 
 
 espn.errors = data.frame(lm = espn.win.shares - espn.pred.lm,
@@ -379,6 +498,16 @@ aau.prep.errors = data.frame(lm = aau.prep.win.shares - aau.prep.pred.lm,
                              svm.radial = aau.prep.win.shares - aau.prep.pred.svm,
                              xgbDART = aau.prep.win.shares - aau.prep.pred.xgbDART,
                              stacked = aau.prep.win.shares - aau.prep.pred.stacked)
+
+
+espn.raw.errors = data.frame(lm = espn.raw.win.shares - espn.raw.pred.lm,
+                             lasso = espn.raw.win.shares - espn.raw.pred.lasso,
+                             ridge = espn.raw.win.shares - espn.raw.pred.ridge,
+                             rf = espn.raw.win.shares - espn.raw.pred.rf,
+                             earth = espn.raw.win.shares - espn.raw.pred.earth,
+                             svm.radial = espn.raw.win.shares - espn.raw.pred.svm,
+                             xgbDART = espn.raw.win.shares - espn.raw.pred.xgbDART,
+                             stacked = espn.raw.win.shares - espn.raw.pred.stacked)
 
 
 
@@ -454,16 +583,28 @@ aau.prep.rmse = data.frame(lm = sqrt(mean((aau.prep.errors$lm)^2)),
                            stacked = sqrt(mean((aau.prep.errors$stacked)^2)))
 
 
-final.rmse = cbind(t(espn.rmse), 
+espn.raw.rmse = data.frame(lm = sqrt(mean((espn.raw.errors$lm)^2)), 
+                           lasso = sqrt(mean((espn.raw.errors$lasso)^2)),
+                           ridge = sqrt(mean((espn.raw.errors$ridge)^2)),
+                           rf = sqrt(mean((espn.raw.errors$rf)^2)),
+                           earth = sqrt(mean((espn.raw.errors$earth)^2)),
+                           svm.radial = sqrt(mean((espn.raw.errors$svm.radial)^2)),
+                           xgbDART = sqrt(mean((espn.raw.errors$xgbDART)^2)),
+                           stacked = sqrt(mean((espn.raw.errors$stacked)^2)))
+
+
+final.rmse = cbind(t(espn.raw),
+                  t(espn.rmse), 
                    t(prep.rmse), 
                    t(aau.rmse), 
                    t(full.rmse),
                    t(aau.espn.rmse),
                    t(prep.espn.rmse),
-                   t(aau.prep.rmse))
-colnames(final.rmse) = c('espn', 'prep', 'aau', 'full', 'aau.espn', 
+                   t(aau.prep.rmse),)
+colnames(final.rmse) = c('espn.raw', 'espn', 'prep', 'aau', 'full', 'aau.espn', 
                          'prep.espn', 'aau.prep')
 
+n.raw.espn = nrow(espn.raw)
 n.espn = nrow(espn)
 n.prep = nrow(prep)
 n.aau = nrow(aau)
@@ -472,7 +613,7 @@ n.aau.espn = nrow(aau.espn)
 n.prep.espn = nrow(prep.espn)
 n.aau.prep = nrow(aau.prep)
 
-n.vec = c(n.espn, n.prep, n.aau, n.full, n.aau.espn, n.prep.espn, n.aau.prep)
+n.vec = c(n.espn.raw, n.espn, n.prep, n.aau, n.full, n.aau.espn, n.prep.espn, n.aau.prep)
 
 rmse.col.names = paste(colnames(final.rmse),' ',
                        'n=',n.vec, sep = '')
@@ -481,9 +622,9 @@ colnames(final.rmse) = rmse.col.names
 final.rmse
 
 
-save.image("~/Honors Thesis/Predictions/All Predictions (espn.rating 80 filtered).RData")
+save.image("~/Honors Thesis/Model Environments/All Predictions (complete players 2).RData")
 
 write.csv(final.rmse,
-          file = '~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered).csv')
+          file = '~/Honors Thesis/Predictions/All RMSEs (complete players 2).csv')
 
 

@@ -11,7 +11,7 @@ data = read_csv('~/Honors Thesis/Clean Data/espn.bball-ref.aau.prep(updated).csv
 
 
 #2 wrong players scraped#
-data = data %>% dplyr::filter(Season != 1993 & Season != 2014)
+data = data %>% dplyr::filter(Season != 1993 & Season != 2014 & Season != 2020)
 
 
 # this prior hypothesis is no longer believed to be true:
@@ -117,11 +117,13 @@ data = data[,-c(which(grepl('total.', colnames(data))))]
 
 
 #getting rid of some more aau stats not in prep
-data = data %>% dplyr::select(-given.pts.aau,
-                              -pf.aau,
-                              -threep.made.aau,
-                              -ft.made.aau,
-                              -fg.made.aau)
+data = data %>% dplyr::select(-given.pts.aau
+                              # ,
+                              # -pf.aau,
+                              # -threep.made.aau,
+                              # -ft.made.aau,
+                              # -fg.made.aau
+                              )
 
 
 #getting rid of some prep stats not in current aau summary and weren't predictive
@@ -157,7 +159,7 @@ data$GamesPlayed.aau = games.played.aau
 colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
 
-data = data %>% dplyr::filter(espn.rating > 80)
+data = data[complete.cases(data),]
 
 
 

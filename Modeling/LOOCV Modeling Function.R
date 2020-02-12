@@ -45,8 +45,12 @@ if(model == 'lasso'){
   
   #data = num.data
   library(mlr)
-  data = createDummyFeatures(data, cols = c('Position.Basic'))
+  if(ncol(data) > 2){
+    
+    
   
+  data = createDummyFeatures(data, cols = c('Position.Basic'))
+  }
   
 lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                    data[,1],
@@ -63,8 +67,13 @@ if(model == 'ridge'){
   set.seed(2020)
  # data = num.data
   library(mlr)
-  data = createDummyFeatures(data, cols = c('Position.Basic'))
-  
+  if(ncol(data) > 2){
+    
+    
+    
+    data = createDummyFeatures(data, cols = c('Position.Basic'))
+  }
+
 ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       data[,1],
                       nfolds = 5,
@@ -106,7 +115,12 @@ if(model == 'svm'){
 if(model == 'nnet'){
   library(mlr)
 
-  data = createDummyFeatures(data, cols = c('Position.Basic'))
+  if(ncol(data) > 2){
+    
+    
+    
+    data = createDummyFeatures(data, cols = c('Position.Basic'))
+  }
 
 }
 
@@ -263,8 +277,13 @@ predictions = c(predictions, data.pred)
   if(model == 'xgbDART'){
     library(mlr)
     library(xgboost)
-    train.data = createDummyFeatures(train.data, cols = c('Position.Basic'))
-    test.data = createDummyFeatures(test.data, cols = c('Position.Basic'))
+    if(ncol(data) > 2){
+      
+      train.data = createDummyFeatures(train.data, cols = c('Position.Basic'))
+      test.data = createDummyFeatures(test.data, cols = c('Position.Basic'))
+      
+    }
+  
     train.fit = xgboost(data= as.matrix(train.data[,2:ncol(train.data)]),
                           label = train.data[,1],
                         param = params,

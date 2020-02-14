@@ -81,7 +81,6 @@ data = data %>% ungroup() %>% dplyr::select(-ows,
                                             -Season,
                               -dws,
                               -Name,
-                              -Weight,
                               -player.id,
                               -group,
                               -group.num)
@@ -115,9 +114,10 @@ games.played.aau = data$total.games.aau
 data = data[,-c(which(grepl('total.', colnames(data))))]
 
 
-data = data %>% dplyr::select(-given.pts.aau
-                              # ,
-                              # -pf.aau,
+data = data %>% dplyr::select(
+                              -pf.aau,
+                              -to.aau,
+                              -given.pts.aau
                               # -threep.made.aau,
                               # -ft.made.aau,
                               # -fg.made.aau
@@ -139,16 +139,19 @@ scat.data = scat.data %>% dplyr::select(-g)
 data = data %>% dplyr::select(-`FT%.prep`,
                               -`3P%.prep`,
                               -fg.prep,
+                              -tov.prep,
                               -apg.prep,
                               -mpg.prep,
                               -reb.prep)
 
 #getting rid of max pts variable
-data = data %>% dplyr::select(-HIGH.prep,
-                              -max.pts.aau)
+# data = data %>% dplyr::select(-HIGH.prep,
+#                               -max.pts.aau)
 
+data$BMI = data$fixed.height / data$Weight
                               
-         
+nums = nums <- unlist(lapply(data, is.numeric))  
+x = data[,nums]
 #renaming some columns                     
 colnames(data)[which(colnames(data) == 'gp.max.prep')] = 'GamesPlayed.prep'
 
@@ -270,12 +273,10 @@ library(data.table)
 #changing prep columns names
 data = setnames(data, old = c('ppg.prep',
                               'blk.prep',
-                              'spg.prep',
-                              'tov.prep'), 
+                              'spg.prep'), 
                 new = c('Points.prep',
                         'Blocks.prep',
-                        'Steals.prep',
-                        'Turnovers.prep'))
+                        'Steals.prep'))
 
 
 #changing aau columns
@@ -283,14 +284,12 @@ data = setnames(data, old = c('pts.aau',
                               'mp.aau',
                               'reb.aau',
                               'blk.aau',
-                              'stl.aau',
-                              'to.aau'), 
+                              'stl.aau'), 
                 new = c('Points.aau',
                         'Minutes.aau',
                         'Rebounds.aau',
                         'Blocks.aau',
-                        'Steals.aau',
-                        'Turnovers.aau'))
+                        'Steals.aau'))
 
 
 
@@ -316,15 +315,12 @@ data$Position = plyr::revalue(data$Position,
                                 'C' = 5))
 
 
-data$Position = as.numeric(data$Position)
+data$Position = as.factor(data$Position)
 
 
 #### Creating ESPN dataset ####
 
 espn = data %>% dplyr::select(ws,
-                              Position,
-                              Position.Basic,
-                              Height,
                               espn.rating)
 
 espn = espn[complete.cases(espn),]
@@ -432,7 +428,6 @@ prep = prep %>% dplyr::select(ws,
                               Points.prep,
                               Blocks.prep,
                               Steals.prep,
-                              Turnovers.prep,
                               GamesPlayed.prep,
                               Position,
                               Position.Basic,
@@ -471,7 +466,6 @@ aau = aau %>% dplyr::select(ws,
                             Rebounds.aau,
                             Blocks.aau,
                             Steals.aau,
-                            Turnovers.aau,
                             GamesPlayed.aau,
                             Position,
                             Position.Basic,

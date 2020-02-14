@@ -26,7 +26,7 @@ source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
 The goal of this project is to predict collegiate win shares from ESPN recruiting ratings [1] and high school statistics provided by Prep Circuit [2] and AAUStats [3]. As it stands, there is little research on predicting individual players’ collegiate performance. In 2010, Jamie McNeilly used recruiting ranking quartiles to predict PER and other barometers of success [3]; however, the models presented did not consider high school statistics as an input, nor did they consider predicting win shares, which is a more authentic measurement of how a player contributes to overall team success as shown by basketball reference [5].  
 Accusations of many NCAA coaches paying high profile recruits hundreds of thousands of dollars to single recruits catalyized this analysis. If one player can cause decorated coaches to potentially resort to unethical methods, then programs should explore every possible avenue of predicting college performance, especially programs with smaller budgets and less recognition.  
 In addition to benefiting collegiate programs, the methods in this paper could benefit NBA front office decision making. Some high-profile recruits have had mediocre freshman collegiate performances (Harry Giles), or hardly any at all (Michael Porter Jr., Thon Maker), and are still selected in the first round based on their high school evaluations. As NBA teams are investing millions of dollars on players with little to no collegiate data, the methods and data presented in this paper could be used to model NBA performance in conjunction with their collegiate performance.  
-The model with the best out-of-sample mean absolute error included both ESPN ratings and Prep Circuit statistics. The models with only ESPN rating and only Prep Circuit statistics followed suit. Future research adjusting for players’ strength of schedule and teamates could significantly improve the models presented in this paper. 
+The model with the best out-of-sample error incorporating ESPN Ratings and the two sources of high school statistics. All other models had similar error rates. Future research adjusting for players’ strength of schedule and teamates could significantly improve the models presented in this paper. 
 
 # Data 
 ## Basketball Reference
@@ -44,7 +44,7 @@ top.10.ws = top.ws[1:10,]
 From a basketball perspective, these players had some of the best freshman seasons over the past few years. Zion in particular has been widely regarded as having the best season from a statistical and basketball perspective. This gives more confidence and validitiy to win shares as an overall barometer of success.
 
 ## ESPN
-  The ESPN data gathered contained players’ overall rating from 55 to 100. Only the classes from 2016 to 2018 were used in this analysis due to the lack of Prep Circuit data before the 2016 high school season. In terms of grabbing the basketball reference data, the ESPN data played a critical role. There was no feasible or swift way to accurately gather a high school player’s collegiate win shares without knowing where he went to college, which was not in the Prep Circuit data. Also gathered from ESPN were players' height, weight, and position. 
+  The ESPN data gathered contained players’ overall rating from 55 to 100. Only the classes from 2016 to 2018 were used in this analysis due to the lack of Prep Circuit data before the 2016 high school season. In terms of grabbing the basketball reference data, the ESPN data played a critical role. There was no feasible or swift way to accurately gather a high school player’s collegiate win shares without knowing where he went to college, which was not in the Prep Circuit or AAU data. Also gathered from ESPN were players' height, weight, and position. 
   
 ## Prep Circuit
   
@@ -79,27 +79,34 @@ data.by.season
   \[M_{AAU}:=  \hat{ws} = f_{AAU}(X_{AAU})+ \epsilon\]
   \[M_{PREP}:= \hat{ws} = f_{PREP}(X_{PREP}) + \epsilon\]
   \[M_{ESPN}:= \hat{ws} = f_{ESPN}(X_{ESPN}) + \epsilon\]
+  \[M_{AAU.ESPN}:= \hat{ws} = f_{ESPN}(X_{AAU}, X_{ESPN}) + \epsilon\]
+  \[M_{PREP.ESPN}:= \hat{ws} = f_{ESPN}(X_{PREP}, X_{ESPN}) + \epsilon\]
+  \[M_{AAU.PREP}:= \hat{ws} = f_{ESPN}(X_{AAU},X_{PREP}) + \epsilon\]
   \[M_{FULL}:= \hat{ws} = f_{FULL}(X_{AAU},X_{PREP}, X_{ESPN}) + \epsilon \]
 where
 \begin{itemize}
 \item $\hat{ws}\:is\:the\:predicted\:win\:shares\:of\:a\:given\:player,$
-\item  $X_{AAU},\:X_{Prep},\:and\:X_{ESPN}\:are\:the\:data\:matrices\:for\:each\:data\:source,$
-\item $f_{AAU},\:f_{Prep},\:f_{ESPN},\:and\:f_{FULL}\:are\:functions\:that\:output\:predicted\:win\:shares\:per\:game\:using\:one\:or\:all\:three\:data sources,$
+\item  $X_{AAU},\:X_{PREP},\:and\:X_{ESPN}\:are\:the\:data\:matrices\:for\:each\:data\:source,$
+\item $f_{AAU},\:f_{Prep},\:f_{ESPN},\:and\:f_{FULL}\:are\:functions\:that\:output\:predicted\:win\:shares\:based\:each\:data\:source,$
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
 
+# Methods
+  All models were trained through leave one out cross validation. Each player's predicted win shares was created through fitting on all other players, and then predicted on that player. In order to speed up these computations, hyperparameters for some of the different methods were trained through 5 fold cross validation for all players. These values were chosen based on the parameters yielding the smallest out of sample error. So for example, in lasso regression, all models used the same optimal lambda value during the fitting process.
+  
+  In addition to predicted raw win shares, a seperate set of predictions were also generated by predicting a players offensive and defensive win shares seperately. The final predictions were a weighted sum of these two quantities. The linear weights were calculated through leave one out cross validation. A weighted sum was used as this significantly decreased out of sample accuracy compared to adding the two together.
 
+# Results
 ## Leave One Out Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
-rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (complete players).csv")
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (complete players more covariates).csv")
 #colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
 ```
 `r pander(rmse.table)`
-
 ## Leave One Out Offensive + Defensive Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
-rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (espn.rating 80 filtered ows+dws).csv")
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (complete players ows+dws regressed).csv")
 #colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
 ```

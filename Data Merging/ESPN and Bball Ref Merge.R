@@ -50,16 +50,23 @@ id.fix = function(sexton){
   
 
 player.id = strsplit(sexton, ".html")
+
 player.id = strsplit(player.id[[1]][1], '/', fixed = T)
-player.id = player.id[[1]][6]
-return(player.id)
+
+player= player.id[[1]][6]
+return(player)
 
 }
 
 espn.total$player.id = sapply(espn.total$link, FUN = id.fix)
 
+bball.ref.total$player.id = sapply(bball.ref.total$link, FUN = id.fix)
+
+
 library(tidyverse)
 espn.total = espn.total %>% dplyr::select(-Name)
+
+
 total.data = left_join(bball.ref.total, espn.total, by = 'player.id')
 
 

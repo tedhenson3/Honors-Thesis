@@ -38,13 +38,13 @@ data$player.id = word(data$player.id, start = 1, end = -2, sep = '-')
 
 
 data = data %>% 
-  group_by(Name) %>% 
+  group_by(player.id) %>% 
   filter(row_number()==1)
 data = data %>% dplyr::arrange(desc(ws))
 
 
 #verify only last college season
-zion = data %>% dplyr::filter(Name == 'Zion Williamson')
+#zion = data %>% dplyr::filter(Name == 'Zion Williamson')
 
 
 prep = read_csv('Prep.Total.Final.Year.csv')

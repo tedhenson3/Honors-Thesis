@@ -20,9 +20,7 @@ num.obs = nrow(data)
 folds <- cut(seq(1,nrow(data)),breaks=num.obs,labels=FALSE)
 #### End ####
 
-#### Create empty vector for predictions ####
-predictions = c()
-#### End ####
+
 
 #### Create dataset of numeric predictors ####
 is.fact <- sapply(data, is.factor)
@@ -50,7 +48,7 @@ if(model == 'lasso'){
     
   
   data = createDummyFeatures(data, cols = c('Position.Basic'))
-  }
+  
   
 lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                    data[,1],
@@ -59,6 +57,7 @@ lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                    alpha = 1,
                    family = 'gaussian')
 min.lasso.lambda = lasso.cv$lambda.min
+}
 
 }
 
@@ -72,7 +71,7 @@ if(model == 'ridge'){
     
     
     data = createDummyFeatures(data, cols = c('Position.Basic'))
-  }
+  
 
 ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       data[,1],
@@ -82,7 +81,7 @@ ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       family = 'gaussian')
 min.ridge.lambda = ridge.cv$lambda.min
 
-
+}
 
 }
 #### End ####
@@ -124,10 +123,33 @@ if(model == 'nnet'){
 
 }
 
+if(model == 'pls'){
+  if(ncol(data) > 2){
+  library(plsr)
+  resample.method <- trainControl(method = "cv",
+                                  number = 5)
+  library(caret)
+  library(mlr)
+  
+  data = createDummyFeatures(data, cols = c('Position.Basic'))
+  
+  best.pls <- caret::train(form = formula,
+                               data = data,
+                               metric = 'RMSE',
+                               maximize = F,
+                               method = "pls",
+                               trControl = resample.method) 
+  
+  #best.xgboost = best.xgboost[4]
+  
+  best.pls = as.data.frame(best.pls$results)
+  #colnames(best.xgboost) = gsub('results.', '', best.xgboost)
+  opt.ncomp = as.numeric(best.pls[which.min(best.pls$RMSE), 'ncomp'][1])
+  }
+}
 
 
-
-if(model == 'xgbDART'){
+if(model == 'xgbDART1'){
   resample.method <- trainControl(method = "cv",
                                   number = 5)
   library(caret)
@@ -186,6 +208,9 @@ if(model == 'earth'){
   
 }
 
+#### Create empty vector for predictions ####
+predictions = c()
+#### End ####
 #### Loop through every observation, train model on other obs, and predict on held out ####
 for(j in 1:num.obs){
   
@@ -231,14 +256,27 @@ for(j in 1:num.obs){
   }
   
   
-  if(model == 'lm'){
-    train.fit = lm(formula, data = train.data)
-    data.pred=predict(train.fit, test.data)
+  if(model == 'pls'){
+library(pls)
+    #if(ncol(train.data) > 2){
+        train.fit = plsr(formula,
+                         ncomp = opt.ncomp, 
+                         data = train.data,
+                         y = T)
+    # data.pred=
+
+          
+    data.pred = predict(train.fit, test.data)[opt.ncomp]
+
     predictions = c(predictions, data.pred)
-}
+    #}
+  }
 
 
 if(model == 'lasso'){
+  
+  if(ncol(data) > 2){
+    
   
   train.fit = glmnet(x = as.matrix(train.X), 
                      y = train.y,
@@ -247,11 +285,13 @@ if(model == 'lasso'){
                      family = 'gaussian')
 data.pred=as.numeric(predict(train.fit, as.matrix(test.X)))
 predictions = c(predictions, data.pred)
+  }
 }
   
   if(model == 'ridge'){
     
-
+    if(ncol(data) > 2){
+      
     train.fit = glmnet(x = as.matrix(train.X), 
                        y = train.y,
                        alpha  = 0,
@@ -259,6 +299,7 @@ predictions = c(predictions, data.pred)
                        family = 'gaussian')
     data.pred=as.numeric(predict(train.fit, as.matrix(test.X)))
     predictions = c(predictions, data.pred)
+    }
   }
   
   if(model == 'rf'){
@@ -273,6 +314,13 @@ predictions = c(predictions, data.pred)
     predictions = c(predictions, data.pred)
   }
   
+  if(model == 'lm'){
+    
+    
+    train.fit = lm(formula, data = train.data)
+    data.pred=predict(train.fit, test.data)
+    predictions = c(predictions, data.pred)
+  }
   
   if(model == 'xgbDART'){
     library(mlr)
@@ -286,9 +334,10 @@ predictions = c(predictions, data.pred)
   
     train.fit = xgboost(data= as.matrix(train.data[,2:ncol(train.data)]),
                           label = train.data[,1],
-                        param = params,
+                        #param = params,
                         verbose = 0,
-                        nrounds = opt.nrounds
+                        nrounds = 100
+                            #opt.nrounds
     )
     data.pred=predict(train.fit, as.matrix(test.data[,2:ncol(test.data)]))
     predictions = c(predictions, data.pred)

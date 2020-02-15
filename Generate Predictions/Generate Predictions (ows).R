@@ -4,6 +4,7 @@ source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling (ows).R')
 source('~/Honors Thesis/Modeling/LOOCV Modeling Function.R')
 
 
+
 prep.pred.lasso = loocv.modeler(model = 'lasso',
                                 data = prep)
 
@@ -68,19 +69,18 @@ full.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-prep.pred.lm = loocv.modeler(model = 'lm',
-                             data = prep)
+prep.pred.pls = loocv.modeler(model = 'pls',
+                              data = prep)
 
 
-aau.pred.lm = loocv.modeler(model = 'lm',
-                            data = aau)
-
+aau.pred.pls = loocv.modeler(model = 'pls',
+                             data = aau)
 
 espn.pred.lm = loocv.modeler(model = 'lm',
                              data = espn)
 
-full.pred.lm = loocv.modeler(model = 'lm',
-                             data = full)
+full.pred.pls = loocv.modeler(model = 'pls',
+                              data = full)
 
 
 
@@ -109,8 +109,7 @@ aau.pred.rf = loocv.modeler(model = 'rf',
                             data = aau)
 
 
-espn.pred.rf = loocv.modeler(model = 'rf',
-                             data = espn)
+espn.pred.rf = NA
 
 full.pred.rf = loocv.modeler(model = 'rf',
                              data = full)
@@ -136,8 +135,8 @@ aau.espn.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-aau.espn.pred.lm = loocv.modeler(model = 'lm',
-                                 data = aau.espn)
+aau.espn.pred.pls = loocv.modeler(model = 'pls',
+                                  data = aau.espn)
 
 aau.espn.pred.xgbDART = loocv.modeler(model = 'xgbDART',
                                       data = aau.espn)
@@ -169,8 +168,8 @@ prep.espn.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-prep.espn.pred.lm = loocv.modeler(model = 'lm',
-                                  data = prep.espn)
+prep.espn.pred.pls = loocv.modeler(model = 'pls',
+                                   data = prep.espn)
 
 prep.espn.pred.xgbDART = loocv.modeler(model = 'xgbDART',
                                        data = prep.espn)
@@ -203,8 +202,8 @@ aau.prep.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-aau.prep.pred.lm = loocv.modeler(model = 'lm',
-                                 data = aau.prep)
+aau.prep.pred.pls = loocv.modeler(model = 'pls',
+                                  data = aau.prep)
 
 aau.prep.pred.xgbDART = loocv.modeler(model = 'xgbDART',
                                       data = aau.prep)
@@ -214,71 +213,96 @@ aau.prep.pred.xgbDART = loocv.modeler(model = 'xgbDART',
 aau.prep.pred.rf = loocv.modeler(model = 'rf',
                                  data = aau.prep)
 
+#### ESPN RAW ####
+
+# 
+# espn.raw.pred.svm = loocv.modeler(model = 'svm',
+#                                   data = espn.raw)
+# 
+# 
+# 
+# 
+# espn.raw.pred.earth = loocv.modeler(model = 'earth',
+#                                     data = espn.raw)
+# 
+# 
+# 
+# 
+# espn.raw.pred.pls = loocv.modeler(model = 'pls',
+#                                  data = espn.raw)
+# 
+# espn.raw.pred.xgbDART = loocv.modeler(model = 'xgbDART',
+#                                       data = espn.raw)
+# 
+# 
+# 
+# espn.raw.pred.rf = loocv.modeler(model = 'rf',
+#                                  data = espn.raw)
+# 
 
 
-espn.ows.predictions = data.frame(lm = espn.pred.lm,
-                                  lasso = espn.pred.lasso,
-                                  ridge = espn.pred.ridge,
-                                  rf = espn.pred.rf,
-                                  earth = espn.pred.earth,
-                                  svm.radial = espn.pred.svm,
-                                  xgbDART = espn.pred.xgbDART)
+espn.ows.predictions = data.frame(
+  #pls = NA,
+  lasso = espn.pred.lm,
+  # ridge = c(rep(0, 185)),
+  # rf = c(rep(0, 185)),
+  earth = espn.pred.earth,
+  svm.radial = espn.pred.svm,
+  xgbDART = espn.pred.xgbDART)
 
-prep.ows.predictions = data.frame(lm = prep.pred.lm,
-                                  lasso = prep.pred.lasso,
-                                  ridge = prep.pred.ridge,
-                                  rf = prep.pred.rf,
-                                  earth = prep.pred.earth,
-                                  svm.radial = prep.pred.svm,
-                                  xgbDART = prep.pred.xgbDART)
+prep.ows.predictions = data.frame(pls = prep.pred.pls,
+                              lasso = prep.pred.lasso,
+                              ridge = prep.pred.ridge,
+                              rf = prep.pred.rf,
+                              earth = prep.pred.earth,
+                              svm.radial = prep.pred.svm,
+                              xgbDART = prep.pred.xgbDART)
 
-aau.ows.predictions = data.frame(lm = aau.pred.lm,
-                                 lasso = aau.pred.lasso,
-                                 ridge = aau.pred.ridge,
-                                 rf = aau.pred.rf,
-                                 earth = aau.pred.earth,
-                                 svm.radial = aau.pred.svm,
-                                 xgbDART = aau.pred.xgbDART)
+aau.ows.predictions = data.frame(pls = aau.pred.pls,
+                             lasso = aau.pred.lasso,
+                             ridge = aau.pred.ridge,
+                             rf = aau.pred.rf,
+                             earth = aau.pred.earth,
+                             svm.radial = aau.pred.svm,
+                             xgbDART = aau.pred.xgbDART)
 
-full.ows.predictions = data.frame(lm = full.pred.lm,
-                                  lasso = full.pred.lasso,
-                                  ridge = full.pred.ridge,
-                                  rf = full.pred.rf,
-                                  earth = full.pred.earth,
-                                  svm.radial = full.pred.svm,
-                                  xgbDART = full.pred.xgbDART
+full.ows.predictions = data.frame(pls = full.pred.pls,
+                              lasso = full.pred.lasso,
+                              ridge = full.pred.ridge,
+                              rf = full.pred.rf,
+                              earth = full.pred.earth,
+                              svm.radial = full.pred.svm,
+                              xgbDART = full.pred.xgbDART
 )
 
 
-aau.espn.ows.predictions = data.frame(lm = aau.espn.pred.lm,
-                                      lasso = aau.espn.pred.lasso,
-                                      ridge = aau.espn.pred.ridge,
-                                      rf = aau.espn.pred.rf,
-                                      earth = aau.espn.pred.earth,
-                                      svm.radial = aau.espn.pred.svm,
-                                      xgbDART = aau.espn.pred.xgbDART
+aau.espn.ows.predictions = data.frame(pls = aau.espn.pred.pls,
+                                  lasso = aau.espn.pred.lasso,
+                                  ridge = aau.espn.pred.ridge,
+                                  rf = aau.espn.pred.rf,
+                                  earth = aau.espn.pred.earth,
+                                  svm.radial = aau.espn.pred.svm,
+                                  xgbDART = aau.espn.pred.xgbDART
 )
 
-prep.espn.ows.predictions = data.frame(lm = prep.espn.pred.lm,
-                                       lasso = prep.espn.pred.lasso,
-                                       ridge = prep.espn.pred.ridge,
-                                       rf = prep.espn.pred.rf,
-                                       earth = prep.espn.pred.earth,
-                                       svm.radial = prep.espn.pred.svm,
-                                       xgbDART = prep.espn.pred.xgbDART
-)
-
-
-aau.prep.ows.predictions = data.frame(lm = aau.prep.pred.lm,
-                                      lasso = aau.prep.pred.lasso,
-                                      ridge = aau.prep.pred.ridge,
-                                      rf = aau.prep.pred.rf,
-                                      earth = aau.prep.pred.earth,
-                                      svm.radial = aau.prep.pred.svm,
-                                      xgbDART = aau.prep.pred.xgbDART
+prep.espn.ows.predictions = data.frame(pls = prep.espn.pred.pls,
+                                   lasso = prep.espn.pred.lasso,
+                                   ridge = prep.espn.pred.ridge,
+                                   rf = prep.espn.pred.rf,
+                                   earth = prep.espn.pred.earth,
+                                   svm.radial = prep.espn.pred.svm,
+                                   xgbDART = prep.espn.pred.xgbDART
 )
 
 
+aau.prep.ows.predictions = data.frame(pls = aau.prep.pred.pls,
+                                  lasso = aau.prep.pred.lasso,
+                                  ridge = aau.prep.pred.ridge,
+                                  rf = aau.prep.pred.rf,
+                                  earth = aau.prep.pred.earth,
+                                  svm.radial = aau.prep.pred.svm,
+                                  xgbDART = aau.prep.pred.xgbDART
+)
 
 
 source('~/Honors Thesis/Modeling/LOOCV Modeling Function (Stacked).R')
@@ -308,16 +332,16 @@ aau.prep.pred.stacked = loocv.stacked.modeler(preds = aau.prep.ows.predictions,
                                          ws = aau.prep.win.shares)
 
 
-espn.ows.predictions = data.frame(lm = espn.pred.lm,
-                              lasso = espn.pred.lasso,
-                              ridge = espn.pred.ridge,
-                              rf = espn.pred.rf,
+espn.ows.predictions = data.frame(pls = NA,
+                              lasso = espn.pred.lm,
+                              ridge = NA,
+                              rf = NA,
                               earth = espn.pred.earth,
                               svm.radial = espn.pred.svm,
                               xgbDART = espn.pred.xgbDART,
                               stacked = espn.pred.stacked)
 
-prep.ows.predictions = data.frame(lm = prep.pred.lm,
+prep.ows.predictions = data.frame(pls = prep.pred.pls,
                               lasso = prep.pred.lasso,
                               ridge = prep.pred.ridge,
                               rf = prep.pred.rf,
@@ -326,7 +350,7 @@ prep.ows.predictions = data.frame(lm = prep.pred.lm,
                               xgbDART = prep.pred.xgbDART,
                               stacked = prep.pred.stacked)
 
-aau.ows.predictions = data.frame(lm = aau.pred.lm,
+aau.ows.predictions = data.frame(pls = aau.pred.pls,
                              lasso = aau.pred.lasso,
                              ridge = aau.pred.ridge,
                              rf = aau.pred.rf,
@@ -335,7 +359,7 @@ aau.ows.predictions = data.frame(lm = aau.pred.lm,
                              xgbDART = aau.pred.xgbDART,
                              stacked = aau.pred.stacked)
 
-full.ows.predictions = data.frame(lm = full.pred.lm,
+full.ows.predictions = data.frame(pls = full.pred.pls,
                               lasso = full.pred.lasso,
                               ridge = full.pred.ridge,
                               rf = full.pred.rf,
@@ -347,7 +371,7 @@ full.ows.predictions = data.frame(lm = full.pred.lm,
 )
 
 
-aau.espn.ows.predictions = data.frame(lm = aau.espn.pred.lm,
+aau.espn.ows.predictions = data.frame(pls = aau.espn.pred.pls,
                                   lasso = aau.espn.pred.lasso,
                                   ridge = aau.espn.pred.ridge,
                                   rf = aau.espn.pred.rf,
@@ -357,7 +381,7 @@ aau.espn.ows.predictions = data.frame(lm = aau.espn.pred.lm,
                                   stacked = aau.espn.pred.stacked
 )
 
-prep.espn.ows.predictions = data.frame(lm = prep.espn.pred.lm,
+prep.espn.ows.predictions = data.frame(pls = prep.espn.pred.pls,
                                    lasso = prep.espn.pred.lasso,
                                    ridge = prep.espn.pred.ridge,
                                    rf = prep.espn.pred.rf,
@@ -368,7 +392,7 @@ prep.espn.ows.predictions = data.frame(lm = prep.espn.pred.lm,
 )
 
 
-aau.prep.ows.predictions = data.frame(lm = aau.prep.pred.lm,
+aau.prep.ows.predictions = data.frame(pls = aau.prep.pred.pls,
                                   lasso = aau.prep.pred.lasso,
                                   ridge = aau.prep.pred.ridge,
                                   rf = aau.prep.pred.rf,
@@ -378,165 +402,166 @@ aau.prep.ows.predictions = data.frame(lm = aau.prep.pred.lm,
                                   stacked = aau.prep.pred.stacked
 )
 
+save.image("~/Honors Thesis/Model Environments/All Predictions ows.RData")
 
 
 
-
-espn.errors = data.frame(lm = espn.win.shares - espn.pred.lm,
-                         lasso = espn.win.shares - espn.pred.lasso,
-                         ridge = espn.win.shares - espn.pred.ridge,
-                         rf = espn.win.shares - espn.pred.rf,
-                         earth = espn.win.shares - espn.pred.earth,
-                         svm.radial = espn.win.shares - espn.pred.svm,
-                         xgbDART = espn.win.shares - espn.pred.xgbDART)
-
-prep.errors = data.frame(lm = prep.win.shares - prep.pred.lm,
-                         lasso = prep.win.shares - prep.pred.lasso,
-                         ridge = prep.win.shares - prep.pred.ridge,
-                         rf = prep.win.shares - prep.pred.rf,
-                         earth = prep.win.shares - prep.pred.earth,
-                         svm.radial = prep.win.shares - prep.pred.svm,
-                         xgbDART = prep.win.shares - prep.pred.xgbDART)
-
-
-aau.errors = data.frame(lm = aau.win.shares - aau.pred.lm,
-                        lasso = aau.win.shares - aau.pred.lasso,
-                        ridge = aau.win.shares - aau.pred.ridge,
-                        rf = aau.win.shares - aau.pred.rf,
-                        earth = aau.win.shares - aau.pred.earth,
-                        svm.radial = aau.win.shares - aau.pred.svm,
-                        xgbDART = aau.win.shares - aau.pred.xgbDART)
-
-full.errors = data.frame(lm = full.win.shares - full.pred.lm,
-                         lasso = full.win.shares - full.pred.lasso,
-                         ridge = full.win.shares - full.pred.ridge,
-                         rf = full.win.shares - full.pred.rf,
-                         earth = full.win.shares - full.pred.earth,
-                         svm.radial = full.win.shares - full.pred.svm,
-                         xgbDART = full.win.shares - full.pred.xgbDART)
-
-aau.espn.errors = data.frame(lm = aau.espn.win.shares - aau.espn.pred.lm,
-                             lasso = aau.espn.win.shares - aau.espn.pred.lasso,
-                             ridge = aau.espn.win.shares - aau.espn.pred.ridge,
-                             rf = aau.espn.win.shares - aau.espn.pred.rf,
-                             earth = aau.espn.win.shares - aau.espn.pred.earth,
-                             svm.radial = aau.espn.win.shares - aau.espn.pred.svm,
-                             xgbDART = aau.espn.win.shares - aau.espn.pred.xgbDART)
-
-prep.espn.errors = data.frame(lm = prep.espn.win.shares - prep.espn.pred.lm,
-                              lasso = prep.espn.win.shares - prep.espn.pred.lasso,
-                              ridge = prep.espn.win.shares - prep.espn.pred.ridge,
-                              rf = prep.espn.win.shares - prep.espn.pred.rf,
-                              earth = prep.espn.win.shares - prep.espn.pred.earth,
-                              svm.radial = prep.espn.win.shares - prep.espn.pred.svm,
-                              xgbDART = prep.espn.win.shares - prep.espn.pred.xgbDART)
-
-
-
-aau.prep.errors = data.frame(lm = aau.prep.win.shares - aau.prep.pred.lm,
-                             lasso = aau.prep.win.shares - aau.prep.pred.lasso,
-                             ridge = aau.prep.win.shares - aau.prep.pred.ridge,
-                             rf = aau.prep.win.shares - aau.prep.pred.rf,
-                             earth = aau.prep.win.shares - aau.prep.pred.earth,
-                             svm.radial = aau.prep.win.shares - aau.prep.pred.svm,
-                             xgbDART = aau.prep.win.shares - aau.prep.pred.xgbDART)
-
-
-
-
-
-espn.rmse = data.frame(lm = sqrt(mean((espn.errors$lm)^2)), 
-                       lasso = sqrt(mean((espn.errors$lasso)^2)),
-                       ridge = sqrt(mean((espn.errors$ridge)^2)),
-                       rf = sqrt(mean((espn.errors$rf)^2)),
-                       earth = sqrt(mean((espn.errors$earth)^2)),
-                       svm.radial = sqrt(mean((espn.errors$svm.radial)^2)),
-                       xgbDART = sqrt(mean((espn.errors$xgbDART)^2)))
-
-prep.rmse = data.frame(lm = sqrt(mean((prep.errors$lm)^2)), 
-                       lasso = sqrt(mean((prep.errors$lasso)^2)),
-                       ridge = sqrt(mean((prep.errors$ridge)^2)),
-                       rf = sqrt(mean((prep.errors$rf)^2)),
-                       earth = sqrt(mean((prep.errors$earth)^2)),
-                       svm.radial = sqrt(mean((prep.errors$svm.radial)^2)),
-                       xgbDART = sqrt(mean((prep.errors$xgbDART)^2)))
-
-
-aau.rmse = data.frame(lm = sqrt(mean((aau.errors$lm)^2)), 
-                      lasso = sqrt(mean((aau.errors$lasso)^2)),
-                      ridge = sqrt(mean((aau.errors$ridge)^2)),
-                      rf = sqrt(mean((aau.errors$rf)^2)),
-                      earth = sqrt(mean((aau.errors$earth)^2)),
-                      svm.radial = sqrt(mean((aau.errors$svm.radial)^2)),
-                      xgbDART = sqrt(mean((aau.errors$xgbDART)^2)))
-
-
-full.rmse = data.frame(lm = sqrt(mean((full.errors$lm)^2)), 
-                       lasso = sqrt(mean((full.errors$lasso)^2)),
-                       ridge = sqrt(mean((full.errors$ridge)^2)),
-                       rf = sqrt(mean((full.errors$rf)^2)),
-                       earth = sqrt(mean((full.errors$earth)^2)),
-                       svm.radial = sqrt(mean((full.errors$svm.radial)^2)),
-                       xgbDART = sqrt(mean((full.errors$xgbDART)^2)))
-
-
-
-aau.espn.rmse = data.frame(lm = sqrt(mean((aau.espn.errors$lm)^2)), 
-                           lasso = sqrt(mean((aau.espn.errors$lasso)^2)),
-                           ridge = sqrt(mean((aau.espn.errors$ridge)^2)),
-                           rf = sqrt(mean((aau.espn.errors$rf)^2)),
-                           earth = sqrt(mean((aau.espn.errors$earth)^2)),
-                           svm.radial = sqrt(mean((aau.espn.errors$svm.radial)^2)),
-                           xgbDART = sqrt(mean((aau.espn.errors$xgbDART)^2)))
-
-
-prep.espn.rmse = data.frame(lm = sqrt(mean((prep.espn.errors$lm)^2)), 
-                            lasso = sqrt(mean((prep.espn.errors$lasso)^2)),
-                            ridge = sqrt(mean((prep.espn.errors$ridge)^2)),
-                            rf = sqrt(mean((prep.espn.errors$rf)^2)),
-                            earth = sqrt(mean((prep.espn.errors$earth)^2)),
-                            svm.radial = sqrt(mean((prep.espn.errors$svm.radial)^2)),
-                            xgbDART = sqrt(mean((prep.espn.errors$xgbDART)^2)))
-
-
-aau.prep.rmse = data.frame(lm = sqrt(mean((aau.prep.errors$lm)^2)), 
-                           lasso = sqrt(mean((aau.prep.errors$lasso)^2)),
-                           ridge = sqrt(mean((aau.prep.errors$ridge)^2)),
-                           rf = sqrt(mean((aau.prep.errors$rf)^2)),
-                           earth = sqrt(mean((aau.prep.errors$earth)^2)),
-                           svm.radial = sqrt(mean((aau.prep.errors$svm.radial)^2)),
-                           xgbDART = sqrt(mean((aau.prep.errors$xgbDART)^2)))
-
-
-final.rmse = cbind(t(espn.rmse), 
-                   t(prep.rmse), 
-                   t(aau.rmse), 
-                   t(full.rmse),
-                   t(aau.espn.rmse),
-                   t(prep.espn.rmse),
-                   t(aau.prep.rmse))
-colnames(final.rmse) = c('espn', 'prep', 'aau', 'full', 'aau.espn', 
-                         'prep.espn', 'aau.prep')
-final.rmse
-
-n.espn = nrow(espn)
-n.prep = nrow(prep)
-n.aau = nrow(aau)
-n.full = nrow(full)
-n.aau.espn = nrow(aau.espn)
-n.prep.espn = nrow(prep.espn)
-n.aau.prep = nrow(aau.prep)
-
-n.vec = c(n.espn, n.prep, n.aau, n.full, n.aau.espn, n.prep.espn, n.aau.prep)
-
-rmse.col.names = paste(colnames(final.rmse),' ',
-                       'n=',n.vec, sep = '')
-
-colnames(final.rmse) = rmse.col.names
-
-save.image("~/Honors Thesis/Model Environments/All Predictions (complete players ows).RData")
-
-write.csv(final.rmse,
-          file = '~/Honors Thesis/Predictions/All RMSEs (complete players ows).csv')
-
-
+# 
+# espn.errors = data.frame(pls = NA,
+#                          lasso = espn.win.shares - espn.pred.lm,
+#                          ridge = NA,
+#                          rf = NA,
+#                          earth = espn.win.shares - espn.pred.earth,
+#                          svm.radial = espn.win.shares - espn.pred.svm,
+#                          xgbDART = espn.win.shares - espn.pred.xgbDART)
+# 
+# prep.errors = data.frame(pls = prep.win.shares - prep.pred.pls,
+#                          lasso = prep.win.shares - prep.pred.lasso,
+#                          ridge = prep.win.shares - prep.pred.ridge,
+#                          rf = prep.win.shares - prep.pred.rf,
+#                          earth = prep.win.shares - prep.pred.earth,
+#                          svm.radial = prep.win.shares - prep.pred.svm,
+#                          xgbDART = prep.win.shares - prep.pred.xgbDART)
+# 
+# 
+# aau.errors = data.frame(pls = aau.win.shares - aau.pred.pls,
+#                         lasso = aau.win.shares - aau.pred.lasso,
+#                         ridge = aau.win.shares - aau.pred.ridge,
+#                         rf = aau.win.shares - aau.pred.rf,
+#                         earth = aau.win.shares - aau.pred.earth,
+#                         svm.radial = aau.win.shares - aau.pred.svm,
+#                         xgbDART = aau.win.shares - aau.pred.xgbDART)
+# 
+# full.errors = data.frame(pls = full.win.shares - full.pred.pls,
+#                          lasso = full.win.shares - full.pred.lasso,
+#                          ridge = full.win.shares - full.pred.ridge,
+#                          rf = full.win.shares - full.pred.rf,
+#                          earth = full.win.shares - full.pred.earth,
+#                          svm.radial = full.win.shares - full.pred.svm,
+#                          xgbDART = full.win.shares - full.pred.xgbDART)
+# 
+# aau.espn.errors = data.frame(pls = aau.espn.win.shares - aau.espn.pred.pls,
+#                              lasso = aau.espn.win.shares - aau.espn.pred.lasso,
+#                              ridge = aau.espn.win.shares - aau.espn.pred.ridge,
+#                              rf = aau.espn.win.shares - aau.espn.pred.rf,
+#                              earth = aau.espn.win.shares - aau.espn.pred.earth,
+#                              svm.radial = aau.espn.win.shares - aau.espn.pred.svm,
+#                              xgbDART = aau.espn.win.shares - aau.espn.pred.xgbDART)
+# 
+# prep.espn.errors = data.frame(pls = prep.espn.win.shares - prep.espn.pred.pls,
+#                               lasso = prep.espn.win.shares - prep.espn.pred.lasso,
+#                               ridge = prep.espn.win.shares - prep.espn.pred.ridge,
+#                               rf = prep.espn.win.shares - prep.espn.pred.rf,
+#                               earth = prep.espn.win.shares - prep.espn.pred.earth,
+#                               svm.radial = prep.espn.win.shares - prep.espn.pred.svm,
+#                               xgbDART = prep.espn.win.shares - prep.espn.pred.xgbDART)
+# 
+# 
+# 
+# aau.prep.errors = data.frame(pls = aau.prep.win.shares - aau.prep.pred.pls,
+#                              lasso = aau.prep.win.shares - aau.prep.pred.lasso,
+#                              ridge = aau.prep.win.shares - aau.prep.pred.ridge,
+#                              rf = aau.prep.win.shares - aau.prep.pred.rf,
+#                              earth = aau.prep.win.shares - aau.prep.pred.earth,
+#                              svm.radial = aau.prep.win.shares - aau.prep.pred.svm,
+#                              xgbDART = aau.prep.win.shares - aau.prep.pred.xgbDART)
+# 
+# 
+# 
+# 
+# 
+# espn.rmse = data.frame(pls = NA, 
+#                        lasso = sqrt(mean((espn.errors$lasso)^2)),
+#                        ridge =NA,
+#                        rf = NA,
+#                        earth = sqrt(mean((espn.errors$earth)^2)),
+#                        svm.radial = sqrt(mean((espn.errors$svm.radial)^2)),
+#                        xgbDART = sqrt(mean((espn.errors$xgbDART)^2)))
+# 
+# prep.rmse = data.frame(lm = sqrt(mean((prep.errors$lm)^2)), 
+#                        lasso = sqrt(mean((prep.errors$lasso)^2)),
+#                        ridge = sqrt(mean((prep.errors$ridge)^2)),
+#                        rf = sqrt(mean((prep.errors$rf)^2)),
+#                        earth = sqrt(mean((prep.errors$earth)^2)),
+#                        svm.radial = sqrt(mean((prep.errors$svm.radial)^2)),
+#                        xgbDART = sqrt(mean((prep.errors$xgbDART)^2)))
+# 
+# 
+# aau.rmse = data.frame(lm = sqrt(mean((aau.errors$lm)^2)), 
+#                       lasso = sqrt(mean((aau.errors$lasso)^2)),
+#                       ridge = sqrt(mean((aau.errors$ridge)^2)),
+#                       rf = sqrt(mean((aau.errors$rf)^2)),
+#                       earth = sqrt(mean((aau.errors$earth)^2)),
+#                       svm.radial = sqrt(mean((aau.errors$svm.radial)^2)),
+#                       xgbDART = sqrt(mean((aau.errors$xgbDART)^2)))
+# 
+# 
+# full.rmse = data.frame(lm = sqrt(mean((full.errors$lm)^2)), 
+#                        lasso = sqrt(mean((full.errors$lasso)^2)),
+#                        ridge = sqrt(mean((full.errors$ridge)^2)),
+#                        rf = sqrt(mean((full.errors$rf)^2)),
+#                        earth = sqrt(mean((full.errors$earth)^2)),
+#                        svm.radial = sqrt(mean((full.errors$svm.radial)^2)),
+#                        xgbDART = sqrt(mean((full.errors$xgbDART)^2)))
+# 
+# 
+# 
+# aau.espn.rmse = data.frame(lm = sqrt(mean((aau.espn.errors$lm)^2)), 
+#                            lasso = sqrt(mean((aau.espn.errors$lasso)^2)),
+#                            ridge = sqrt(mean((aau.espn.errors$ridge)^2)),
+#                            rf = sqrt(mean((aau.espn.errors$rf)^2)),
+#                            earth = sqrt(mean((aau.espn.errors$earth)^2)),
+#                            svm.radial = sqrt(mean((aau.espn.errors$svm.radial)^2)),
+#                            xgbDART = sqrt(mean((aau.espn.errors$xgbDART)^2)))
+# 
+# 
+# prep.espn.rmse = data.frame(lm = sqrt(mean((prep.espn.errors$lm)^2)), 
+#                             lasso = sqrt(mean((prep.espn.errors$lasso)^2)),
+#                             ridge = sqrt(mean((prep.espn.errors$ridge)^2)),
+#                             rf = sqrt(mean((prep.espn.errors$rf)^2)),
+#                             earth = sqrt(mean((prep.espn.errors$earth)^2)),
+#                             svm.radial = sqrt(mean((prep.espn.errors$svm.radial)^2)),
+#                             xgbDART = sqrt(mean((prep.espn.errors$xgbDART)^2)))
+# 
+# 
+# aau.prep.rmse = data.frame(lm = sqrt(mean((aau.prep.errors$lm)^2)), 
+#                            lasso = sqrt(mean((aau.prep.errors$lasso)^2)),
+#                            ridge = sqrt(mean((aau.prep.errors$ridge)^2)),
+#                            rf = sqrt(mean((aau.prep.errors$rf)^2)),
+#                            earth = sqrt(mean((aau.prep.errors$earth)^2)),
+#                            svm.radial = sqrt(mean((aau.prep.errors$svm.radial)^2)),
+#                            xgbDART = sqrt(mean((aau.prep.errors$xgbDART)^2)))
+# 
+# 
+# final.rmse = cbind(t(espn.rmse), 
+#                    t(prep.rmse), 
+#                    t(aau.rmse), 
+#                    t(full.rmse),
+#                    t(aau.espn.rmse),
+#                    t(prep.espn.rmse),
+#                    t(aau.prep.rmse))
+# colnames(final.rmse) = c('espn', 'prep', 'aau', 'full', 'aau.espn', 
+#                          'prep.espn', 'aau.prep')
+# final.rmse
+# 
+# n.espn = nrow(espn)
+# n.prep = nrow(prep)
+# n.aau = nrow(aau)
+# n.full = nrow(full)
+# n.aau.espn = nrow(aau.espn)
+# n.prep.espn = nrow(prep.espn)
+# n.aau.prep = nrow(aau.prep)
+# 
+# n.vec = c(n.espn, n.prep, n.aau, n.full, n.aau.espn, n.prep.espn, n.aau.prep)
+# 
+# rmse.col.names = paste(colnames(final.rmse),' ',
+#                        'n=',n.vec, sep = '')
+# 
+# colnames(final.rmse) = rmse.col.names
+# 
+# save.image("~/Honors Thesis/Model Environments/All Predictions (less vars more folds ows).RData")
+# 
+# write.csv(final.rmse,
+#           file = '~/Honors Thesis/Predictions/All RMSEs (less vars more folds ows).csv')
+# 
+# 

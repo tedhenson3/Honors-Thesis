@@ -13,6 +13,9 @@ data = read_csv('~/Honors Thesis/Clean Data/espn.bball-ref.aau.prep(updated).csv
 #2 wrong players scraped#
 data = data %>% dplyr::filter(Season != 1993 & Season != 2014 & Season != 2020)
 
+# nums = nums <- unlist(lapply(data, is.numeric))  
+# x = data[,nums]
+# View(cor(x, use = 'pairwise.complete.obs'))
 
 # this prior hypothesis is no longer believed to be true:
 # # adding in recreated per game prep stats 
@@ -55,37 +58,38 @@ data$group <- ifelse(is.na(data$group),
                      data$group)
 
 
-data = data %>% group_by(Season, group) %>% mutate(group.num = n())
+data = as.data.frame(data)
+
+data = data %>% group_by(Season, group) %>% dplyr::mutate(group.num = n())
 
 data.for.graph = data
-
 
 
 
 #### Getting rid of variables for all models ####
 
 #saving these for later in case needed later
-ows = data$ows
-dws = data$dws
+# oows = data$oows
+# dows = data$dows
 name = data$Name
 player.id = data$player.id
 weight = data$Weight
 
-#creating for top ws table
-data.ws = data
+#creating for top ows table
+data.ows = data
 
 
 #getting rid of some bio stuff
 data = data %>% ungroup() %>% dplyr::select(-ws,
                                             -Season,
+                                            -g,
+                                            -Weight,
+                                            -fixed.height,
                                             -dws,
                                             -Name,
-                                            -Weight,
                                             -player.id,
                                             -group,
                                             -group.num)
-data$ws = data$ows
-data = data %>% dplyr::select(-ows)
 
 
 #getting rid of total prep stats
@@ -116,14 +120,18 @@ games.played.aau = data$total.games.aau
 data = data[,-c(which(grepl('total.', colnames(data))))]
 
 
-#getting rid of some more aau stats not in prep
-data = data %>% dplyr::select(-given.pts.aau
-                              # ,
-                              # -pf.aau,
-                              # -threep.made.aau,
-                              # -ft.made.aau,
-                              # -fg.made.aau
-                              )
+data = data %>% dplyr::select(
+  -pf.aau,
+  -to.aau,
+  -given.pts.aau,
+  -threep.made.aau,
+  -max.pts.aau,
+  -ft.made.aau,
+  -fg.made.aau
+)
+# ggplot(data, aes(, ows)) + 
+#   #facet_grid(Position ~ .) + 
+#   geom_point() + geom_smooth()
 
 
 #getting rid of some prep stats not in current aau summary and weren't predictive
@@ -133,32 +141,42 @@ scat.data = data %>% dplyr::select(`FT%.prep`,
                                    `3P%.prep`,
                                    fg.prep,
                                    apg.prep,
-                                   ws,
-                                   g)
-scat.data = scat.data %>% dplyr::select(-g)
+                                   ows)
+#scat.data = scat.data %>% dplyr::select(-g)
 
 
 data = data %>% dplyr::select(-`FT%.prep`,
                               -`3P%.prep`,
                               -fg.prep,
+                              -HIGH.prep,
+                              -tov.prep,
                               -apg.prep,
+                              -spg.prep,
+                              -blk.prep,
                               -mpg.prep,
-                              -reb.prep)
+                              -reb.prep
+)
 
 #getting rid of max pts variable
-data = data %>% dplyr::select(-HIGH.prep,
-                              -max.pts.aau)
+# data = data %>% dplyr::select(-HIGH.prep,
+#                               -max.pts.aau)
 
+#data$BMI = data$fixed.height / data$Weight
 
-
+nums = nums <- unlist(lapply(data, is.numeric))  
+x = data[,nums]
+#View(cor(x, use = 'pairwise.complete.obs'))
 #renaming some columns                     
 colnames(data)[which(colnames(data) == 'gp.max.prep')] = 'GamesPlayed.prep'
 
 data$GamesPlayed.aau = games.played.aau
 
-colnames(data)[colnames(data)=="fixed.height"] <- "Height"
+#colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
-
+# ggplot(data, aes(x = spg.prep, y = ows, colour = Position)) +
+#   geom_point() +
+#   facet_grid(Position ~ .) +
+#   geom_smooth()
 data = data[complete.cases(data),]
 
 
@@ -262,7 +280,7 @@ data = data[complete.cases(data),]
 
 
 
-data = data %>% dplyr::select(ws,
+data = data %>% dplyr::select(ows,
                               Position,
                               everything())
 
@@ -270,14 +288,8 @@ data = data %>% dplyr::select(ws,
 
 library(data.table)
 #changing prep columns names
-data = setnames(data, old = c('ppg.prep',
-                              'blk.prep',
-                              'spg.prep',
-                              'tov.prep'), 
-                new = c('Points.prep',
-                        'Blocks.prep',
-                        'Steals.prep',
-                        'Turnovers.prep'))
+data = setnames(data, old = c('ppg.prep'), 
+                new = c('Points.prep'))
 
 
 #changing aau columns
@@ -285,28 +297,26 @@ data = setnames(data, old = c('pts.aau',
                               'mp.aau',
                               'reb.aau',
                               'blk.aau',
-                              'stl.aau',
-                              'to.aau'), 
+                              'stl.aau'), 
                 new = c('Points.aau',
                         'Minutes.aau',
                         'Rebounds.aau',
                         'Blocks.aau',
-                        'Steals.aau',
-                        'Turnovers.aau'))
+                        'Steals.aau'))
 
 
 
-data$Position.Basic = ifelse(data$Position %in% c('PG', 'SG'),
-                             'G', 0)
+# data$Position.Basic = ifelse(data$Position %in% c('PG', 'SG'),
+#                              'G', 0)
+# 
+# data$Position.Basic = ifelse(data$Position %in% c('SF', 'PF'),
+#                              'F', data$Position.Basic)
+# 
+# 
+# data$Position.Basic = ifelse(data$Position == 'C',
+#                              'C', data$Position.Basic)
 
-data$Position.Basic = ifelse(data$Position %in% c('SF', 'PF'),
-                             'F', data$Position.Basic)
-
-
-data$Position.Basic = ifelse(data$Position == 'C',
-                             'C', data$Position.Basic)
-
-data$Position.Basic = as.factor(data$Position.Basic)
+data$Position.Basic = as.factor(data$Position)
 
 data$Position = as.factor(data$Position)
 data$Position = plyr::revalue(data$Position,
@@ -319,28 +329,24 @@ data$Position = plyr::revalue(data$Position,
 
 
 data$Position = as.numeric(data$Position)
+data = data %>% dplyr::select(-Position)
 
 
 #### Creating ESPN dataset ####
 
-espn = data %>% dplyr::select(ws,
-                              Position,
-                              Position.Basic,
-                              Height,
-                              espn.rating,
-                              ws,
-                              g)
+espn = data %>% dplyr::select(ows,
+                              espn.rating)
 
 espn = espn[complete.cases(espn),]
 
 
-espn.win.shares = espn$ws
+espn.win.shares = espn$ows
 
 
-espn.games = espn$g
 
-espn = espn %>% dplyr::select(-g)
-espn.scat.data = espn %>% dplyr::select(-Position.Basic)
+
+
+#espn.scat.data = espn %>% dplyr::select(-Position.Basic)
 
 #### End ####
 
@@ -349,13 +355,11 @@ espn.scat.data = espn %>% dplyr::select(-Position.Basic)
 
 full = data[complete.cases(data),]
 
-full.win.shares = full$ws
-
-full.games = full$g
+full.win.shares = full$ows
 
 
-full = full %>% dplyr::select(-g)
-full = full %>% dplyr::select(ws, everything())
+
+full = full %>% dplyr::select(ows, everything())
 #### End ####
 
 
@@ -365,13 +369,11 @@ prep.espn = data[,-c(which(grepl('aau', colnames(data))))]
 
 prep.espn = prep.espn[complete.cases(prep.espn),]
 
-prep.espn.win.shares = prep.espn$ws
-
-prep.espn.games = prep.espn$g
+prep.espn.win.shares = prep.espn$ows
 
 
-prep.espn = prep.espn %>% dplyr::select(-g)
-prep.espn = prep.espn %>% dplyr::select(ws, everything())
+
+prep.espn = prep.espn %>% dplyr::select(ows, everything())
 
 #### End ####
 
@@ -381,12 +383,10 @@ aau.espn = data[,-c(which(grepl('prep', colnames(data))))]
 
 aau.espn = aau.espn[complete.cases(aau.espn),]
 
-aau.espn.win.shares = aau.espn$ws
-
-aau.espn.games = aau.espn$g
+aau.espn.win.shares = aau.espn$ows
 
 
-aau.espn = aau.espn %>% dplyr::select(-g)
+
 aau.espn = aau.espn %>% dplyr::select(everything())
 
 
@@ -397,12 +397,10 @@ aau.prep = data[,-c(which(grepl('espn', colnames(data))))]
 
 aau.prep = aau.prep[complete.cases(aau.prep),]
 
-aau.prep.win.shares = aau.prep$ws
-
-aau.prep.games = aau.prep$g
+aau.prep.win.shares = aau.prep$ows
 
 
-aau.prep = aau.prep %>% dplyr::select(-g)
+
 aau.prep = aau.prep %>% dplyr::select(everything())
 
 #### End ####
@@ -410,31 +408,24 @@ aau.prep = aau.prep %>% dplyr::select(everything())
 #### creating prep dataset ####
 prep = data[,which(grepl('prep', colnames(data)))]
 
-prep = cbind(data$ws, data$Position,
-             data$Position.Basic, data$Height,
-             data$g, 
+prep = cbind(data$ows, 
+             data$Position.Basic, 
              prep)
-colnames(prep)[1:5] = c('ws', 'Position', 'Position.Basic', 'Height',
-                        'g')
-
+colnames(prep)[1:2] = c('ows','Position.Basic')
 
 prep = prep[complete.cases(prep),]
 
 
-prep.win.shares = prep$ws
-
-prep.games = prep$g
+prep.win.shares = prep$ows
 
 
-prep = prep %>% dplyr::select(ws,
-                              Points.prep,
-                              Blocks.prep,
-                              Steals.prep,
-                              Turnovers.prep,
-                              GamesPlayed.prep,
-                              Position,
-                              Position.Basic,
-                              Height)
+
+# prep = prep %>% dplyr::select(ows,
+#                               Points.prep,
+#                               Blocks.prep,
+#                               Steals.prep,
+#                               GamesPlayed.prep,
+#                               Position.Basic)
 
 prep.scat.data = prep %>% dplyr::select(-Position.Basic)
 
@@ -445,36 +436,28 @@ prep.scat.data = prep %>% dplyr::select(-Position.Basic)
 aau = data[,which(grepl('aau', colnames(data)))]
 
 
-aau = cbind(data$ws,
-            data$Position, data$Position.Basic, data$Height,
-            data$g,
+aau = cbind(data$ows,data$Position.Basic,
             aau)
 
-colnames(aau)[1:5] = c('ws', 'Position', 'Position.Basic', 'Height',
-                       'g')
+colnames(aau)[1:2] = c('ows', 'Position.Basic')
 
 
 aau = aau[complete.cases(aau),]
 
-aau.win.shares = aau$ws
-
-aau.games = aau$g
+aau.win.shares = aau$ows
 
 
 
 
-aau = aau %>% dplyr::select(ws,
-                            Points.aau,
-                            Minutes.aau,
-                            Rebounds.aau,
-                            Blocks.aau,
-                            Steals.aau,
-                            Turnovers.aau,
-                            GamesPlayed.aau,
-                            Position,
-                            Position.Basic,
-                            Height
-)
+
+# aau = aau %>% dplyr::select(ows,
+#                             Points.aau,
+#                             Minutes.aau,
+#                             Rebounds.aau,
+#                             Blocks.aau,
+#                             Steals.aau,
+#                             GamesPlayed.aau,
+#                             Position.Basic)
 
 aau.scat.data = aau %>% dplyr::select(-Position.Basic)
 

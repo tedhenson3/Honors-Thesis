@@ -1,24 +1,15 @@
 
 
-load("~/Honors Thesis/Model Environments/All Predictions (complete players dws).RData")
-espn.predictions = data.frame(lm = 
-                            loocv.stacked.modeler(preds = data.frame(espn.ows.predictions$lm,
-                                                                espn.dws.predictions$lm),
-                                                         espn.win.shares),
+#load("~/Honors Thesis/Model Environments/All Predictions (complete players dws).RData")
+espn.predictions = data.frame(pls = NA,
                             
                               lasso = 
               loocv.stacked.modeler(preds = data.frame(espn.ows.predictions$lasso,
                                                  espn.dws.predictions$lasso),
                                                       espn.win.shares),
-             ridge = 
-                loocv.stacked.modeler(preds = data.frame(espn.ows.predictions$ridge,
-                                                         espn.dws.predictions$ridge),
-                                      espn.win.shares),
+             ridge = NA,
              
-             rf = 
-               loocv.stacked.modeler(preds = data.frame(espn.ows.predictions$rf,
-                                                        espn.dws.predictions$rf),
-                                     espn.win.shares),
+             rf = NA,
                               earth = 
                                 loocv.stacked.modeler(preds = data.frame(espn.ows.predictions$earth,
                                                                     espn.dws.predictions$earth),
@@ -36,9 +27,9 @@ espn.predictions = data.frame(lm =
                                                               espn.win.shares))
 
 
-prep.predictions = data.frame(lm = 
-                                loocv.stacked.modeler(preds = data.frame(prep.ows.predictions$lm,
-                                                                    prep.dws.predictions$lm),
+prep.predictions = data.frame(pls = 
+                                loocv.stacked.modeler(preds = data.frame(prep.ows.predictions$pls,
+                                                                    prep.dws.predictions$pls),
                                                       prep.win.shares),
                               lasso = 
                                 loocv.stacked.modeler(preds = data.frame(prep.ows.predictions$lasso,
@@ -68,9 +59,9 @@ prep.predictions = data.frame(lm =
                               stacked = loocv.stacked.modeler(preds = data.frame(prep.ows.predictions$stacked,
                                                                             prep.dws.predictions$stacked),
                                                               prep.win.shares))
-aau.predictions = data.frame(lm = 
-                               loocv.stacked.modeler(preds = data.frame(aau.ows.predictions$lm,
-                                                                   aau.dws.predictions$lm),
+aau.predictions = data.frame(pls = 
+                               loocv.stacked.modeler(preds = data.frame(aau.ows.predictions$pls,
+                                                                   aau.dws.predictions$pls),
                                                      aau.win.shares),
                              lasso = 
                                loocv.stacked.modeler(preds = data.frame(aau.ows.predictions$lasso,
@@ -103,9 +94,9 @@ aau.predictions = data.frame(lm =
                                                                            aau.dws.predictions$stacked),
                                                              aau.win.shares))
 
-full.predictions = data.frame(lm = 
-                                loocv.stacked.modeler(preds = data.frame(full.ows.predictions$lm,
-                                                                    full.dws.predictions$lm),
+full.predictions = data.frame(pls = 
+                                loocv.stacked.modeler(preds = data.frame(full.ows.predictions$pls,
+                                                                    full.dws.predictions$pls),
                                                       full.win.shares),
                               lasso = 
                                 loocv.stacked.modeler(preds = data.frame(full.ows.predictions$lasso,
@@ -136,9 +127,9 @@ full.predictions = data.frame(lm =
                               stacked = loocv.stacked.modeler(preds = data.frame(full.ows.predictions$stacked,
                                                                             full.dws.predictions$stacked),
                                                               full.win.shares))
-aau.espn.predictions = data.frame(lm = 
-                                    loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$lm,
-                                                                        aau.espn.dws.predictions$lm),
+aau.espn.predictions = data.frame(pls = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$pls,
+                                                                        aau.espn.dws.predictions$pls),
                                                           aau.espn.win.shares),
                                   lasso = 
                                     loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$lasso,
@@ -169,9 +160,9 @@ aau.espn.predictions = data.frame(lm =
                                   stacked = loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$stacked,
                                                                                 aau.espn.dws.predictions$stacked),
                                                                   aau.espn.win.shares))
-prep.espn.predictions = data.frame(lm = 
-                                     loocv.stacked.modeler(preds = data.frame(prep.espn.ows.predictions$lm,
-                                                                         prep.espn.dws.predictions$lm),
+prep.espn.predictions = data.frame(pls = 
+                                     loocv.stacked.modeler(preds = data.frame(prep.espn.ows.predictions$pls,
+                                                                         prep.espn.dws.predictions$pls),
                                                            prep.espn.win.shares),
                                    lasso = 
                                      loocv.stacked.modeler(preds = data.frame(prep.espn.ows.predictions$lasso,
@@ -202,9 +193,9 @@ prep.espn.predictions = data.frame(lm =
                                    stacked = loocv.stacked.modeler(preds = data.frame(prep.espn.ows.predictions$stacked,
                                                                                  prep.espn.dws.predictions$stacked),
                                                                    prep.espn.win.shares))
-aau.espn.predictions = data.frame(lm = 
-                                    loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$lm,
-                                                                        aau.espn.dws.predictions$lm),
+aau.espn.predictions = data.frame(pls = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$pls,
+                                                                        aau.espn.dws.predictions$pls),
                                                           aau.espn.win.shares),
                                   lasso = 
                                     loocv.stacked.modeler(preds = data.frame(aau.espn.ows.predictions$lasso,
@@ -238,17 +229,54 @@ aau.espn.predictions = data.frame(lm =
                                                                   aau.espn.win.shares))
 
 
+aau.prep.predictions = data.frame(pls = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$pls,
+                                                                             aau.prep.dws.predictions$pls),
+                                                          aau.prep.win.shares),
+                                  lasso = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$lasso,
+                                                                             aau.prep.dws.predictions$lasso),
+                                                          aau.prep.win.shares),
+                                  
+                                  
+                                  ridge = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$ridge,
+                                                                             aau.prep.dws.predictions$ridge),
+                                                          aau.prep.win.shares),
+                                  
+                                  rf = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$rf,
+                                                                             aau.prep.dws.predictions$rf),
+                                                          aau.prep.win.shares),
+                                  earth = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$earth,
+                                                                             aau.prep.dws.predictions$earth),
+                                                          aau.prep.win.shares),
+                                  svm.radial = 
+                                    loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$svm.radial,
+                                                                             aau.prep.dws.predictions$svm.radial),
+                                                          aau.prep.win.shares),
+                                  
+                                  xgbDART = loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$xgbDART,
+                                                                                     aau.prep.dws.predictions$xgbDART),
+                                                                  aau.prep.win.shares),
+                                  stacked = loocv.stacked.modeler(preds = data.frame(aau.prep.ows.predictions$stacked,
+                                                                                     aau.prep.dws.predictions$stacked),
+                                                                  aau.prep.win.shares))
 
-espn.errors = data.frame(lm = espn.win.shares - espn.predictions$lm,
+
+
+
+espn.errors = data.frame(pls = NA,
                          lasso = espn.win.shares - espn.predictions$lasso,
-                         ridge = espn.win.shares - espn.predictions$ridge,
-                         rf = espn.win.shares - espn.predictions$rf,
+                         ridge = NA,
+                         rf = NA,
                          earth = espn.win.shares - espn.predictions$earth,
                          svm.radial = espn.win.shares - espn.predictions$svm,
                          xgbDART = espn.win.shares - espn.predictions$xgbDART,
                          stacked = espn.win.shares - espn.predictions$stacked)
 
-prep.errors = data.frame(lm = prep.win.shares - prep.predictions$lm,
+prep.errors = data.frame(pls = prep.win.shares - prep.predictions$pls,
                          lasso = prep.win.shares - prep.predictions$lasso,
                          ridge = prep.win.shares - prep.predictions$ridge,
                          rf = prep.win.shares - prep.predictions$rf,
@@ -258,7 +286,7 @@ prep.errors = data.frame(lm = prep.win.shares - prep.predictions$lm,
                          stacked = prep.win.shares - prep.predictions$stacked)
 
 
-aau.errors = data.frame(lm = aau.win.shares - aau.predictions$lm,
+aau.errors = data.frame(pls = aau.win.shares - aau.predictions$pls,
                         lasso = aau.win.shares - aau.predictions$lasso,
                         ridge = aau.win.shares - aau.predictions$ridge,
                         rf = aau.win.shares - aau.predictions$rf,
@@ -267,7 +295,7 @@ aau.errors = data.frame(lm = aau.win.shares - aau.predictions$lm,
                         xgbDART = aau.win.shares - aau.predictions$xgbDART,
                         stacked = aau.win.shares - aau.predictions$stacked)
 
-full.errors = data.frame(lm = full.win.shares - full.predictions$lm,
+full.errors = data.frame(pls = full.win.shares - full.predictions$pls,
                          lasso = full.win.shares - full.predictions$lasso,
                          ridge = full.win.shares - full.predictions$ridge,
                          rf = full.win.shares - full.predictions$rf,
@@ -276,7 +304,7 @@ full.errors = data.frame(lm = full.win.shares - full.predictions$lm,
                          xgbDART = full.win.shares - full.predictions$xgbDART,
                          stacked = full.win.shares - full.predictions$stacked)
 
-aau.espn.errors = data.frame(lm = aau.espn.win.shares - aau.espn.predictions$lm,
+aau.espn.errors = data.frame(pls = aau.espn.win.shares - aau.espn.predictions$pls,
                              lasso = aau.espn.win.shares - aau.espn.predictions$lasso,
                              ridge = aau.espn.win.shares - aau.espn.predictions$ridge,
                              rf = aau.espn.win.shares - aau.espn.predictions$rf,
@@ -285,7 +313,7 @@ aau.espn.errors = data.frame(lm = aau.espn.win.shares - aau.espn.predictions$lm,
                              xgbDART = aau.espn.win.shares - aau.espn.predictions$xgbDART,
                              stacked = aau.espn.win.shares - aau.espn.predictions$stacked)
 
-prep.espn.errors = data.frame(lm = prep.espn.win.shares - prep.espn.predictions$lm,
+prep.espn.errors = data.frame(pls = prep.espn.win.shares - prep.espn.predictions$pls,
                               lasso = prep.espn.win.shares - prep.espn.predictions$lasso,
                               ridge = prep.espn.win.shares - prep.espn.predictions$ridge,
                               rf = prep.espn.win.shares - prep.espn.predictions$rf,
@@ -296,7 +324,7 @@ prep.espn.errors = data.frame(lm = prep.espn.win.shares - prep.espn.predictions$
 
 
 
-aau.prep.errors = data.frame(lm = aau.prep.win.shares - aau.prep.predictions$lm,
+aau.prep.errors = data.frame(pls = aau.prep.win.shares - aau.prep.predictions$pls,
                              lasso = aau.prep.win.shares - aau.prep.predictions$lasso,
                              ridge = aau.prep.win.shares - aau.prep.predictions$ridge,
                              rf = aau.prep.win.shares - aau.prep.predictions$rf,
@@ -309,16 +337,16 @@ aau.prep.errors = data.frame(lm = aau.prep.win.shares - aau.prep.predictions$lm,
 
 
 
-espn.rmse = data.frame(lm = sqrt(mean((espn.errors$lm)^2)), 
+espn.rmse = data.frame(pls = NA, 
                        lasso = sqrt(mean((espn.errors$lasso)^2)),
-                       ridge = sqrt(mean((espn.errors$ridge)^2)),
-                       rf = sqrt(mean((espn.errors$rf)^2)),
+                       ridge = NA,
+                       rf = NA,
                        earth = sqrt(mean((espn.errors$earth)^2)),
                        svm.radial = sqrt(mean((espn.errors$svm.radial)^2)),
                        xgbDART = sqrt(mean((espn.errors$xgbDART)^2)),
                        stacked = sqrt(mean((espn.errors$stacked)^2)))
 
-prep.rmse = data.frame(lm = sqrt(mean((prep.errors$lm)^2)), 
+prep.rmse = data.frame(pls = sqrt(mean((prep.errors$pls)^2)), 
                        lasso = sqrt(mean((prep.errors$lasso)^2)),
                        ridge = sqrt(mean((prep.errors$ridge)^2)),
                        rf = sqrt(mean((prep.errors$rf)^2)),
@@ -328,7 +356,7 @@ prep.rmse = data.frame(lm = sqrt(mean((prep.errors$lm)^2)),
                        stacked = sqrt(mean((prep.errors$stacked)^2)))
 
 
-aau.rmse = data.frame(lm = sqrt(mean((aau.errors$lm)^2)), 
+aau.rmse = data.frame(pls = sqrt(mean((aau.errors$pls)^2)), 
                       lasso = sqrt(mean((aau.errors$lasso)^2)),
                       ridge = sqrt(mean((aau.errors$ridge)^2)),
                       rf = sqrt(mean((aau.errors$rf)^2)),
@@ -338,7 +366,7 @@ aau.rmse = data.frame(lm = sqrt(mean((aau.errors$lm)^2)),
                       stacked = sqrt(mean((aau.errors$stacked)^2)))
 
 
-full.rmse = data.frame(lm = sqrt(mean((full.errors$lm)^2)), 
+full.rmse = data.frame(pls = sqrt(mean((full.errors$pls)^2)), 
                        lasso = sqrt(mean((full.errors$lasso)^2)),
                        ridge = sqrt(mean((full.errors$ridge)^2)),
                        rf = sqrt(mean((full.errors$rf)^2)),
@@ -349,7 +377,7 @@ full.rmse = data.frame(lm = sqrt(mean((full.errors$lm)^2)),
 
 
 
-aau.espn.rmse = data.frame(lm = sqrt(mean((aau.espn.errors$lm)^2)), 
+aau.espn.rmse = data.frame(pls = sqrt(mean((aau.espn.errors$pls)^2)), 
                            lasso = sqrt(mean((aau.espn.errors$lasso)^2)),
                            ridge = sqrt(mean((aau.espn.errors$ridge)^2)),
                            rf = sqrt(mean((aau.espn.errors$rf)^2)),
@@ -359,7 +387,7 @@ aau.espn.rmse = data.frame(lm = sqrt(mean((aau.espn.errors$lm)^2)),
                            stacked = sqrt(mean((aau.espn.errors$stacked)^2)))
 
 
-prep.espn.rmse = data.frame(lm = sqrt(mean((prep.espn.errors$lm)^2)), 
+prep.espn.rmse = data.frame(pls = sqrt(mean((prep.espn.errors$pls)^2)), 
                             lasso = sqrt(mean((prep.espn.errors$lasso)^2)),
                             ridge = sqrt(mean((prep.espn.errors$ridge)^2)),
                             rf = sqrt(mean((prep.espn.errors$rf)^2)),
@@ -369,7 +397,7 @@ prep.espn.rmse = data.frame(lm = sqrt(mean((prep.espn.errors$lm)^2)),
                             stacked = sqrt(mean((prep.espn.errors$stacked)^2)))
 
 
-aau.prep.rmse = data.frame(lm = sqrt(mean((aau.prep.errors$lm)^2)), 
+aau.prep.rmse = data.frame(pls = sqrt(mean((aau.prep.errors$pls)^2)), 
                            lasso = sqrt(mean((aau.prep.errors$lasso)^2)),
                            ridge = sqrt(mean((aau.prep.errors$ridge)^2)),
                            rf = sqrt(mean((aau.prep.errors$rf)^2)),
@@ -406,7 +434,10 @@ colnames(final.rmse) = rmse.col.names
 
 final.rmse
 
+save.image("~/Honors Thesis/Model Environments/All Predictions regressed ows+dws.RData")
+
+
 write.csv(final.rmse,
-          file = '~/Honors Thesis/Predictions/All RMSEs (complete players ows+dws regressed).csv')
+          file = '~/Honors Thesis/Predictions/All RMSEs (less vars more folds ows+dws regressed).csv')
 
 

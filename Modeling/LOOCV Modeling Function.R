@@ -2,11 +2,11 @@
 #### Define function and standard arguments ####
 loocv.modeler = function(data = full, 
                          model = 'lm'){
-
+colnames(data)[1] = 'ws'
 
 #### load packages for built in models ####
 library(glmnet)
-#### End ####
+#### End ####z
   
 #### Grab number of obs ####
 num.obs = nrow(data)
@@ -52,7 +52,7 @@ if(model == 'lasso'){
   
 lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                    data[,1],
-                   nfolds = 5,
+                   nfolds =10,
                    type.measure = "mse",
                    alpha = 1,
                    family = 'gaussian')
@@ -75,7 +75,7 @@ if(model == 'ridge'){
 
 ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       data[,1],
-                      nfolds = 5,
+                      nfolds =10,
                       type.measure = "mse",
                       alpha = 0,
                       family = 'gaussian')
@@ -93,7 +93,7 @@ if(model == 'rf'){
   
   bestmtry <- randomForest::tuneRF(x = data[,2:ncol(data)],
                      y = data$ws, 
-                     stepFactor=1.5, ntree=1000)
+                     stepFactor=1.5, ntree=200)
   #print(bestmtry)
   
   optim.num.predictors = as.numeric(bestmtry[which.min(bestmtry[,2]), 1])
@@ -127,7 +127,7 @@ if(model == 'pls'){
   if(ncol(data) > 2){
   library(plsr)
   resample.method <- trainControl(method = "cv",
-                                  number = 5)
+                                  number =10)
   library(caret)
   library(mlr)
   
@@ -151,7 +151,7 @@ if(model == 'pls'){
 
 if(model == 'xgbDART1'){
   resample.method <- trainControl(method = "cv",
-                                  number = 5)
+                                  number =10)
   library(caret)
   best.xgboost <- caret::train(form = formula,
                                data = data,
@@ -190,7 +190,7 @@ if(model == 'xgbDART1'){
 if(model == 'earth'){
   library(caret)
   resample.method <- trainControl(method = "cv",
-                                  number = 5)
+                                  number =10)
   library(caret)
   best.earth <- caret::train(form = formula,
                                data = data,
@@ -307,7 +307,7 @@ predictions = c(predictions, data.pred)
     
     train.fit = randomForest(formula = formula,
               data= train.data,
-              ntree = 500,
+              ntree = 200,
               mtry = optim.num.predictors
                )
     data.pred=predict(train.fit, test.data)
@@ -336,7 +336,7 @@ predictions = c(predictions, data.pred)
                           label = train.data[,1],
                         #param = params,
                         verbose = 0,
-                        nrounds = 100
+                        nrounds = 200
                             #opt.nrounds
     )
     data.pred=predict(train.fit, as.matrix(test.data[,2:ncol(test.data)]))

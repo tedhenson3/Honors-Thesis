@@ -120,13 +120,14 @@ games.played.aau = data$total.games.aau
 data = data[,-c(which(grepl('total.', colnames(data))))]
 
 
-data = data %>% dplyr::select(-pf.aau,
+data = data %>% dplyr::select(
+                              -pf.aau,
                               -to.aau,
                               -given.pts.aau,
                               -threep.made.aau,
-                              -max.pts.aau
-                              # -ft.made.aau,
-                              # -fg.made.aau
+                              -max.pts.aau,
+                              -ft.made.aau,
+                              -fg.made.aau
                               )
 # ggplot(data, aes(, ws)) + 
 #   #facet_grid(Position ~ .) + 
@@ -147,13 +148,14 @@ scat.data = data %>% dplyr::select(`FT%.prep`,
 data = data %>% dplyr::select(-`FT%.prep`,
                               -`3P%.prep`,
                               -fg.prep,
-                              -HIGH.prep,
-                              # -tov.prep,
-                              # -apg.prep,
-                              # -spg.prep,
-                              # -blk.prep,
+                               -HIGH.prep,
+                              -tov.prep,
+                              -apg.prep,
+                               -spg.prep,
+                              -blk.prep,
                               -mpg.prep,
-                              -reb.prep)
+                              -reb.prep
+                              )
 
 #getting rid of max pts variable
 # data = data %>% dplyr::select(-HIGH.prep,
@@ -171,10 +173,10 @@ data$GamesPlayed.aau = games.played.aau
 
 #colnames(data)[colnames(data)=="fixed.height"] <- "Height"
 
-ggplot(data, aes(x = spg.prep, y = ws, colour = Position)) +
-  geom_point() +
-  facet_grid(Position ~ .) +
-  geom_smooth()
+# ggplot(data, aes(x = spg.prep, y = ws, colour = Position)) +
+#   geom_point() +
+#   facet_grid(Position ~ .) +
+#   geom_smooth()
 data = data[complete.cases(data),]
 
 

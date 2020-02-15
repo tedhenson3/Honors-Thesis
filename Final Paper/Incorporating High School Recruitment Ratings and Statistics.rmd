@@ -99,14 +99,14 @@ where
 # Results
 ## Leave One Out Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
-rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (complete players more covariates).csv")
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (raw ws).csv")
 #colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
 ```
 `r pander(rmse.table)`
 ## Leave One Out Offensive + Defensive Win Share RMSEs
 ```{r, echo = F, eval = T, include=F}
-rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (complete players ows+dws regressed).csv")
+rmse.table = read_csv("~/Honors Thesis/Predictions/All RMSEs (ows+dws).csv")
 #colnames(rmse.table)[1] = 'Model'
 rmse.table[,2:ncol(rmse.table)] = round(rmse.table[,2:ncol(rmse.table)], 2)
 ```

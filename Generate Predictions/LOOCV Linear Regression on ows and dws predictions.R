@@ -1,6 +1,8 @@
 
 
-#load("~/Honors Thesis/Model Environments/All Predictions (complete players dws).RData")
+load("~/Honors Thesis/Model Environments/All Predictions ows and dws.RData")
+source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
+
 espn.predictions = data.frame(pls = NA,
                             
                               lasso = 
@@ -434,10 +436,10 @@ colnames(final.rmse) = rmse.col.names
 
 final.rmse
 
-save.image("~/Honors Thesis/Model Environments/All Predictions regressed ows+dws.RData")
+save.image("~/Honors Thesis/Model Environments/All Predictions (ows+dws regressed).RData")
 
 
 write.csv(final.rmse,
-          file = '~/Honors Thesis/Predictions/All RMSEs (less vars more folds ows+dws regressed).csv')
+          file = '~/Honors Thesis/Predictions/All RMSEs (ows+dws regressed).csv')
 
 

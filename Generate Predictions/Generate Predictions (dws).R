@@ -402,5 +402,5 @@ aau.prep.dws.predictions = data.frame(pls = aau.prep.pred.pls,
                                       stacked = aau.prep.pred.stacked
 )
 
-save.image("~/Honors Thesis/Model Environments/All Predictions ows.RData")
+save.image("~/Honors Thesis/Model Environments/All Predictions ows and dws.RData")
 

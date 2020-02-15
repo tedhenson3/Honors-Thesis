@@ -628,9 +628,9 @@ colnames(final.rmse) = rmse.col.names
 final.rmse
 
 
-save.image("~/Honors Thesis/Model Environments/All Predictions (complete players more vars more folds).RData")
+save.image("~/Honors Thesis/Model Environments/All Predictions (raw ws).RData")
 
 write.csv(final.rmse,
-          file = '~/Honors Thesis/Predictions/All RMSEs (complete players more vars more folds).csv')
+          file = '~/Honors Thesis/Predictions/All RMSEs (raw ws).csv')
 
 

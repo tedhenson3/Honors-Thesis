@@ -52,7 +52,7 @@ if(model == 'lasso'){
   
 lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                    data[,1],
-                   nfolds =10,
+                   nfolds =5,
                    type.measure = "mse",
                    alpha = 1,
                    family = 'gaussian')
@@ -75,7 +75,7 @@ if(model == 'ridge'){
 
 ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       data[,1],
-                      nfolds =10,
+                      nfolds =5,
                       type.measure = "mse",
                       alpha = 0,
                       family = 'gaussian')
@@ -127,7 +127,7 @@ if(model == 'pls'){
   if(ncol(data) > 2){
   library(plsr)
   resample.method <- trainControl(method = "cv",
-                                  number =10)
+                                  number =5)
   library(caret)
   library(mlr)
   
@@ -151,7 +151,7 @@ if(model == 'pls'){
 
 if(model == 'xgbDART1'){
   resample.method <- trainControl(method = "cv",
-                                  number =10)
+                                  number =5)
   library(caret)
   best.xgboost <- caret::train(form = formula,
                                data = data,
@@ -190,7 +190,7 @@ if(model == 'xgbDART1'){
 if(model == 'earth'){
   library(caret)
   resample.method <- trainControl(method = "cv",
-                                  number =10)
+                                  number =5)
   library(caret)
   best.earth <- caret::train(form = formula,
                                data = data,
@@ -227,7 +227,19 @@ for(j in 1:num.obs){
   
   #### create X / y without factors ####
   #### End ####
-  
+  if(model == 'bayesglm'){
+    library(caret)
+    train.fit = caret::train(form = formula,
+                      data= train.data,
+                      method = 'bayesglm',
+                      metric = 'RMSE',
+                      maximize = F)
+    
+    data.pred=as.numeric(predict(train.fit, test.data))
+    predictions = c(predictions, data.pred)
+    
+    
+  }
   
   
   if(model == 'nnet'){
@@ -368,8 +380,8 @@ predictions = c(predictions, data.pred)
 
   
 }
-
 #### End ####
+#save.image(paste("~/Honors Thesis/Model Environments/", model, " nvar ",  ncol(data), " important vars ", ".RData", sep = ""))
 
 return(predictions)
 }

@@ -2,6 +2,14 @@
 #### Define function and standard arguments ####
 loocv.modeler = function(data = full, 
                          model = 'lm'){
+
+# if("espn.rating" %in% colnames(data)){
+#   data$espn.logged = log(data$espn.rating)
+#   print(data$espn.logged)
+# }
+group = data$dataset[1]
+
+data = data %>% dplyr::select(-dataset)
 colnames(data)[1] = 'ws'
 
 #### load packages for built in models ####
@@ -240,6 +248,38 @@ for(j in 1:num.obs){
     
     
   }
+  if(model == 'brnn'){
+    library(caret)
+
+    train.fit = caret::train(form = formula,
+                             data= train.data,
+                             method = 'brnn',
+                             verbose = F,
+                             metric = 'RMSE',
+                             maximize = F)
+    
+    data.pred=as.numeric(predict(train.fit, test.data))
+    predictions = c(predictions, data.pred)
+    
+    
+  }
+  
+  
+  if(model == 'bartMachine'){
+    library(caret)
+    options(java.parameters = "-Xmx2500m")
+    
+    train.fit = caret::train(form = formula,
+                             data= train.data,
+                             method = 'bartMachine',
+                             metric = 'RMSE',
+                             maximize = F)
+    
+    data.pred=as.numeric(predict(train.fit, test.data))
+    predictions = c(predictions, data.pred)
+    
+    
+  }
   
   
   if(model == 'nnet'){
@@ -251,6 +291,7 @@ for(j in 1:num.obs){
                    train.y,
                    linout = T,
                    trace = F,
+                   allowParallel = TRUE,
                    size = hidden.layers)
 
   data.pred=predict(train.fit, test.X)
@@ -377,11 +418,13 @@ predictions = c(predictions, data.pred)
     predictions = c(predictions, data.pred)
   }
   
-
-  
+# if(j == 18){
+# 
+# 
+#   save(train.fit, file = paste("~/Honors Thesis/Model Environments/", model, ' ', group, ".RData", sep = ""))
+# }
 }
 #### End ####
-#save.image(paste("~/Honors Thesis/Model Environments/", model, " nvar ",  ncol(data), " important vars ", ".RData", sep = ""))
 
 return(predictions)
 }

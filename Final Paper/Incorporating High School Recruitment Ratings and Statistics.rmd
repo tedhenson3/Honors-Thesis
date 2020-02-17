@@ -115,7 +115,14 @@ colnames(rmse.table)[1] = 'Method'
 ```
 `r pander(rmse.table)`
 
-## Important Variables
+# Important Variables
+## Full Model Ridge Regression Coefficients
+```{r, echo = F, eval = T, include=F}
+# load(paste("~/Honors Thesis/Model Environments/", "ridge", ' ', 'full', ".RData", sep = ""))
+# print(coefficients(train.fit))
+
+```
+
 # Conclusion
 
 # Appendix

@@ -81,7 +81,6 @@ data.ws = data
 
 #getting rid of some bio stuff
 data = data %>% ungroup() %>% dplyr::select(-ows,
-                                            -Season,
                                             -g,
                               -Weight,
                               -fixed.height,
@@ -335,6 +334,7 @@ data = data %>% dplyr::select(-Position)
 #### Creating ESPN dataset ####
 
 espn = data %>% dplyr::select(ws,
+                              Season,
                               espn.rating)
 
 espn = espn[complete.cases(espn),]

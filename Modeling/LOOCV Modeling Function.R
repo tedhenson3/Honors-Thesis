@@ -195,7 +195,7 @@ if(model == 'xgbDART1'){
 }
 
 
-if(model == 'earth'){
+if(model == 'earth1'){
   library(caret)
   resample.method <- trainControl(method = "cv",
                                   number =5)
@@ -254,7 +254,7 @@ for(j in 1:num.obs){
     train.fit = caret::train(form = formula,
                              data= train.data,
                              method = 'brnn',
-                             verbose = F,
+                             #verbose = F,
                              metric = 'RMSE',
                              maximize = F)
     
@@ -264,6 +264,22 @@ for(j in 1:num.obs){
     
   }
   
+  
+  if(model == 'enet'){
+    library(caret)
+    
+    train.fit = caret::train(form = formula,
+                             data= train.data,
+                             method = 'enet',
+                             #verbose = F,
+                             metric = 'RMSE',
+                             maximize = F)
+    
+    data.pred=as.numeric(predict(train.fit, test.data))
+    predictions = c(predictions, data.pred)
+    
+    
+  }
   
   if(model == 'bartMachine'){
     library(caret)
@@ -399,7 +415,7 @@ predictions = c(predictions, data.pred)
   }
   # 
   if(model == 'earth'){
-    library(caret)
+    library(earth)
     # train.fit = caret::train(form = formula,
     #                   data= train.data,
     #                   method = 'earth',
@@ -410,8 +426,7 @@ predictions = c(predictions, data.pred)
     # )
     train.fit = earth(formula = formula,
                       data= train.data,
-                      nprune = opt.nprune,
-                      degree = opt.degree
+                      degree = 2
     )
     
     data.pred=predict(train.fit, test.data)

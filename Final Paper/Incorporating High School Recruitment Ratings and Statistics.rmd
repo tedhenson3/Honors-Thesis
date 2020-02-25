@@ -70,10 +70,11 @@ source("~/Honors Thesis/Figure and Table Generators/Data Availability by Season.
 ```{r, echo = F, fig.align = 'center', out.height='80%', out.width='70%'}
 data.by.season
 ```
+  
   As shown by the graph above, in 2016, the data sources presented did not even exist. By 2019, most ESPN rated players had both AAU and Prep Circuit statistics. This includes players that are rated poorly. Additionally, by the time this project will complete, the 2019-2020 college basketball season will be over. Their data could be incorporated into the training set or held out as a test set. 
   As shown by the graph above, not every model can be considered on every player as not all players have all sources of information. Using all possible players unfairly favored ESPN models since their sample of players contains many players not talented enough to play in the competitive AAU Circuits or high profile high schools in Prep Circuit. Therefore, only player's with complete information will be considered. Additionally, since many player's only had partial Prep Circuit data, only points per game and the number of games was used in fitting. Other variables were used in some models, but the elimination of some players lacking say blocks per game increased the error rates. In total, there were 185 players used in the models.
   
-# Coaches
+# Game Plan
   In order to assess the predictive value of high school statistics, models will be constructed using all possible input combinations. The models are the following:
   
   \[M_{AAU}:  \hat{ws} = f_{AAU}(X_{AAU})+ \epsilon\]
@@ -91,19 +92,79 @@ where
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
 
-  All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. In order to speed up these computations, hyperparameters for some of the different methods were trained through 10 fold cross validation. These values were chosen based on the parameters yielding the smallest out of sample error. For example, in lasso regression, all models used the same optimal lambda value during the fitting process.
+  All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. In order to speed up these computations, hyperparameters for some of the different methods were trained through 10 fold cross validation. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyperparameters will be discussed briefly below
+
+\begin{itemize}
+\item Lasso
+\begin{itemize}
+\item Fits a standard linear regression, but shrinks the sum of the absolute value of the coefficients by a value lambda chosen through cross validation.
+\end{itemize}
+\item Ridge
+\begin{itemize}
+\item Fits a standard linear regression, but shrinks the sum of squares of the coefficients by a value lambda chosen through cross validation.
+\end{itemize}
+\item Partial Least Squares
+\begin{itemize}
+\item Decomposes the predictor matrix and its relation to the response vector into orthonormal vectors. A regression is then performed on these m components with m chosen through cross validation.
+\end{itemize}
+\item Earth
+\begin{itemize}
+\item Models non lineareaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the cutoff value for variable x. When x is below a, it is multiplied by a constant b1. When x is greater than a, it is  multiplied by a seperate constant b2, and is added to b1. The number of these hinge functions is controlled by a hyperparameter as is the degree (number of interactions and higher order terms).
+\end{itemize}
+\item Support Vector Machine
+\begin{itemize}
+\item Builds a hyperplane (a plane or line with dimension of our predictor matrix) that attempts to minize the distance from the response value. Rather than minimize the total sum of the epsilon's, the hyperplane is fit so that all epsilon's are less than a given cost value, C, found through cross validation. In this case, the non linear predictor space had a lower out of sample error.
+\end{itemize}
+\item Random Forest
+\begin{itemize}
+\item Builds n regression trees and creates a prediction based on the average of all of the trees. To reduce correlation between the trees, m random predictors are chosen to construct the tree. M is found through cross validation.
+\end{itemize}
+\item Gradient Boosted Trees
+\begin{itemize}
+\item Builds n "weak" regression trees and creates a prediction based on the average of all of the "weak" trees. The trees are pruned by cutting them at a specified "max depth" found through cross validation.
+\end{itemize}
+\item Stacked
+\begin{itemize}
+\item A full linear regression is performed on all prior predictions using leave one out cross validation.
+\end{itemize}
+\end{itemize}
   
-  In addition to predicting raw win shares, a seperate set of predictions were also generated by predicting a players offensive and defensive win shares seperately. The final predictions were a simple sum of these two quantities. Predictions were also generated using a weighted sum, but these were less accurate. Below are the tables of out of sample RMSE for the different input combinations.
 
 # Box Score
+  There were many variables to consider for these models. Many statistics in the prep dataset were not always valid values, and many in both high school datasets or were randomly inaccurate, leading to poor out of sample prediction. Methods were trained through many different combinations of the inputs. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown below.
+## Full Linear Regression
+```{r}
+source("~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R")
+full.2 = full %>% dplyr::select(-dataset)
+mod = lm(ws ~ ., data = full.2)
+summary(mod)
+```
+
+The most interesting result is that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are superteams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on thier school teams, leading to high and predictive Prep Circuit points per game. Although the full linear regression performed close to the other methods, it was the worst method across all input combinations. Therefore it will not be discussed in the final results. Below are the cross validated R^2s for the different input combinations and models.
+
 ## \[Leave\:One\:Out\:Win\:Shares\:R^2\]
 ```{r, echo = F, eval = T, include=F}
 r2.table = read_csv("~/Honors Thesis/Predictions/All R2 (raw ws 5 folds).csv")
-colnames(r2.table)[1] = 'Model'
 r2.table[,2:ncol(r2.table)] = round(r2.table[,2:ncol(r2.table)]*100, 1)
+paster = function(x){
+  return(paste(x, '%', sep = ''))
+  
+}
+r2.table[,2:ncol(r2.table)] = apply(X = r2.table[,2:ncol(r2.table)], MARGIN=2, FUN = paster)
 colnames(r2.table)[1] = 'Method'
+
 ```
-`r pander(r2.table)`
+`r pander(r2.table[,1:4])`
+`r pander(r2.table[,5:ncol(r2.table)])`
+
+
+# Linear Weights for Full Stacked Model
+```{r}
+load("~/Honors Thesis/Model Environments/All Predictions (raw ws 5 folds).RData")
+load("~/Honors Thesis/Model Environments/full stacked.RData")
+summary(mod)
+```
+
 
 # Last Take
 

@@ -60,7 +60,7 @@ if(model == 'lasso'){
   
 lasso.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                    data[,1],
-                   nfolds =5,
+                   nfolds =nrow(data),
                    type.measure = "mse",
                    alpha = 1,
                    family = 'gaussian')
@@ -83,15 +83,17 @@ if(model == 'ridge'){
 
 ridge.cv <- cv.glmnet(as.matrix(data[,2:ncol(data)]),
                       data[,1],
-                      nfolds =5,
+                      nfolds =nrow(data),
                       type.measure = "mse",
                       alpha = 0,
                       family = 'gaussian')
 min.ridge.lambda = ridge.cv$lambda.min
 
+  }
+  
 }
+  
 
-}
 #### End ####
 
 
@@ -117,6 +119,15 @@ if(model == 'svm'){
 }
 
 
+if(model == 'svmlinear'){
+  library(e1071)
+  svm_tune <- tune(svm, formula, data=data,kernel ="linear", 
+                   ranges = list(cost=c(0.001, 0.01,0.1, 1, 10, 100)))
+  
+  opt.c = summary(svm_tune)[[1]]
+}
+
+
 #### dummy vars for nnet ####
 
 if(model == 'nnet'){
@@ -134,8 +145,7 @@ if(model == 'nnet'){
 if(model == 'pls'){
   if(ncol(data) > 2){
   library(plsr)
-  resample.method <- trainControl(method = "cv",
-                                  number =5)
+  resample.method <- trainControl(method = "LOOCV")
   library(caret)
   library(mlr)
   
@@ -148,18 +158,37 @@ if(model == 'pls'){
                                method = "pls",
                                trControl = resample.method) 
   
-  #best.xgboost = best.xgboost[4]
-  
+
   best.pls = as.data.frame(best.pls$results)
-  #colnames(best.xgboost) = gsub('results.', '', best.xgboost)
   opt.ncomp = as.numeric(best.pls[which.min(best.pls$RMSE), 'ncomp'][1])
   }
 }
 
 
-if(model == 'xgbDART1'){
-  resample.method <- trainControl(method = "cv",
-                                  number =5)
+if(model == 'pcr'){
+  
+  if(ncol(data) > 2){
+    resample.method <- trainControl(method = "LOOCV")
+    library(caret)
+    library(mlr)
+    
+    data = createDummyFeatures(data, cols = c('Position.Basic'))
+    
+    best.pcr <- caret::train(form = formula,
+                             data = data,
+                             method = "pcr",
+                             trControl = resample.method) 
+    
+
+    best.pcr = as.data.frame(best.pcr$results)
+    opt.ncomp = as.numeric(best.pcr[which.min(best.pcr$RMSE), 'ncomp'][1])
+    opt.ncomp
+  
+  }
+}
+
+if(model == 'xgboost'){
+  resample.method <- trainControl(method = "LOOCV")
   library(caret)
   best.xgboost <- caret::train(form = formula,
                                data = data,
@@ -195,10 +224,9 @@ if(model == 'xgbDART1'){
 }
 
 
-if(model == 'earth1'){
+if(model == 'earth'){
   library(caret)
-  resample.method <- trainControl(method = "cv",
-                                  number =5)
+  resample.method <- trainControl(method = "LOOCV")
   library(caret)
   best.earth <- caret::train(form = formula,
                                data = data,
@@ -323,7 +351,15 @@ for(j in 1:num.obs){
     predictions = c(predictions, data.pred)
     
   }
-  
+  if(model == 'svmlinear'){
+    library(e1071)
+    train.fit = svm(formula, data = train.data,
+                    type = 'eps-regression',
+                    kernel = 'linear')
+    data.pred=predict(train.fit, test.data)
+    predictions = c(predictions, data.pred)
+    
+  }
   
   if(model == 'pls'){
 library(pls)
@@ -391,7 +427,30 @@ predictions = c(predictions, data.pred)
     predictions = c(predictions, data.pred)
   }
   
-  if(model == 'xgbDART'){
+  if(model == 'bayesglm'){
+    library(arm)
+    train.fit = bayesglm(formula = ws ~ .,
+                             data = train.data)
+    data.pred=predict(train.fit, test.data)
+    predictions = c(predictions, data.pred)
+  }
+  
+  
+  if(model == 'pcr'){
+    
+    train.fit = caret::train(form = formula,
+                             data= train.data,
+                             method = 'pcr',
+                             metric = 'RMSE',
+                             ncomp = opt.ncomp,
+                             maximize = F)
+    
+    data.pred=as.numeric(predict(train.fit, test.data))
+    predictions = c(predictions, data.pred)
+    
+  }
+  
+  if(model == 'xgboost'){
     library(mlr)
     library(xgboost)
     if(ncol(data) > 2){
@@ -421,13 +480,12 @@ predictions = c(predictions, data.pred)
     #                   method = 'earth',
     #                   metric = 'RMSE',
     #                   maximize = F,
-    #                   nprune = opt.nprune,
-    #                   degree = opt.degree
+    #                   
     # )
     train.fit = earth(formula = formula,
                       data= train.data,
-                      degree = 2
-    )
+                      nprune = opt.nprune,
+                      degree = opt.degree)
     
     data.pred=predict(train.fit, test.data)
     predictions = c(predictions, data.pred)

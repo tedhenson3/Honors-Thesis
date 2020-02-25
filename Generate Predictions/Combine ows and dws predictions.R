@@ -152,6 +152,76 @@ aau.prep.rmse = data.frame(pls = sqrt(mean((aau.prep.errors$pls)^2)),
                            stacked = sqrt(mean((aau.prep.errors$stacked)^2)))
 
 
+full.r2=  data.frame(pls = cor(x = full.win.shares, y =full.predictions$pls)^2, 
+                     lasso = cor(x = full.win.shares, y =full.predictions$lasso)^2,
+                     ridge = cor(x = full.win.shares, y =full.predictions$ridge)^2,
+                     rf = cor(x = full.win.shares, y =full.predictions$rf)^2,
+                     earth = cor(x = full.win.shares, y =full.predictions$earth)^2,
+                     svm.radial = cor(x = full.win.shares, y =full.predictions$svm.radial)^2,
+                     xgbDART = cor(x = full.win.shares, y =full.predictions$xgbDART)^2,
+                     stacked = cor(x = full.win.shares, y =full.predictions$stacked)^2)
+
+espn.r2=  data.frame(pls = cor(x = espn.win.shares, y =espn.predictions$pls)^2, 
+                     lasso = cor(x = espn.win.shares, y =espn.predictions$lasso)^2,
+                     ridge = cor(x = espn.win.shares, y =espn.predictions$ridge)^2,
+                     rf = cor(x = espn.win.shares, y =espn.predictions$rf)^2,
+                     earth = cor(x = espn.win.shares, y =espn.predictions$earth)^2,
+                     svm.radial = cor(x = espn.win.shares, y =espn.predictions$svm.radial)^2,
+                     xgbDART = cor(x = espn.win.shares, y =espn.predictions$xgbDART)^2,
+                     stacked = cor(x = espn.win.shares, y =espn.predictions$stacked)^2)
+
+
+prep.r2=  data.frame(pls = cor(x = prep.win.shares,y = prep.predictions$pls)^2, 
+                     lasso = cor(x = prep.win.shares, y =prep.predictions$lasso)^2,
+                     ridge = cor(x = prep.win.shares, y =prep.predictions$ridge)^2,
+                     rf = cor(x = prep.win.shares, y =prep.predictions$rf)^2,
+                     earth = cor(x = prep.win.shares, y =prep.predictions$earth)^2,
+                     svm.radial = cor(x = prep.win.shares, y =prep.predictions$svm.radial)^2,
+                     xgbDART = cor(x = prep.win.shares, y =prep.predictions$xgbDART)^2,
+                     stacked = cor(x = prep.win.shares, y =prep.predictions$stacked)^2)
+
+
+aau.r2=  data.frame(pls = cor(x = aau.win.shares, y =aau.predictions$pls)^2, 
+                    lasso = cor(x = aau.win.shares, y =aau.predictions$lasso)^2,
+                    ridge = cor(x = aau.win.shares, y =aau.predictions$ridge)^2,
+                    rf = cor(x = aau.win.shares, y =aau.predictions$rf)^2,
+                    earth = cor(x = aau.win.shares, y =aau.predictions$earth)^2,
+                    svm.radial = cor(x = aau.win.shares, y =aau.predictions$svm.radial)^2,
+                    xgbDART = cor(x = aau.win.shares, y =aau.predictions$xgbDART)^2,
+                    stacked = cor(x = aau.win.shares, y =aau.predictions$stacked)^2)
+
+
+
+aau.espn.r2=  data.frame(pls = cor(x = aau.espn.win.shares, y =aau.espn.predictions$pls)^2, 
+                         lasso = cor(x = aau.espn.win.shares, y =aau.espn.predictions$lasso)^2,
+                         ridge = cor(x = aau.espn.win.shares, y =aau.espn.predictions$ridge)^2,
+                         rf = cor(x = aau.espn.win.shares, y =aau.espn.predictions$rf)^2,
+                         earth = cor(x = aau.espn.win.shares, y =aau.espn.predictions$earth)^2,
+                         svm.radial = cor(x = aau.espn.win.shares, y =aau.espn.predictions$svm.radial)^2,
+                         xgbDART = cor(x = aau.espn.win.shares, y =aau.espn.predictions$xgbDART)^2,
+                         stacked = cor(x = aau.espn.win.shares, y =aau.espn.predictions$stacked)^2)
+
+
+prep.espn.r2=  data.frame(pls = cor(x = prep.espn.win.shares, y =prep.espn.predictions$pls)^2, 
+                          lasso = cor(x = prep.espn.win.shares, y =prep.espn.predictions$lasso)^2,
+                          ridge = cor(x = prep.espn.win.shares, y =prep.espn.predictions$ridge)^2,
+                          rf = cor(x = prep.espn.win.shares, y =prep.espn.predictions$rf)^2,
+                          earth = cor(x = prep.espn.win.shares, y =prep.espn.predictions$earth)^2,
+                          svm.radial = cor(x = prep.espn.win.shares, y =prep.espn.predictions$svm.radial)^2,
+                          xgbDART = cor(x = prep.espn.win.shares, y =prep.espn.predictions$xgbDART)^2,
+                          stacked = cor(x = prep.espn.win.shares, y =prep.espn.predictions$stacked)^2)
+
+
+aau.prep.r2=  data.frame(pls = cor(x = aau.prep.win.shares, y =aau.prep.predictions$pls)^2, 
+                         lasso = cor(x = aau.prep.win.shares, y =aau.prep.predictions$lasso)^2,
+                         ridge = cor(x = aau.prep.win.shares, y =aau.prep.predictions$ridge)^2,
+                         rf = cor(x = aau.prep.win.shares, y =aau.prep.predictions$rf)^2,
+                         earth = cor(x = aau.prep.win.shares, y =aau.prep.predictions$earth)^2,
+                         svm.radial = cor(x = aau.prep.win.shares, y =aau.prep.predictions$svm.radial)^2,
+                         xgbDART = cor(x = aau.prep.win.shares, y =aau.prep.predictions$xgbDART)^2,
+                         stacked = cor(x = aau.prep.win.shares, y =aau.prep.predictions$stacked)^2)
+
+
 final.rmse = cbind(t(espn.rmse), 
                    t(prep.rmse), 
                    t(aau.rmse), 
@@ -161,6 +231,18 @@ final.rmse = cbind(t(espn.rmse),
                    t(aau.prep.rmse))
 colnames(final.rmse) = c('espn', 'prep', 'aau', 'full', 'aau.espn', 
                          'prep.espn', 'aau.prep')
+
+
+
+final.r2 = cbind(t(espn.r2), 
+                 t(prep.r2), 
+                 t(aau.r2), 
+                 t(full.r2),
+                 t(aau.espn.r2),
+                 t(prep.espn.r2),
+                 t(aau.prep.r2))
+colnames(final.r2) = c('espn', 'prep', 'aau', 'full', 'aau.espn', 
+                       'prep.espn', 'aau.prep')
 
 n.espn = nrow(espn)
 n.prep = nrow(prep)
@@ -176,8 +258,18 @@ rmse.col.names = paste(colnames(final.rmse),' ',
                        'n=',n.vec, sep = '')
 
 colnames(final.rmse) = rmse.col.names
-
 final.rmse
+
+
+r2.col.names = paste(colnames(final.r2),' ',
+                     'n=',n.vec, sep = '')
+
+colnames(final.r2) = r2.col.names
+final.r2
+
+
+write.csv(final.r2,
+          file = '~/Honors Thesis/Predictions/All R2 (ows + dws 5 folds).csv')
 
 write.csv(final.rmse,
           file = '~/Honors Thesis/Predictions/All RMSEs (ows + dws).csv')

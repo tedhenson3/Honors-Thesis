@@ -24,9 +24,9 @@ source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
 # First Take
 
   The goal of this project is to predict collegiate win shares from ESPN recruiting ratings [1] and high school statistics provided by Prep Circuit [2] and AAUStats [3]. As it stands, there is little research on predicting individual players’ collegiate performance. In 2010, Jamie McNeilly used recruiting ranking quartiles to predict PER and other barometers of success [3]; however, the models presented did not consider high school statistics as an input, nor did they consider predicting win shares, which is a more authentic measurement of how a player contributes to overall team success as shown by basketball reference [5].  
-Accusations of many NCAA coaches paying high profile recruits hundreds of thousands of dollars to single recruits catalyized this analysis. If one player can cause decorated coaches to potentially resort to unethical methods, then programs should explore every possible avenue of predicting college performance, especially programs with smaller budgets and less recognition.  
+Accusations of many NCAA coaches paying high profile recruits hundreds of thousands of dollars to single recruits catalyzed this analysis. If one player can cause decorated coaches to potentially resort to unethical methods, then programs should explore every possible avenue of predicting college performance, especially programs with smaller budgets and less recognition.  
   In addition to benefiting collegiate programs, the methods in this paper could benefit NBA front office decision making. Some high-profile recruits have had mediocre freshman collegiate performances (Harry Giles), or hardly any at all (Michael Porter Jr., Thon Maker), and are still selected in the first round based on their high school evaluations. As NBA teams are investing millions of dollars on players with little to no collegiate data, the methods and data presented in this paper could be used to model NBA performance in conjunction with their collegiate performance.  
-  The model with the best out-of-sample error incorporating ESPN Ratings and the two sources of high school statistics. All other models had similar error rates. Future research adjusting for players’ strength of schedule and teamates could significantly improve the models presented in this paper. 
+  The model with the best out-of-sample error incorporating ESPN Ratings and the two sources of high school statistics. All other models had similar error rates. Future research adjusting for players’ strength of schedule and teammates could significantly improve the models presented in this paper. 
 
 # The Players 
 ## Basketball Reference
@@ -35,24 +35,24 @@ Accusations of many NCAA coaches paying high profile recruits hundreds of thousa
 knitr::include_graphics("ACC Basketball WS.png")
 ```
 
-  College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were ploted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the concencus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in our data.
+  College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were plotted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the concencus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in our data.
 ```{r, echo = F, eval = T, include=F}
 top.ws = data.ws %>% arrange(desc(ws)) %>% select(player.id, ws, Season)
 top.10.ws = top.ws[1:10,]
 ```
 `r pander(top.10.ws)`
-From a basketball perspective, these players had some of the best freshman seasons over the past few years. Zion in particular has been widely regarded as having the best season from a statistical and basketball perspective. This gives more confidence and validitiy to win shares as an overall barometer of success.
+From a basketball perspective, these players had some of the best freshman seasons over the past few years. Zion in particular has been widely regarded as having the best season from a statistical and basketball perspective. This gives more confidence and validity to win shares as an overall barometer of success.
 
 ## ESPN
   The ESPN data gathered contained players’ overall rating from 55 to 100. Only the classes from 2016 to 2018 were used in this analysis due to the lack of Prep Circuit data before the 2016 high school season. In terms of grabbing the basketball reference data, the ESPN data played a critical role. There was no feasible or swift way to accurately gather a high school player’s collegiate win shares without knowing where he went to college, which was not in the Prep Circuit or AAU data. Also gathered from ESPN were players' height, weight, and position. 
   
 ## Prep Circuit
   
-  The high school statistics gathered from Prep Circuit contained regular season averages and totals from box score statistics such as points, points per game, assists, etc. The data is fairly encompassing; however, there appear to be some inaccuracies in the data. For example, Lonzo Ball had 31 games where points were tracked, 4 games for minutes, 22 games for assists steals and turnovers, and 21 games for rebounds. One explanation is that Prep Circuit does not keep track of all statistics for every game. The other hypothesis was that if a player did not log a statistic in a given table, Prep Circuit did not count that towards your game total for that statistic. Upon futher inspection, it appeared that the most reliable statistics were the given per game statistics. 
+  The high school statistics gathered from Prep Circuit contained regular season averages and totals from box score statistics such as points, points per game, assists, etc. The data is fairly encompassing; however, there appear to be some inaccuracies in the data. For example, Lonzo Ball had 31 games where points were tracked, 4 games for minutes, 22 games for assists steals and turnovers, and 21 games for rebounds. One explanation is that Prep Circuit does not keep track of all statistics for every game. The other hypothesis was that if a player did not log a statistic in a given table, Prep Circuit did not count that towards your game total for that statistic. Upon further inspection, it appeared that the most reliable statistics were the given per game statistics. 
   
 ## AAUStats  
   
-  AAU data was gathered from aaustats.com [3]. This data contained box scores from Nike, Adidas, and Under Armour circuits from the 2017 to 2019 seasons. There is potential to create more advanced metrics with these box scores, or scaling based on the quality of a player's team or opponent; however, for this analysis, common per game box score statistics akin to Prep Circuit's data were created based on player's final season in all AAU circuits. 
+  AAU data was gathered from AAUStats.com [3]. This data contained box scores from Nike, Adidas, and Under Armour circuits from the 2017 to 2019 seasons. There is potential to create more advanced metrics with these box scores, or scaling based on the quality of a player's team or opponent; however, for this analysis, common per game box score statistics akin to Prep Circuit's data were created based on player's final season in all AAU circuits. 
   
   Prior analyses used k nearest neighbor imputation to deal with players missing a given statistic, such as rebounds in Prep Circuit. Below is a table of the number of Prep Circuit players that had points per game, but were missing another per game statistics.
 ```{r, echo = F, fig.align = 'center'}
@@ -92,7 +92,7 @@ where
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
 
-  All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. In order to speed up these computations, hyperparameters for some of the different methods were trained through 10 fold cross validation. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyperparameters will be discussed briefly below
+  All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. In order to speed up these computations, hyper parameters for some of the different methods were trained through 10 fold cross validation. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyper parameters will be discussed briefly below
 
 \begin{itemize}
 \item Lasso
@@ -103,17 +103,17 @@ where
 \begin{itemize}
 \item Fits a standard linear regression, but shrinks the sum of squares of the coefficients by a value lambda chosen through cross validation.
 \end{itemize}
-\item Partial Least Squares
+\item Averaged Neural Network
 \begin{itemize}
-\item Decomposes the predictor matrix and its relation to the response vector into orthonormal vectors. A regression is then performed on these m components with m chosen through cross validation.
+\item Assigns one or more linear weights to each of the variables depending on the number of input layers (number of variables). The hidden layers are comprised of a linear combination of the input variables. The number of hidden layers is somewhat arbitrarily chosen, in this case, 1/2 of the number of input layers. The final output is a linear combination of the hidden layers, and is then converted into a predicted value through some function, in this case a linear weight was chosen. 200 networks were constructed as such. The final prediction for a player was an average of all such networks. 
 \end{itemize}
 \item Earth
 \begin{itemize}
-\item Models non lineareaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the cutoff value for variable x. When x is below a, it is multiplied by a constant b1. When x is greater than a, it is  multiplied by a seperate constant b2, and is added to b1. The number of these hinge functions is controlled by a hyperparameter as is the degree (number of interactions and higher order terms).
+\item Models non lineareaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the cutoff value for variable x. When x is below a, it is multiplied by a constant b1. When x is greater than a, it is  multiplied by a separate constant b2, and is added to b1. The number of these hinge functions is controlled by a hyper parameter as is the degree (number of interactions and higher order terms).
 \end{itemize}
 \item Support Vector Machine
 \begin{itemize}
-\item Builds a hyperplane (a plane or line with dimension of our predictor matrix) that attempts to minize the distance from the response value. Rather than minimize the total sum of the epsilon's, the hyperplane is fit so that all epsilon's are less than a given cost value, C, found through cross validation. In this case, the non linear predictor space had a lower out of sample error.
+\item Builds a hyper plane (a plane or line with dimension of our predictor matrix) that attempts to minimize the distance from the response value. Rather than minimize the total sum of the epsilon's, the hyper plane is fit so that all epsilon's are less than a given cost value, C, found through cross validation. In this case, the non linear predictor space had a lower out of sample error.
 \end{itemize}
 \item Random Forest
 \begin{itemize}
@@ -131,7 +131,7 @@ where
   
 
 # Box Score
-  There were many variables to consider for these models. Many statistics in the prep dataset were not always valid values, and many in both high school datasets or were randomly inaccurate, leading to poor out of sample prediction. Methods were trained through many different combinations of the inputs. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown below.
+  There were many variables to consider for these models. Many statistics in the prep data set were not always valid values, and many in both high school data sets or were randomly inaccurate, leading to poor out of sample prediction. Methods were trained through many different combinations of the inputs. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown below.
 ## Full Linear Regression
 ```{r}
 source("~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R")
@@ -140,11 +140,11 @@ mod = lm(ws ~ ., data = full.2)
 summary(mod)
 ```
 
-The most interesting result is that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are superteams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on thier school teams, leading to high and predictive Prep Circuit points per game. Although the full linear regression performed close to the other methods, it was the worst method across all input combinations. Therefore it will not be discussed in the final results. Below are the cross validated R^2s for the different input combinations and models.
+The most interesting result is that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are super teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to high and predictive Prep Circuit points per game. Although the full linear regression performed close to the other methods, it was the worst method across all input combinations. Therefore it will not be discussed in the final results. Below are the cross validated R^2s for the different input combinations and models.
 
 ## \[Leave\:One\:Out\:Win\:Shares\:R^2\]
 ```{r, echo = F, eval = T, include=F}
-r2.table = read_csv("~/Honors Thesis/Predictions/All R2 (raw ws 5 folds).csv")
+r2.table = read_csv("~/Honors Thesis/Predictions/All R2 (raw ws LOOCV 3).csv")
 r2.table[,2:ncol(r2.table)] = round(r2.table[,2:ncol(r2.table)]*100, 1)
 paster = function(x){
   return(paste(x, '%', sep = ''))
@@ -163,6 +163,66 @@ colnames(r2.table)[1] = 'Method'
 load("~/Honors Thesis/Model Environments/All Predictions (raw ws 5 folds).RData")
 load("~/Honors Thesis/Model Environments/full stacked.RData")
 summary(mod)
+```
+# Best ESPN Model Versus Best Stacked Model
+```{r}
+load("~/Honors Thesis/Model Environments/All Predictions (raw ws LOOCV 5).RData")
+
+
+source('~/Honors Thesis/Data Cleaning/Prepping Data for Residual Analysis.R')
+
+
+full$full.error = full$ws - full.pred.stacked
+full$espn.error = full$ws - espn.pred.svm
+
+full$full.fitted = full.pred.stacked
+
+full$espn.fitted = espn.pred.svm
+
+full$abs.error.dif = abs(full$full.error) - abs(full$espn.error)
+
+full = full %>% dplyr::select(
+  player.id,
+  ws,
+  full.fitted,
+  espn.fitted,
+  abs.error.dif,
+  full.error,
+  espn.error,
+  everything()
+)
+
+
+ggplot(full, aes(x = full.error, 
+                 y = espn.error,
+                 label = player.id)) +
+  #geom_point() +
+  geom_text(size = 3.5) + 
+ # geom_abline(slope = 1) + 
+  geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  ylim(-6, 6) +
+  xlim(-6, 6)  + 
+  ylab('ESPN SVM Residual') +  
+  xlab('Full Stacked Residual')  + theme_bw()
+
+```
+
+```{r}
+
+ggplot(full, aes(x = full.error, 
+                 y = espn.error,
+                 label = player.id)) +
+  #geom_point() +
+  geom_text(size = 3.5) + 
+ geom_abline(slope = 1) + 
+  geom_hline(yintercept = 0) + 
+  geom_vline(xintercept = 0) + 
+  ylim(-4, 4) +
+  xlim(-4, 4)  +  
+  ylab('ESPN SVM Residual') +  
+  xlab('Full Stacked Residual')  + theme_bw()
+
 ```
 
 

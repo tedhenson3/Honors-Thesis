@@ -199,8 +199,8 @@ ggplot(full, aes(x = full.error,
   #geom_point() +
   geom_text(size = 3.5) + 
  # geom_abline(slope = 1) + 
-  geom_hline(yintercept = 0) + 
-  geom_vline(xintercept = 0) + 
+  # geom_hline(yintercept = 0) + 
+  # geom_vline(xintercept = 0) + 
   ylim(-6, 6) +
   xlim(-6, 6)  + 
   ylab('ESPN SVM Residual') +  
@@ -216,8 +216,10 @@ ggplot(full, aes(x = full.error,
   #geom_point() +
   geom_text(size = 3.5) + 
  geom_abline(slope = 1) + 
-  geom_hline(yintercept = 0) + 
-  geom_vline(xintercept = 0) + 
+   geom_abline(slope = -1) + 
+
+  #geom_hline(yintercept = 0) + 
+ # geom_vline(xintercept = 0) + 
   ylim(-4, 4) +
   xlim(-4, 4)  +  
   ylab('ESPN SVM Residual') +  

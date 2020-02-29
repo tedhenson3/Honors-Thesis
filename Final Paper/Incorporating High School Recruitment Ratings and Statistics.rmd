@@ -144,7 +144,7 @@ The most interesting result is that the AAU points per game was not highly signi
 
 ## \[Leave\:One\:Out\:Win\:Shares\:R^2\]
 ```{r, echo = F, eval = T, include=F}
-r2.table = read_csv("~/Honors Thesis/Predictions/All R2 (raw ws LOOCV 3).csv")
+r2.table = read_csv("~/Honors Thesis/Predictions/All R2 (raw ws LOOCV 5).csv")
 r2.table[,2:ncol(r2.table)] = round(r2.table[,2:ncol(r2.table)]*100, 1)
 paster = function(x){
   return(paste(x, '%', sep = ''))
@@ -160,7 +160,7 @@ colnames(r2.table)[1] = 'Method'
 
 # Linear Weights for Full Stacked Model
 ```{r}
-load("~/Honors Thesis/Model Environments/All Predictions (raw ws 5 folds).RData")
+#load("~/Honors Thesis/Model Environments/All Predictions (LOOCV 5).RData")
 load("~/Honors Thesis/Model Environments/full stacked.RData")
 summary(mod)
 ```
@@ -212,11 +212,14 @@ ggplot(full, aes(x = full.error,
 
 ggplot(full, aes(x = full.error, 
                  y = espn.error,
+                 colour = espn.rating,
                  label = player.id)) +
   #geom_point() +
-  geom_text(size = 3.5) + 
- geom_abline(slope = 1) + 
+geom_text(aes(label=player.id),hjust=0, vjust=0,
+          size = 3) + 
+   geom_abline(slope = 1) + 
    geom_abline(slope = -1) + 
+  geom_point() + 
 
   #geom_hline(yintercept = 0) + 
  # geom_vline(xintercept = 0) + 

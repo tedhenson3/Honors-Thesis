@@ -133,7 +133,7 @@ where
 # Box Score
   There were many variables to consider for these models. Many statistics in the prep data set were not always valid values, and many in both high school data sets or were randomly inaccurate, leading to poor out of sample prediction. Methods were trained through many different combinations of the inputs. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown below.
 
-## Full Linear Regression
+# Full Linear Regression Coefficients
 ```{r}
 source("~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R")
 full.2 = full %>% dplyr::select(-dataset)
@@ -155,11 +155,32 @@ r2.table[,2:ncol(r2.table)] = apply(X = r2.table[,2:ncol(r2.table)], MARGIN=2, F
 colnames(r2.table)[1] = 'Method'
 r2.table = as.data.frame(r2.table)
 r2.table[,2] = gsub('0%', '', r2.table[,2], fixed = T)
-```
-## Correlation Between Predicted And Actual Win Shares
-`r pander(r2.table[,1:5])`
-`r pander(r2.table[,6:ncol(r2.table)])`
 
+
+lm.table = read_csv("~/Honors Thesis/Predictions/All R2 (linear).csv")
+lm.table[,2:ncol(lm.table)] = round(lm.table[,2:ncol(lm.table)]*100, 1)
+lm.table[is.na(lm.table[,2]),2] = 0
+paster = function(x){
+  return(paste(x, '%', sep = ''))
+  
+}
+lm.table[,2:ncol(lm.table)] = apply(X = lm.table[,2:ncol(lm.table)], MARGIN=2, FUN = paster)
+colnames(lm.table)[1] = 'Method'
+lm.table = as.data.frame(lm.table)
+lm.table[,2] = gsub('0%', '', lm.table[,2], fixed = T)
+```
+
+# Percentage of Variance Explained by the Models
+```{r}
+#pandoc.table(lm.table, style = 'rmarkdown')
+lm = c('lm', t(lm.table)[2:length(lm.table)])
+full.table = rbind(lm, r2.table)
+library(knitr)
+library(kableExtra)
+kable(full.table[,1:5]) 
+kable(full.table[c(1,6,7,8)])
+  #column_spec(1, width = "3em")
+```
 
 # Linear Weights for Full Stacked Model
 ```{r}
@@ -167,6 +188,7 @@ r2.table[,2] = gsub('0%', '', r2.table[,2], fixed = T)
 load("~/Honors Thesis/Model Environments/full stacked.RData")
 summary(mod)
 ```
+
 # Residuals for Best ESPN Model Versus Best Stacked Model
 ```{r}
 load("~/Honors Thesis/Model Environments/All Predictions (raw ws LOOCV 5).RData")

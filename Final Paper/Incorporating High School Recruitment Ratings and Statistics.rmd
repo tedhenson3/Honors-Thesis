@@ -182,12 +182,9 @@ kable(full.table[c(1,6,7,8)])
   #column_spec(1, width = "3em")
 ```
 
-# Linear Weights for Full Stacked Model
-```{r}
-#load("~/Honors Thesis/Model Environments/All Predictions (LOOCV 5).RData")
-load("~/Honors Thesis/Model Environments/full stacked.RData")
-summary(mod)
-```
+The first interesting result is that the ESPN models are generally better than the Prep and AAU models. The best ESPN model explains almost 10% more variation than the best Prep model. When forecasting prospect performance, 10% is a huge performance boost. It should be noted, that the best ESPN model is a radial support vector machine, indicating the presence of non linearities. In short, there is a larger difference in expected wins for a team between securing a top 10 propsect versus top 20, as opposed to a top 20 versus a top 20 player.
+However, this difference should not discount the usefullness of the high school statistics. on their own, the Prep Circuit and AAU models were able to explain 23% and 21% of the variation respectively; moreover, models incorporating the ESPN ratings and high school statistics performed even better, with the best model explaining 37.4% of the variation, 4% better than the non linear espn model, and 14% better than the basic linear ESPN model which could be viewed as the 'conventional approach'.
+To illustrate how this predictive advantage could be used, the plot below shows the difference in absolute error between the best full model and the best ESPN model. Negative values mean the full model had a smaller error compared to the ESPN model and positive values mean the ESPN model performed better. In the graph below, values to the left of the vertical line indicate negative values, where the full models performed better. The x axis is the actual win shares. 
 
 # Residuals for Best ESPN Model Versus Best Stacked Model
 ```{r}
@@ -216,49 +213,33 @@ full = full %>% dplyr::select(
   espn.error,
   everything()
 )
-
-
-ggplot(full, aes(x = full.error, 
-                 y = espn.error,
+ggplot(full, aes(x = abs.error.dif,
+                 y = ws,
                  label = player.id)) +
-  #geom_point() +
-  geom_text(size = 3.5) + 
- # geom_abline(slope = 1) + 
-  # geom_hline(yintercept = 0) + 
-  # geom_vline(xintercept = 0) + 
-  ylim(-6, 6) +
-  xlim(-6, 6)  + 
-  ylab('ESPN SVM Residual') +  
-  xlab('Full Stacked Residual')  + theme_bw()
-
-```
-
-```{r}
-
-ggplot(full, aes(x = full.error, 
-                 y = espn.error,
-                 colour = espn.rating,
-                 label = player.id)) +
-  #geom_point() +
 geom_text(aes(label=player.id),hjust=0, vjust=0,
-          size = 3) + 
-   # geom_abline(slope = 1) + 
-   # geom_abline(slope = -1) + 
-  geom_point() + 
-
- geom_hline(yintercept = 0) +
- geom_vline(xintercept = 0) +
-  ylim(-4, 4) +
-  xlim(-4, 4)  +  
-  ylab('ESPN SVM Residual') +  
-  xlab('Full Stacked Residual')  + theme_bw()
+          size = 3) +
+  geom_point() +
+  ylab('Win Shares') +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+   ylim(-1, 8.5) +
+  xlim(-2, 2)  +
+  xlab('Difference between Full Error and ESPN Error')  + theme_bw()
 
 ```
-
 
 # Last Take
+It is important to judge the data and its predictive accuracy with some perspective. Original modeling with brand new box score high school statistics improved upon a rating system that has been improving upon itself for 13 years. Even in baseball where statistical modeling in sports is an integral part of the process, the best projection systems incorporate scouting and statistics, and the statitics only models rarely beat the combined models despite the individual aspect to baseball.
+This finding should encourage more analysis and collection of high school data not only for the collegiate level, but at the professional level, where one draft pick can change a franchise for decades. If this data holds predictive value at the collegiate level, there is reason to believe it can assist an NBA projection system, particularly in cases where a high school superstar falters and a dark horse emerges.  
 
 # Appendix
+## Linear Weights for Full Stacked Model
+```{r}
+#load("~/Honors Thesis/Model Environments/All Predictions (LOOCV 5).RData")
+load("~/Honors Thesis/Model Environments/full stacked.RData")
+summary(mod)
+```
+
 # References 
 [1]	"ESPN Basketball Recruiting - Player Rankings", ESPN. [Online]. Available: 
 http://www.espn.com/collegesports/basketball/recruiting/playerrankings/_/class/2016/order/true. [Accessed: 26- Mar- 2019]. 

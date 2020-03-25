@@ -22,7 +22,6 @@ library(pander)
 source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
 ```
 # First Take
-
   The goal of this project is to predict collegiate win shares from ESPN recruiting ratings [1] and high school statistics provided by Prep Circuit [2] and AAUStats [3]. As it stands, there is little research on predicting individual players’ collegiate performance. In 2010, Jamie McNeilly used recruiting ranking quartiles to predict PER and other barometers of success [3]; however, the models presented did not consider high school statistics as an input, nor did they consider predicting win shares, which is a more authentic measurement of how a player contributes to overall team success as shown by basketball reference [5].  
 Accusations of many NCAA coaches paying high profile recruits hundreds of thousands of dollars to single recruits catalyzed this analysis. If one player can cause decorated coaches to potentially resort to unethical methods, then programs should explore every possible avenue of predicting college performance, especially programs with smaller budgets and less recognition.  
   In addition to benefiting collegiate programs, the methods in this paper could benefit NBA front office decision making. Some high-profile recruits have had mediocre freshman collegiate performances (Harry Giles), or hardly any at all (Michael Porter Jr., Thon Maker), and are still selected in the first round based on their high school evaluations. As NBA teams are investing millions of dollars on players with little to no collegiate data, the methods and data presented in this paper could be used to model NBA performance in conjunction with their collegiate performance.  
@@ -35,7 +34,7 @@ Accusations of many NCAA coaches paying high profile recruits hundreds of thousa
 knitr::include_graphics("ACC Basketball WS.png")
 ```
 
-  College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were plotted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the concencus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in our data.
+  College win shares have a weaker relationship with winning than WAR in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were plotted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the concensus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in our data.
 ```{r, echo = F, eval = T, include=F}
 top.ws = data.ws %>% arrange(desc(ws)) %>% select(player.id, ws, Season)
 top.10.ws = top.ws[1:10,]
@@ -62,7 +61,7 @@ colnames(Prep_NA_Counts)[1] = 'Per Game Statistic'
 ```
 `r pander(Prep_NA_Counts)`
   
-  Although this knn imputation was effective for seasons past, it will not be the best method going forward, as the amount and quality of data has improved drastically over the past few years. Below is a table and histogram of the number of players that have each of our data sources by season.
+  Although this k nearest neighbor imputation was effective for seasons past, it will not be the best method going forward, as the amount and quality of data has improved drastically over the past few years. Below is a table and histogram of the number of players that have each of our data sources by season.
 ```{r, echo = F}
 source("~/Honors Thesis/Figure and Table Generators/Data Availability by Season.R")
 ```
@@ -92,7 +91,7 @@ where
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
 
-  All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. In order to speed up these computations, hyper parameters for some of the different methods were trained through 10 fold cross validation. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyper parameters will be discussed briefly below
+  All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyper parameters will be discussed briefly below
 
 \begin{itemize}
 \item Lasso
@@ -109,7 +108,7 @@ where
 \end{itemize}
 \item Earth
 \begin{itemize}
-\item Models non lineareaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the cutoff value for variable x. When x is below a, it is multiplied by a constant b1. When x is greater than a, it is  multiplied by a separate constant b2, and is added to b1. The number of these hinge functions is controlled by a hyper parameter as is the degree (number of interactions and higher order terms).
+\item Models non linearaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the cutoff value for variable x. When x is below a, it is multiplied by a constant b1. When x is greater than a, it is  multiplied by a separate constant b2, and is added to b1. The number of these hinge functions is controlled by a hyper parameter as is the degree (number of interactions and higher order terms).
 \end{itemize}
 \item Support Vector Machine
 \begin{itemize}
@@ -121,7 +120,7 @@ where
 \end{itemize}
 \item Gradient Boosted Trees
 \begin{itemize}
-\item Builds n "weak" regression trees and creates a prediction based on the average of all of the "weak" trees. The trees are pruned by cutting them at a specified "max depth" found through cross validation.
+\item Builds n "weak" regression trees and creates a prediction based on the average of all of the "weak" trees. The trees are pruned by cutting them at a specified "max depth" found through cross validation. For the boosted trees, these hyper-paramaters were chosen through 10 fold cross validation as leave one out lead to over fitting.
 \end{itemize}
 \item Stacked
 \begin{itemize}
@@ -131,20 +130,26 @@ where
   
 
 # Box Score
-  There were many variables to consider for these models. Many statistics in the prep data set were not always valid values, and many in both high school data sets or were randomly inaccurate, leading to poor out of sample prediction. Methods were trained through many different combinations of the inputs. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown below.
+  There were many variables to consider for these models. Many statistics in the prep data set were not always valid values, and many in both high school data sets or were randomly inaccurate, leading to poor out of sample prediction. Methods were trained through many different combinations of the inputs. Note that some methods were not used for ESPN as they are tailored to data sets with many predictor variables: in this case the ESPN data set is only one variable, ESPN rating. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown below.
 
-# Full Linear Regression Coefficients
+## Full Linear Regression Coefficients
 ```{r}
 source("~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R")
 full.2 = full %>% dplyr::select(-dataset)
 mod = lm(ws ~ ., data = full.2)
-summary(mod)[4]$coefficients
+library(knitr)
+library(kableExtra)
+kable(summary(mod)[4]$coefficients)
 ```
 
-The most interesting result is that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are super teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to high and predictive Prep Circuit points per game. Although the full linear regression performed close to the other methods, it was the worst method across all input combinations. Therefore it will not be discussed in the final results. Below are the cross validated R^2s for the different input combinations and models.
+The most interesting result is that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are super teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to high and predictive Prep Circuit points per game. Although the full linear regression performed close to the other methods, it was the worst method across all input combinations. Below are the cross validated R^2s for the different input combinations and models. 
 
 ```{r, echo = F, eval = T, include=F}
 r2.table = read_csv("~/Honors Thesis/Predictions/All R2 (raw ws LOOCV 5).csv")
+colnames(r2.table) = toupper(colnames(r2.table))
+colnames(r2.table) = gsub('N=', '(n=', colnames(r2.table), fixed = T)
+colnames(r2.table) = gsub('185', '185)', colnames(r2.table), fixed = T)
+
 r2.table[,2:ncol(r2.table)] = round(r2.table[,2:ncol(r2.table)]*100, 1)
 r2.table[is.na(r2.table[,2]),2] = 0
 paster = function(x){
@@ -170,23 +175,30 @@ lm.table = as.data.frame(lm.table)
 lm.table[,2] = gsub('0%', '', lm.table[,2], fixed = T)
 ```
 
-# Percentage of Variance Explained by the Models
+## Percentage of Variance Explained by the Models
 ```{r}
 #pandoc.table(lm.table, style = 'rmarkdown')
 lm = c('lm', t(lm.table)[2:length(lm.table)])
 full.table = rbind(lm, r2.table)
-library(knitr)
-library(kableExtra)
+full.table[,1] = c('Linear', 
+                   'Averaged Neural Network',
+                   'Lasso',
+                   'Ridge',
+                   'Random Forest',
+                   'Earth',
+                   'Support Vector Machine',
+                   'Gradient Boosted Trees',
+                   'Stacked')
 kable(full.table[,1:5]) 
 kable(full.table[c(1,6,7,8)])
   #column_spec(1, width = "3em")
 ```
 
-The first interesting result is that the ESPN models are generally better than the Prep and AAU models. The best ESPN model explains almost 10% more variation than the best Prep model. When forecasting prospect performance, 10% is a huge performance boost. It should be noted, that the best ESPN model is a radial support vector machine, indicating the presence of non linearities. In short, there is a larger difference in expected wins for a team between securing a top 10 propsect versus top 20, as opposed to a top 20 versus a top 20 player.
-However, this difference should not discount the usefullness of the high school statistics. on their own, the Prep Circuit and AAU models were able to explain 23% and 21% of the variation respectively; moreover, models incorporating the ESPN ratings and high school statistics performed even better, with the best model explaining 37.4% of the variation, 4% better than the non linear espn model, and 14% better than the basic linear ESPN model which could be viewed as the 'conventional approach'.
-To illustrate how this predictive advantage could be used, the plot below shows the difference in absolute error between the best full model and the best ESPN model. Negative values mean the full model had a smaller error compared to the ESPN model and positive values mean the ESPN model performed better. In the graph below, values to the left of the vertical line indicate negative values, where the full models performed better. The x axis is the actual win shares. 
+The first interesting result is that the ESPN models are generally better than the Prep and AAU models. The best ESPN model explains almost 10% more variation than the best Prep model. When forecasting prospect performance, 10% is a huge performance boost. It should be noted, that the best ESPN model is a radial support vector machine, indicating the presence of non linearities. In short, there is a larger difference in expected wins for a team between securing a top 10 prospect versus top 20, as opposed to a top 20 versus a top 20 player. 
+However, this difference should not discount the usefulness of the high school statistics. on their own, the Prep Circuit and AAU models were able to explain 23% and 21% of the variation respectively; moreover, models incorporating the ESPN ratings and high school statistics performed even better, with the best model explaining 37.4% of the variation, 4% better than the non linear ESPN model, and 14% better than the basic linear ESPN model which could be viewed as the 'conventional approach'.
+To illustrate how this predictive advantage could be used, the plot below shows the difference in absolute error between the best full model and the best ESPN model. Negative values mean the full model had a smaller error compared to the ESPN model and positive values mean the ESPN model performed better. In the graph below, values to the left of the vertical line indicate negative values, where the full models performed better. The x axis is the actual win shares.
 
-# Residuals for Best ESPN Model Versus Best Stacked Model
+## Residuals for Best ESPN Model Versus Best Stacked Model
 ```{r}
 load("~/Honors Thesis/Model Environments/All Predictions (raw ws LOOCV 5).RData")
 
@@ -218,19 +230,24 @@ ggplot(full, aes(x = abs.error.dif,
                  label = player.id)) +
 geom_text(aes(label=player.id),hjust=0, vjust=0,
           size = 3) +
-  geom_point() +
+  geom_point(colour = 'blue') +
   ylab('Win Shares') +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
+  guides(fill=guide_legend(title="ESPN Rating")) + 
    ylim(-1, 8.5) +
   xlim(-2, 2)  +
   xlab('Difference between Full Error and ESPN Error')  + theme_bw()
 
 ```
 
+As shown by the above graph, there were several players that the full model out projected the ESPN model by one or more win shares. In the most extreme example, the full model out projected Deandre Ayton by almost two win shares compared to the ESPN model. Other large differences favoring the full model are Quentin Grimes, Ryan Layman, and Trae Young. 
+
+Most of the players that the ESPN model predicted substantially better on (more than 1 win share) ended up having very low win shares and a low ESPN rating. The three players favoring the ESPN model the most: KJ Davis, Shandon Brown, and Bailey Patella all had an ESPN rating of 64. They also played very few games in the Prep Circuit data: 2, 6, and 6 respectively, where the median Prep Circuit games played was 11 and the average was 11.27. These are not huge outliers, but they are on the lower end of the dataset. More years of data, improved reliability, and more analysis could improve the existing performance boost shown by incorporating all information.
+
 # Last Take
-It is important to judge the data and its predictive accuracy with some perspective. Original modeling with brand new box score high school statistics improved upon a rating system that has been improving upon itself for 13 years. Even in baseball where statistical modeling in sports is an integral part of the process, the best projection systems incorporate scouting and statistics, and the statitics only models rarely beat the combined models despite the individual aspect to baseball.
-This finding should encourage more analysis and collection of high school data not only for the collegiate level, but at the professional level, where one draft pick can change a franchise for decades. If this data holds predictive value at the collegiate level, there is reason to believe it can assist an NBA projection system, particularly in cases where a high school superstar falters and a dark horse emerges.  
+It is important to judge the data and its predictive accuracy with some perspective. Original modeling with relatively new high school statistics improved upon a rating system that has been bettering itself for 13 years. The information used was also only box score statistics which does not paint the full picture of the game. Even in baseball where statistical modeling in sports is an integral part of the process, the best projection systems incorporate scouting and statistics, and the statistics only models rarely beat the combined models despite the individual aspect to baseball.
+This finding should encourage more analysis and collection of high school data not only for the collegiate level, but at the professional level, where one draft pick can change a franchise for decades. If this data holds predictive value at the collegiate level, there is reason to believe it can assist an NBA projection system, particularly in cases where a high school superstar falters or gets injured in college or on the flip side, a low rated recruit explodes onto the scene. Although the improvements shown by the models and data are small relative to the amount of statistical analysis, in 13 years the reliability and robustness of the data will improve the models substantially.
 
 # Appendix
 ## Linear Weights for Full Stacked Model

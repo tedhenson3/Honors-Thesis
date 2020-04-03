@@ -189,10 +189,12 @@ full.table[,1] = c('Linear',
                    'Support Vector Machine',
                    'Gradient Boosted Trees',
                    'Stacked')
-kable(full.table[,1:5]) 
-kable(full.table[c(1,6,7,8)])
-  #column_spec(1, width = "3em")
+full.table[7, 2] =cell_spec(full.table[7,2], bold = T)
+full.table[9, 5] =cell_spec(full.table[9,5], bold = T)
+kable(full.table[,1:5], format = 'markdown')
+kable(full.table[c(1,6,7,8)], format = 'markdown')
 ```
+
 
 The first interesting result is that the ESPN models are generally better than the Prep and AAU models. The best ESPN model explains almost 10% more variation than the best Prep model. When forecasting prospect performance, 10% is a huge performance boost. It should be noted, that the best ESPN model is a radial support vector machine, indicating the presence of non linearities. In short, there is a larger difference in expected wins for a team between securing a top 10 prospect versus top 20, as opposed to a top 20 versus a top 20 player. 
 However, this difference should not discount the usefulness of the high school statistics. on their own, the Prep Circuit and AAU models were able to explain 23% and 21% of the variation respectively; moreover, models incorporating the ESPN ratings and high school statistics performed even better, with the best model explaining 37.4% of the variation, 4% better than the non linear ESPN model, and 14% better than the basic linear ESPN model which could be viewed as the 'conventional approach'.

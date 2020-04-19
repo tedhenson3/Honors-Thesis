@@ -14,7 +14,9 @@ library(psych)
 
 #### response variable histograms, scatters, correlation values ####
 
+
 hist(espn.win.shares)
+hist(log(espn.win.shares))
 hist(espn$ws.per.game)
 
 #scatter of win shares and games

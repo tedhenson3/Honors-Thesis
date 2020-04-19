@@ -36,7 +36,7 @@ loocv.stacked.modeler = function(preds = aau.espn.predictions,
   }
   
   mod = lm(formula, data = data)
-  save(mod, file = paste("~/Honors Thesis/Model Environments/", "full stacked", ".RData", sep = ""))
+ save(mod, file = paste("~/Honors Thesis/Model Environments/", "full stacked", ".RData", sep = ""))
   
     
     

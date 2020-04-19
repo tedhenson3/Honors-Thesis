@@ -188,7 +188,8 @@ if(model == 'pcr'){
 }
 
 if(model == 'xgboost'){
-  resample.method <- trainControl(method = "LOOCV")
+  resample.method <- trainControl(method = "cv",
+                                  number = 10)
   library(caret)
   best.xgboost <- caret::train(form = formula,
                                data = data,
@@ -333,6 +334,7 @@ for(j in 1:num.obs){
 
   train.fit=avNNet(train.X,
                    train.y,
+                   repeats = 500,
                    linout = T,
                    trace = F,
                    allowParallel = TRUE,

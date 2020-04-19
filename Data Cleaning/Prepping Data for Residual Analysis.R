@@ -86,7 +86,6 @@ data = data %>% ungroup() %>% dplyr::select(-ows,
                               -fixed.height,
                               -dws,
                               -Name,
-                              -player.id,
                               -group,
                               -group.num)
 
@@ -335,6 +334,7 @@ data = data %>% dplyr::select(-Position)
 
 espn = data %>% dplyr::select(ws,
                               Season,
+                              `player.id`,
                               espn.rating)
 
 espn = espn[complete.cases(espn),]

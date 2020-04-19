@@ -85,17 +85,17 @@ full.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-prep.pred.pls = loocv.modeler(model = 'pls',
+prep.pred.nnet = loocv.modeler(model = 'nnet',
                              data = prep)
 
 
-aau.pred.pls = loocv.modeler(model = 'pls',
+aau.pred.nnet = loocv.modeler(model = 'nnet',
                             data = aau)
 
-espn.pred.pls = loocv.modeler(model = 'pls',
+espn.pred.nnet = loocv.modeler(model = 'nnet',
                              data = espn)
 
-full.pred.pls = loocv.modeler(model = 'pls',
+full.pred.nnet = loocv.modeler(model = 'nnet',
                              data = full)
 
 
@@ -136,7 +136,7 @@ aau.espn.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-aau.espn.pred.pls = loocv.modeler(model = 'pls',
+aau.espn.pred.nnet = loocv.modeler(model = 'nnet',
                                  data = aau.espn)
 
 aau.espn.pred.xgboost = loocv.modeler(model = 'xgboost',
@@ -169,7 +169,7 @@ prep.espn.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-prep.espn.pred.pls = loocv.modeler(model = 'pls',
+prep.espn.pred.nnet = loocv.modeler(model = 'nnet',
                                   data = prep.espn)
 
 prep.espn.pred.xgboost = loocv.modeler(model = 'xgboost',
@@ -203,7 +203,7 @@ aau.prep.pred.earth = loocv.modeler(model = 'earth',
 
 
 
-aau.prep.pred.pls = loocv.modeler(model = 'pls',
+aau.prep.pred.nnet = loocv.modeler(model = 'nnet',
                                  data = aau.prep)
 
 aau.prep.pred.xgboost = loocv.modeler(model = 'xgboost',
@@ -229,7 +229,7 @@ aau.prep.pred.rf = loocv.modeler(model = 'rf',
 # 
 # 
 # 
-# espn.raw.pred.pls = loocv.modeler(model = 'pls',
+# espn.raw.pred.nnet = loocv.modeler(model = 'nnet',
 #                                  data = espn.raw)
 # 
 # espn.raw.pred.xgboost = loocv.modeler(model = 'xgboost',
@@ -243,15 +243,15 @@ aau.prep.pred.rf = loocv.modeler(model = 'rf',
 
 
 espn.predictions = data.frame(
-                              #pls = NA,
-                              #lasso = espn.pred.pls,
+                              #nnet = NA,
+                              #lasso = espn.pred.nnet,
                               # ridge = c(rep(0, 185)),
                               # rf = c(rep(0, 185)),
                               earth = espn.pred.earth,
                               svm.radial = espn.pred.svm,
                               xgboost = espn.pred.xgboost)
 
-prep.predictions = data.frame(pls = prep.pred.pls,
+prep.predictions = data.frame(nnet = prep.pred.nnet,
                               lasso = prep.pred.lasso,
                               ridge = prep.pred.ridge,
                               rf = prep.pred.rf,
@@ -259,7 +259,7 @@ prep.predictions = data.frame(pls = prep.pred.pls,
                               svm.radial = prep.pred.svm,
                               xgboost = prep.pred.xgboost)
 
-aau.predictions = data.frame(pls = aau.pred.pls,
+aau.predictions = data.frame(nnet = aau.pred.nnet,
                              lasso = aau.pred.lasso,
                              ridge = aau.pred.ridge,
                              rf = aau.pred.rf,
@@ -267,7 +267,7 @@ aau.predictions = data.frame(pls = aau.pred.pls,
                              svm.radial = aau.pred.svm,
                              xgboost = aau.pred.xgboost)
 
-full.predictions = data.frame(pls = full.pred.pls,
+full.predictions = data.frame(nnet = full.pred.nnet,
                               lasso = full.pred.lasso,
                               ridge = full.pred.ridge,
                               rf = full.pred.rf,
@@ -277,7 +277,7 @@ full.predictions = data.frame(pls = full.pred.pls,
 )
 
 
-aau.espn.predictions = data.frame(pls = aau.espn.pred.pls,
+aau.espn.predictions = data.frame(nnet = aau.espn.pred.nnet,
                                   lasso = aau.espn.pred.lasso,
                                   ridge = aau.espn.pred.ridge,
                                   rf = aau.espn.pred.rf,
@@ -286,7 +286,7 @@ aau.espn.predictions = data.frame(pls = aau.espn.pred.pls,
                                   xgboost = aau.espn.pred.xgboost
 )
 
-prep.espn.predictions = data.frame(pls = prep.espn.pred.pls,
+prep.espn.predictions = data.frame(nnet = prep.espn.pred.nnet,
                                    lasso = prep.espn.pred.lasso,
                                    ridge = prep.espn.pred.ridge,
                                    rf = prep.espn.pred.rf,
@@ -296,7 +296,7 @@ prep.espn.predictions = data.frame(pls = prep.espn.pred.pls,
 )
 
 
-aau.prep.predictions = data.frame(pls = aau.prep.pred.pls,
+aau.prep.predictions = data.frame(nnet = aau.prep.pred.nnet,
                                   lasso = aau.prep.pred.lasso,
                                   ridge = aau.prep.pred.ridge,
                                   rf = aau.prep.pred.rf,
@@ -306,7 +306,7 @@ aau.prep.predictions = data.frame(pls = aau.prep.pred.pls,
 )
 
 # 
-# espn.raw.predictions = data.frame(pls = espn.raw.pred.pls,
+# espn.raw.predictions = data.frame(nnet = espn.raw.pred.nnet,
 #                                   lasso = NULL,
 #                                   ridge = NULL,
 #                                   rf = espn.raw.pred.rf,
@@ -350,7 +350,7 @@ full.pred.stacked = loocv.stacked.modeler(preds = full.predictions,
 #                                               ws = espn.raw.win.shares)
 
 
-espn.predictions = data.frame(pls = NA,
+espn.predictions = data.frame(nnet = NA,
                               lasso = NA,
                               ridge = NA,
                               rf = NA,
@@ -359,7 +359,7 @@ espn.predictions = data.frame(pls = NA,
                               xgboost = espn.pred.xgboost,
                               stacked = espn.pred.stacked)
 
-prep.predictions = data.frame(pls = prep.pred.pls,
+prep.predictions = data.frame(nnet = prep.pred.nnet,
                               lasso = prep.pred.lasso,
                               ridge = prep.pred.ridge,
                               rf = prep.pred.rf,
@@ -368,7 +368,7 @@ prep.predictions = data.frame(pls = prep.pred.pls,
                               xgboost = prep.pred.xgboost,
                               stacked = prep.pred.stacked)
 
-aau.predictions = data.frame(pls = aau.pred.pls,
+aau.predictions = data.frame(nnet = aau.pred.nnet,
                              lasso = aau.pred.lasso,
                              ridge = aau.pred.ridge,
                              rf = aau.pred.rf,
@@ -377,7 +377,7 @@ aau.predictions = data.frame(pls = aau.pred.pls,
                              xgboost = aau.pred.xgboost,
                              stacked = aau.pred.stacked)
 
-full.predictions = data.frame(pls = full.pred.pls,
+full.predictions = data.frame(nnet = full.pred.nnet,
                               lasso = full.pred.lasso,
                               ridge = full.pred.ridge,
                               rf = full.pred.rf,
@@ -388,7 +388,7 @@ full.predictions = data.frame(pls = full.pred.pls,
 )
 
 
-aau.espn.predictions = data.frame(pls = aau.espn.pred.pls,
+aau.espn.predictions = data.frame(nnet = aau.espn.pred.nnet,
                                   lasso = aau.espn.pred.lasso,
                                   ridge = aau.espn.pred.ridge,
                                   rf = aau.espn.pred.rf,
@@ -398,7 +398,7 @@ aau.espn.predictions = data.frame(pls = aau.espn.pred.pls,
                                   stacked = aau.espn.pred.stacked
 )
 
-prep.espn.predictions = data.frame(pls = prep.espn.pred.pls,
+prep.espn.predictions = data.frame(nnet = prep.espn.pred.nnet,
                                    lasso = prep.espn.pred.lasso,
                                    ridge = prep.espn.pred.ridge,
                                    rf = prep.espn.pred.rf,
@@ -409,7 +409,7 @@ prep.espn.predictions = data.frame(pls = prep.espn.pred.pls,
 )
 
 
-aau.prep.predictions = data.frame(pls = aau.prep.pred.pls,
+aau.prep.predictions = data.frame(nnet = aau.prep.pred.nnet,
                                   lasso = aau.prep.pred.lasso,
                                   ridge = aau.prep.pred.ridge,
                                   rf = aau.prep.pred.rf,
@@ -421,7 +421,7 @@ aau.prep.predictions = data.frame(pls = aau.prep.pred.pls,
 
 
 # 
-# espn.raw.predictions = data.frame(pls = espn.raw.pred.pls,
+# espn.raw.predictions = data.frame(nnet = espn.raw.pred.nnet,
 #                                   lasso = espn.raw.pred.lasso,
 #                                   ridge = espn.raw.pred.ridge,
 #                                   rf = espn.raw.pred.rf,
@@ -434,7 +434,7 @@ aau.prep.predictions = data.frame(pls = aau.prep.pred.pls,
 
 
 
-espn.errors = data.frame(pls = espn.win.shares - espn.pred.pls,
+espn.errors = data.frame(nnet = espn.win.shares - espn.pred.nnet,
                          lasso =NA,
                          ridge = NA,
                          rf = NA,
@@ -443,7 +443,7 @@ espn.errors = data.frame(pls = espn.win.shares - espn.pred.pls,
                          xgboost = espn.win.shares - espn.pred.xgboost,
                          stacked = espn.win.shares - espn.pred.stacked)
 
-prep.errors = data.frame(pls = prep.win.shares - prep.pred.pls,
+prep.errors = data.frame(nnet = prep.win.shares - prep.pred.nnet,
                          lasso = prep.win.shares - prep.pred.lasso,
                          ridge = prep.win.shares - prep.pred.ridge,
                          rf = prep.win.shares - prep.pred.rf,
@@ -453,7 +453,7 @@ prep.errors = data.frame(pls = prep.win.shares - prep.pred.pls,
                          stacked = prep.win.shares - prep.pred.stacked)
 
 
-aau.errors = data.frame(pls = aau.win.shares - aau.pred.pls,
+aau.errors = data.frame(nnet = aau.win.shares - aau.pred.nnet,
                         lasso = aau.win.shares - aau.pred.lasso,
                         ridge = aau.win.shares - aau.pred.ridge,
                         rf = aau.win.shares - aau.pred.rf,
@@ -462,7 +462,7 @@ aau.errors = data.frame(pls = aau.win.shares - aau.pred.pls,
                         xgboost = aau.win.shares - aau.pred.xgboost,
                         stacked = aau.win.shares - aau.pred.stacked)
 
-full.errors = data.frame(pls = full.win.shares - full.pred.pls,
+full.errors = data.frame(nnet = full.win.shares - full.pred.nnet,
                          lasso = full.win.shares - full.pred.lasso,
                          ridge = full.win.shares - full.pred.ridge,
                          rf = full.win.shares - full.pred.rf,
@@ -471,7 +471,7 @@ full.errors = data.frame(pls = full.win.shares - full.pred.pls,
                          xgboost = full.win.shares - full.pred.xgboost,
                          stacked = full.win.shares - full.pred.stacked)
 
-aau.espn.errors = data.frame(pls = aau.espn.win.shares - aau.espn.pred.pls,
+aau.espn.errors = data.frame(nnet = aau.espn.win.shares - aau.espn.pred.nnet,
                              lasso = aau.espn.win.shares - aau.espn.pred.lasso,
                              ridge = aau.espn.win.shares - aau.espn.pred.ridge,
                              rf = aau.espn.win.shares - aau.espn.pred.rf,
@@ -480,7 +480,7 @@ aau.espn.errors = data.frame(pls = aau.espn.win.shares - aau.espn.pred.pls,
                              xgboost = aau.espn.win.shares - aau.espn.pred.xgboost,
                              stacked = aau.espn.win.shares - aau.espn.pred.stacked)
 
-prep.espn.errors = data.frame(pls = prep.espn.win.shares - prep.espn.pred.pls,
+prep.espn.errors = data.frame(nnet = prep.espn.win.shares - prep.espn.pred.nnet,
                               lasso = prep.espn.win.shares - prep.espn.pred.lasso,
                               ridge = prep.espn.win.shares - prep.espn.pred.ridge,
                               rf = prep.espn.win.shares - prep.espn.pred.rf,
@@ -491,7 +491,7 @@ prep.espn.errors = data.frame(pls = prep.espn.win.shares - prep.espn.pred.pls,
 
 
 
-aau.prep.errors = data.frame(pls = aau.prep.win.shares - aau.prep.pred.pls,
+aau.prep.errors = data.frame(nnet = aau.prep.win.shares - aau.prep.pred.nnet,
                              lasso = aau.prep.win.shares - aau.prep.pred.lasso,
                              ridge = aau.prep.win.shares - aau.prep.pred.ridge,
                              rf = aau.prep.win.shares - aau.prep.pred.rf,
@@ -501,7 +501,7 @@ aau.prep.errors = data.frame(pls = aau.prep.win.shares - aau.prep.pred.pls,
                              stacked = aau.prep.win.shares - aau.prep.pred.stacked)
 
 
-# espn.raw.errors = data.frame(pls = espn.raw.win.shares - espn.raw.pred.pls,
+# espn.raw.errors = data.frame(nnet = espn.raw.win.shares - espn.raw.pred.nnet,
 #                              lasso = espn.raw.win.shares - espn.raw.pred.lasso,
 #                              ridge = espn.raw.win.shares - espn.raw.pred.ridge,
 #                              rf = espn.raw.win.shares - espn.raw.pred.rf,
@@ -514,7 +514,7 @@ aau.prep.errors = data.frame(pls = aau.prep.win.shares - aau.prep.pred.pls,
 
 
 
-espn.rmse = data.frame(pls = sqrt(mean((espn.errors$lasso)^2)), 
+espn.rmse = data.frame(nnet = sqrt(mean((espn.errors$lasso)^2)), 
                        lasso = NA,
                        ridge = NA,
                        rf = NA,
@@ -523,7 +523,7 @@ espn.rmse = data.frame(pls = sqrt(mean((espn.errors$lasso)^2)),
                        xgboost = sqrt(mean((espn.errors$xgboost)^2)),
                        stacked = sqrt(mean((espn.errors$stacked)^2)))
 
-prep.rmse = data.frame(pls = sqrt(mean((prep.errors$pls)^2)), 
+prep.rmse = data.frame(nnet = sqrt(mean((prep.errors$nnet)^2)), 
                        lasso = sqrt(mean((prep.errors$lasso)^2)),
                        ridge = sqrt(mean((prep.errors$ridge)^2)),
                        rf = sqrt(mean((prep.errors$rf)^2)),
@@ -533,7 +533,7 @@ prep.rmse = data.frame(pls = sqrt(mean((prep.errors$pls)^2)),
                        stacked = sqrt(mean((prep.errors$stacked)^2)))
 
 
-aau.rmse = data.frame(pls = sqrt(mean((aau.errors$pls)^2)), 
+aau.rmse = data.frame(nnet = sqrt(mean((aau.errors$nnet)^2)), 
                       lasso = sqrt(mean((aau.errors$lasso)^2)),
                       ridge = sqrt(mean((aau.errors$ridge)^2)),
                       rf = sqrt(mean((aau.errors$rf)^2)),
@@ -543,7 +543,7 @@ aau.rmse = data.frame(pls = sqrt(mean((aau.errors$pls)^2)),
                       stacked = sqrt(mean((aau.errors$stacked)^2)))
 
 
-full.rmse = data.frame(pls = sqrt(mean((full.errors$pls)^2)), 
+full.rmse = data.frame(nnet = sqrt(mean((full.errors$nnet)^2)), 
                        lasso = sqrt(mean((full.errors$lasso)^2)),
                        ridge = sqrt(mean((full.errors$ridge)^2)),
                        rf = sqrt(mean((full.errors$rf)^2)),
@@ -554,7 +554,7 @@ full.rmse = data.frame(pls = sqrt(mean((full.errors$pls)^2)),
 
 
 
-aau.espn.rmse = data.frame(pls = sqrt(mean((aau.espn.errors$pls)^2)), 
+aau.espn.rmse = data.frame(nnet = sqrt(mean((aau.espn.errors$nnet)^2)), 
                            lasso = sqrt(mean((aau.espn.errors$lasso)^2)),
                            ridge = sqrt(mean((aau.espn.errors$ridge)^2)),
                            rf = sqrt(mean((aau.espn.errors$rf)^2)),
@@ -564,7 +564,7 @@ aau.espn.rmse = data.frame(pls = sqrt(mean((aau.espn.errors$pls)^2)),
                            stacked = sqrt(mean((aau.espn.errors$stacked)^2)))
 
 
-prep.espn.rmse = data.frame(pls = sqrt(mean((prep.espn.errors$pls)^2)), 
+prep.espn.rmse = data.frame(nnet = sqrt(mean((prep.espn.errors$nnet)^2)), 
                             lasso = sqrt(mean((prep.espn.errors$lasso)^2)),
                             ridge = sqrt(mean((prep.espn.errors$ridge)^2)),
                             rf = sqrt(mean((prep.espn.errors$rf)^2)),
@@ -574,7 +574,7 @@ prep.espn.rmse = data.frame(pls = sqrt(mean((prep.espn.errors$pls)^2)),
                             stacked = sqrt(mean((prep.espn.errors$stacked)^2)))
 
 
-aau.prep.rmse = data.frame(pls = sqrt(mean((aau.prep.errors$pls)^2)), 
+aau.prep.rmse = data.frame(nnet = sqrt(mean((aau.prep.errors$nnet)^2)), 
                            lasso = sqrt(mean((aau.prep.errors$lasso)^2)),
                            ridge = sqrt(mean((aau.prep.errors$ridge)^2)),
                            rf = sqrt(mean((aau.prep.errors$rf)^2)),
@@ -584,7 +584,7 @@ aau.prep.rmse = data.frame(pls = sqrt(mean((aau.prep.errors$pls)^2)),
                            stacked = sqrt(mean((aau.prep.errors$stacked)^2)))
 
 
-# espn.raw.rmse = data.frame(pls = sqrt(mean((espn.raw.errors$pls)^2)), 
+# espn.raw.rmse = data.frame(nnet = sqrt(mean((espn.raw.errors$nnet)^2)), 
 #                            lasso = sqrt(mean((espn.raw.errors$lasso)^2)),
 #                            ridge = sqrt(mean((espn.raw.errors$ridge)^2)),
 #                            rf = sqrt(mean((espn.raw.errors$rf)^2)),
@@ -593,7 +593,7 @@ aau.prep.rmse = data.frame(pls = sqrt(mean((aau.prep.errors$pls)^2)),
 #                            xgboost = sqrt(mean((espn.raw.errors$xgboost)^2)),
 #                            stacked = sqrt(mean((espn.raw.errors$stacked)^2)))
 
-full.r2=  data.frame(pls = cor(x = full.win.shares, y =full.predictions$pls)^2, 
+full.r2=  data.frame(nnet = cor(x = full.win.shares, y =full.predictions$nnet)^2, 
                      lasso = cor(x = full.win.shares, y =full.predictions$lasso)^2,
                      ridge = cor(x = full.win.shares, y =full.predictions$ridge)^2,
                      rf = cor(x = full.win.shares, y =full.predictions$rf)^2,
@@ -602,7 +602,7 @@ full.r2=  data.frame(pls = cor(x = full.win.shares, y =full.predictions$pls)^2,
                      xgboost = cor(x = full.win.shares, y =full.predictions$xgboost)^2,
                      stacked = cor(x = full.win.shares, y =full.predictions$stacked)^2)
 
-espn.r2=  data.frame(pls = cor(x = espn.win.shares, y =espn.predictions$pls)^2, 
+espn.r2=  data.frame(nnet = cor(x = espn.win.shares, y =espn.predictions$nnet)^2, 
                      lasso = NA,
                      ridge = NA,
                      rf = NA,
@@ -612,7 +612,7 @@ espn.r2=  data.frame(pls = cor(x = espn.win.shares, y =espn.predictions$pls)^2,
                      stacked = cor(x = espn.win.shares, y =espn.predictions$stacked)^2)
 
 
-prep.r2=  data.frame(pls = cor(x = prep.win.shares,y = prep.predictions$pls)^2, 
+prep.r2=  data.frame(nnet = cor(x = prep.win.shares,y = prep.predictions$nnet)^2, 
                      lasso = cor(x = prep.win.shares, y =prep.predictions$lasso)^2,
                      ridge = cor(x = prep.win.shares, y =prep.predictions$ridge)^2,
                      rf = cor(x = prep.win.shares, y =prep.predictions$rf)^2,
@@ -622,7 +622,7 @@ prep.r2=  data.frame(pls = cor(x = prep.win.shares,y = prep.predictions$pls)^2,
                      stacked = cor(x = prep.win.shares, y =prep.predictions$stacked)^2)
 
 
-aau.r2=  data.frame(pls = cor(x = aau.win.shares, y =aau.predictions$pls)^2, 
+aau.r2=  data.frame(nnet = cor(x = aau.win.shares, y =aau.predictions$nnet)^2, 
                     lasso = cor(x = aau.win.shares, y =aau.predictions$lasso)^2,
                     ridge = cor(x = aau.win.shares, y =aau.predictions$ridge)^2,
                     rf = cor(x = aau.win.shares, y =aau.predictions$rf)^2,
@@ -633,7 +633,7 @@ aau.r2=  data.frame(pls = cor(x = aau.win.shares, y =aau.predictions$pls)^2,
 
 
 
-aau.espn.r2=  data.frame(pls = cor(x = aau.espn.win.shares, y =aau.espn.predictions$pls)^2, 
+aau.espn.r2=  data.frame(nnet = cor(x = aau.espn.win.shares, y =aau.espn.predictions$nnet)^2, 
                          lasso = cor(x = aau.espn.win.shares, y =aau.espn.predictions$lasso)^2,
                          ridge = cor(x = aau.espn.win.shares, y =aau.espn.predictions$ridge)^2,
                          rf = cor(x = aau.espn.win.shares, y =aau.espn.predictions$rf)^2,
@@ -643,7 +643,7 @@ aau.espn.r2=  data.frame(pls = cor(x = aau.espn.win.shares, y =aau.espn.predicti
                          stacked = cor(x = aau.espn.win.shares, y =aau.espn.predictions$stacked)^2)
 
 
-prep.espn.r2=  data.frame(pls = cor(x = prep.espn.win.shares, y =prep.espn.predictions$pls)^2, 
+prep.espn.r2=  data.frame(nnet = cor(x = prep.espn.win.shares, y =prep.espn.predictions$nnet)^2, 
                           lasso = cor(x = prep.espn.win.shares, y =prep.espn.predictions$lasso)^2,
                           ridge = cor(x = prep.espn.win.shares, y =prep.espn.predictions$ridge)^2,
                           rf = cor(x = prep.espn.win.shares, y =prep.espn.predictions$rf)^2,
@@ -653,7 +653,7 @@ prep.espn.r2=  data.frame(pls = cor(x = prep.espn.win.shares, y =prep.espn.predi
                           stacked = cor(x = prep.espn.win.shares, y =prep.espn.predictions$stacked)^2)
 
 
-aau.prep.r2=  data.frame(pls = cor(x = aau.prep.win.shares, y =aau.prep.predictions$pls)^2, 
+aau.prep.r2=  data.frame(nnet = cor(x = aau.prep.win.shares, y =aau.prep.predictions$nnet)^2, 
                          lasso = cor(x = aau.prep.win.shares, y =aau.prep.predictions$lasso)^2,
                          ridge = cor(x = aau.prep.win.shares, y =aau.prep.predictions$ridge)^2,
                          rf = cor(x = aau.prep.win.shares, y =aau.prep.predictions$rf)^2,
@@ -710,9 +710,9 @@ final.r2
 
 
 write.csv(final.r2,
-          file = '~/Honors Thesis/Predictions/All R2 (raw ws LOOCV 2).csv')
+          file = '~/Honors Thesis/Predictions/All R2 (final).csv')
 
-save.image("~/Honors Thesis/Model Environments/All Predictions (raw ws LOOCV 2).RData")
+save.image("~/Honors Thesis/Model Environments/All Predictions (raw ws final).RData")
 # 
 # write.csv(final.rmse,
 #           file = '~/Honors Thesis/Predictions/All RMSEs (raw ws 5 folds xgboost).csv')

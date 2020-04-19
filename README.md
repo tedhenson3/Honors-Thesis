@@ -1,3 +1,2 @@
-# Recruiting Project #
-The goal of this project is to predict collegiate basketball performance based on recruiting data and high school statistics.
-This project began as supervised research with Dr. Mario Giacomazzo in the spring of 2019 and has evolved into my senior honors thesis. Improvements to the existing paper will come through incorporating AAU statistics, more advanced statistical methods, and eliminating the use of k nearest neighbor imputation.
+# Incorporating High School Recruiting Ratings and Statistics in Predictive Models for Collegiate Basketball Success #
+The goal of this project is to predict collegiate basketball performance based on ESPN recruiting ratings and high school statistics provided by PrepCircuit and AAUStats. This project began as supervised research with Dr. Mario Giacomazzo in the spring of 2019 and has evolved into my senior honors thesis. The final paper can be located as a pdf file in the final paper folder.

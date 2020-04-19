@@ -71,7 +71,7 @@ From a basketball perspective, these players had some of the best freshman seaso
 
 ## ESPN
 
-The ESPN data gathered contained players’ overall rating from 55 to 100. Only the classes from 2016 to 2018 were used in this analysis due to the lack of PrepCircuit and AAU data before the 2016 high school season. In terms of grabbing the basketball reference data, the ESPN data played a critical role. There was no feasible or swift way to accurately gather a high school player’s collegiate win shares without knowing where he went to college, which was not in the PrepCircuit or AAU data. Also gathered from ESPN were player's height, weight, and position. 
+The ESPN data gathered contained players' overall ratings from 55 to 100. Only the classes from 2016 to 2018 were used in this analysis due to the lack of PrepCircuit and AAU data before the 2016 high school season. In terms of grabbing the basketball reference data, the ESPN data played a critical role. There was no feasible or swift way to accurately gather a high school player’s collegiate win shares without knowing where he went to college, which was not in the PrepCircuit or AAU data. Also gathered from ESPN were player's height, weight, and position. 
   
 ## PrepCircuit
 
@@ -89,7 +89,7 @@ Prep_NA_Counts <- read_csv("~/Honors Thesis/Figure and Table Generators/Prep.NA.
 colnames(Prep_NA_Counts)[1] = 'Per Game Statistic'
 kable(Prep_NA_Counts, format = 'markdown')
 ```
-Although this k nearest neighbor imputation was effective for seasons past, it will not be the best method going forward, as the amount and quality of data has improved drastically over the past few years. Below is a table and histogram of the number of players that have each of our data sources by college season.
+Although this k nearest neighbor imputation was effective for past seasons, it will not be the best method going forward, as the amount and quality of data has improved drastically over the past few years. Below is a table and histogram of the number of players that have each of our data sources by college season.
 ```{r, echo = F, out.height='45%'}
 source("~/Honors Thesis/Figure and Table Generators/Data Availability by Season.R")
 kable(group.freq, format = 'markdown')
@@ -98,7 +98,7 @@ data.by.season
 
 As shown by the graph above, in 2016, the data sources presented did not even exist. By 2019, most ESPN rated players had both AAU and PrepCircuit statistics. This includes players that are rated poorly. The data appears to be improving in its robustness and reliability for current high school seniors and this past season's freshman. Their data could be incorporated into the training set or held out as a test set in the future. This past season was not included in the analysis as it was an incomplete season.
 
-As shown by the graph above, not every model can be considered on every player as not all players have all sources of information. Using all possible players unfairly favored ESPN models since their sample of players contains many players not talented enough to play in the competitive AAU Circuits or high profile high schools in PrepCircuit. Therefore, only player with complete information will be considered. Additionally, since many players only had partial PrepCircuit data, only points per game and the number of games was used in fitting. Other variables were used in some models, but the elimination of some players lacking other statistics increased the error rates. In total, there were 185 players used in the models.
+Not every model can be considered on every player as not all players have all sources of information. Using all possible players unfairly favored ESPN models since their sample of players contains many players not talented enough to play in the competitive AAU Circuits or high profile high schools in PrepCircuit. Therefore, only player with complete information will be considered. Additionally, since many players only had partial PrepCircuit data, only points per game and the number of games was used in fitting. Other variables were used in some models, but the elimination of some players lacking other statistics increased the error rates. In total, there were 185 players used in the models.
 
 # Methods
 
@@ -107,14 +107,14 @@ In order to assess the predictive value of high school statistics, models will b
   \[M_{PREP}: \hat{ws} = f_{PREP}(X_{PREP}) + \epsilon\]
   \[M_{AAU}:  \hat{ws} = f_{AAU}(X_{AAU})+ \epsilon\]
   \[M_{FULL}: \hat{ws} = f_{FULL}(X_{AAU},X_{PREP}, X_{ESPN}) + \epsilon \]
-  \[M_{AAU.ESPN}: \hat{ws} = f_{ESPN}(X_{AAU}, X_{ESPN}) + \epsilon\]
-  \[M_{PREP.ESPN}: \hat{ws} = f_{ESPN}(X_{PREP}, X_{ESPN}) + \epsilon\]
-  \[M_{AAU.PREP}: \hat{ws} = f_{ESPN}(X_{AAU},X_{PREP}) + \epsilon\]
+  \[M_{AAU.ESPN}: \hat{ws} = f_{AAU.ESPN}(X_{AAU}, X_{ESPN}) + \epsilon\]
+  \[M_{PREP.ESPN}: \hat{ws} = f_{PREP.ESPN}(X_{PREP}, X_{ESPN}) + \epsilon\]
+  \[M_{AAU.PREP}: \hat{ws} = f_{AAU.PREP}(X_{AAU},X_{PREP}) + \epsilon\]
 where
 \begin{itemize}
 \item $\hat{ws}\:is\:the\:predicted\:win\:shares\:of\:a\:given\:player,$
 \item  $X_{AAU},\:X_{PREP},\:and\:X_{ESPN}\:are\:the\:data\:matrices\:for\:each\:data\:source,$
-\item $f_{AAU},\:f_{Prep},\:f_{ESPN},\:and\:f_{FULL}\:are\:functions\:that\:output\:predicted\:win\:shares,$
+\item $f\:are\:unique\:functions\:that\:output\:predicted\:win\:shares,$
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
 All models were trained through leave one out cross validation. Each players predicted win shares was outputted from a function fitted on all other players. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyper parameters will be discussed briefly below
@@ -133,7 +133,7 @@ All models were trained through leave one out cross validation. Each players pre
 \end{itemize}
 \item Earth
 \begin{itemize}
-\item Models non linearaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the "knot", a cutoff value for the variable x. When x is below a, it is multiplied by a constant $b_1$. When x is greater than a, it is  multiplied by a separate constant $b_2$. The number of these hinge functions is controlled by a hyper parameter as is the degree (number of interactions and higher order terms). 
+\item Models non linearaties and interactions by creating one or more hinge functions constructed as h(x-a), where a is the "knot", a cutoff value for the variable x. When x is below a, it is multiplied by a weight $b_1$. When x is greater than a, it is  multiplied by a separate weight $b_2$. The number of these hinge functions is controlled by a hyper parameter as is the degree (number of interactions and higher order terms). 
 \end{itemize}
 \item Support Vector Machine
 \begin{itemize}
@@ -156,7 +156,7 @@ All models were trained through leave one out cross validation. Each players pre
 
 There were many variables to consider for these models. Many statistics in the PrepCircuit dataset were not always valid values; moreover, many statistics in both high school datasets were randomly inaccurate, leading to poor out of sample prediction. Many methods and combination of inputs were trained. Note that some methods were not used for ESPN as they are tailored to data sets with many predictor variables. In this case the ESPN dataset is only one variable, ESPN rating. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown in the appendix.
 
-The most interesting result was that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are super teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to a predictive PrepCircuit points per game. Although the full linear regression performed close to the other methods, it was the worst method across almost all input combinations and was highly correlated with the lasso and ridge models so it was not used in the stacked model. Below are the cross validated $R^2s$ for the different models. 
+The most interesting result was that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are super teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to a predictive PrepCircuit points per game. Although the full linear regression performed close to the other methods, it was not used in the stacked model as it was highly correlated with the lasso and ridge models. Below are the cross validated $R^2s$ for the different models. 
 ```{r, echo = F, eval = T, include=F}
 r2.table = read_csv("~/Honors Thesis/Predictions/All R2.csv")
 colnames(r2.table) = toupper(colnames(r2.table))
@@ -215,7 +215,7 @@ kable(full.table[c(1,6,7,8)], format = 'markdown')
 ```
 Based on these results, the ESPN models performed better than the PrepCircuit and AAU models. The best ESPN model explains almost 10% more variation than the best PrepCircuit model. When forecasting prospect performance, 10% is a huge performance boost. It should be noted, that the best ESPN model is a radial support vector machine, indicating the presence of non linearities. A player rated 10 points higher than another player generates a larger increase in expected wins at the higher end of the rating scale. Scouting and projecting players more accurately at the higher end of the talent spectrum may yield a greater expected number of wins than at the lower end.
 
-However, this difference between the ESPN and high school models should not discount the usefulness of the high school statistics. On their own, the PrepCircuit and AAU models were able to explain 23% and 21% of the variation respectively; moreover, models incorporating the ESPN ratings and high school statistics performed even better, with the best model explaining 37.4% of the variation, 4% better than the non linear ESPN model, and 14% better than the basic linear ESPN model which could be viewed as the 'conventional approach'. One could argue the non linear ESPN model should be the null model since it is well established that a star can have a disproportionate effect on the game; however, if it is so inherent to the game, than the ratings should be scaled as such. 
+However, this difference between the ESPN and high school models should not discount the usefulness of the high school statistics. On their own, the PrepCircuit and AAU models were able to explain 23% and 21% of the variation respectively, on par with the linear ESPN model; moreover, models incorporating the ESPN ratings and high school statistics performed even better, with the best model explaining 37.4% of the variation, 4% better than the non linear ESPN model, and 14% better than the basic linear ESPN model which could be viewed as the conventional approach. One could argue the non linear ESPN model should be the null model since it is well established that a star can have a disproportionate effect on the game; however, if it is so inherent to the game, than the ratings should be scaled as such. 
 
 To illustrate how this predictive advantage could be used, the plot below shows the difference in absolute error between the best full model and the linear ESPN model. Negative values mean the full model had a smaller error compared to the ESPN model and positive values mean the ESPN model performed better. In the graph below, values to the left of the vertical line indicate negative values, where the full models performed better. The y axis is the actual win shares.
 ```{r, out.height='45%'}
@@ -252,7 +252,7 @@ ggplot(full, aes(x = abs.error.dif,
                  y = ws,
                  label = last)) +
 geom_text(aes(label=last), vjust=-1,
-          size = 5, color = 'blue', 
+          size = 3, color = 'blue', 
           fontface = 'bold') +
   geom_image(aes(image = image), size = .025) + 
     # geom_bgimage("lb.jpg") + 
@@ -279,7 +279,7 @@ ggplot(full, aes(x = abs.error.dif,
                  y = ws,
                  label = last)) +
 geom_text(aes(label=last), vjust=-1,
-          size = 5, color = 'blue', 
+          size = 3, color = 'blue', 
           fontface = 'bold') +
   geom_image(aes(image = image), size = .025) + 
   #geom_point(colour = 'blue') +

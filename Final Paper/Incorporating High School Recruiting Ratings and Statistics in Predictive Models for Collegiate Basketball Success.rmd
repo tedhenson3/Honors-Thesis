@@ -25,9 +25,9 @@ knitr::opts_chunk$set(echo = F,
 ```{r, echo = F, eval = T, include=F}
 source('~/Honors Thesis/Data Cleaning/Prepping Data for Modeling.R')
 ```
-# First Take
+# Introduction
 
-Predicting collegiate win shares from ESPN recruiting ratings [@ESPN] and high school statistics provided by PrepCircuit [2] and AAUStats [3] could yield a competitive advantage for collegiate and professional basketball organizations. As it stands, there is little research on predicting individual player's collegiate performance. In 2010, Jamie McNeilly used recruiting ranking quartiles to predict Player Effeciency Rating (PER) and other metrics [3]; however, the models presented did not consider high school statistics as an input, nor did they consider predicting win shares, which is a more authentic measurement of a player's contribution to team success as shown by basketball reference [5].  
+Predicting collegiate win shares from ESPN recruiting ratings [@ESPN] and high school statistics provided by PrepCircuit [2] and AAUStats [3] could yield a competitive advantage for collegiate and professional basketball organizations. As it stands, there is little research on predicting individual player's collegiate performance. In 2010, Jamie McNeilly used recruiting ranking quartiles to predict Player Efficiency Rating (PER) and other metrics [3]; however, the models presented did not consider high school statistics as an input, nor did they consider predicting win shares, which is a more authentic measurement of a player's contribution to team success as shown by basketball reference [5].  
 
 Accusations of many NCAA coaches paying high profile recruits hundreds of thousands of dollars catalyzed this analysis. If one player can cause decorated coaches to potentially resort to unethical methods, then programs should explore every possible avenue of predicting college performance, especially programs with smaller budgets and less recognition.  
 
@@ -38,12 +38,12 @@ The model with the best out-of-sample performance incorporated ESPN ratings and 
 # Data
 ## Basketball Reference
 
-Every statistic listed on a player’s college basketball reference page was collected; however, only a player’s first season playing in the NCAA was used in the modeling process in order to fairly evaluate a player’s true production out of high school. Due to its all-encompassing nature, win shares represents the dependent variable. Below is a graph of ACC teams’ sums of player win shares plotted against their season winning percentage. 
-```{r, echo = F, fig.align = 'center', out.height='80%', out.width='80%'}
+Every statistic listed on a player’s college basketball reference page was collected; however, only a player’s first season playing in the NCAA was used in the modeling process in order to fairly evaluate a player’s true production out of high school. Due to its all-encompassing nature, win shares represents the dependent variable. Win shares is calculated by taking the points produced by a player, and reduced on the defensive end, and scaling those based on their team. Below is a graph of ACC teams’ sums of player win shares plotted against their season winning percentage. 
+```{r, echo = F, fig.align = 'center',  out.width='80%'}
 knitr::include_graphics("ACC Basketball WS.png")
 ```
 
-College win shares have a weaker relationship with wins than Wins Above Replacement in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared and basketball reference’s analysis [5]. Other popular basketball metrics such as PER and BPM were plotted against wins as well and had a much lower correlation value than win shares. Additionally, the top players in terms of win shares aligned with the consensus best players over the past few seasons more so than those with the top PER or BPM. Below are the top 10 players in terms of win shares in the data.
+College win shares have a weaker relationship with wins than Wins Above Replacement in baseball and in the NBA partially due to large differences in league competition; nonetheless, it is a strong predictor of team success as shown by the above R-squared. Other popular basketball metrics such as PER, a per minute efficiency rating, and Box Plus Minus (BPM), a box score estimate of the points contributed by a player per 100 possessions on an average team, were considered as dependent variables; however, they had a much lower correlation value with wins than win shares. Additionally, the top players in terms of win shares aligned with the consensus best players over the past few seasons more so than those with the top PER or BPM. Calculations and analyses for win shares, PER, and BPM can be found on basketball reference [5, 6, 7]. Below are the top 10 players in terms of win shares in the data.
 ```{r, echo = F, eval = T}
 library(kableExtra)
 
@@ -82,7 +82,6 @@ The high school statistics gathered from PrepCircuit contained regular season av
 AAU data was gathered from AAUStats.com [3]. The data contained box scores from Nike, Adidas, and Under Armour circuits from the 2017 to 2019 seasons. There is potential to create more advanced metrics with these box scores, or scaling based on the quality of a player's team or opponent; however, for this analysis, common per game box score statistics akin to PrepCircuit's data were created based on player's final season in all AAU circuits.
 
 Prior analyses used k nearest neighbor imputation to deal with players missing a given statistic, such as rebounds in PrepCircuit. Below is a table of the number of PrepCircuit players that had points per game, but were missing another per game statistic.
-\newpage
 ```{r, echo = F, out.height='100%'}
 
 Prep_NA_Counts <- read_csv("~/Honors Thesis/Figure and Table Generators/Prep.NA.Counts.csv")
@@ -117,7 +116,7 @@ where
 \item $f\:are\:unique\:functions\:that\:output\:predicted\:win\:shares,$
 \item $\epsilon\:is\:a\:random\:error$
 \end{itemize}
-All models were trained through leave one out cross validation. Each players predicted win shares was outputted from a function fitted on all other players. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyper parameters will be discussed briefly below
+All models were trained through leave one out cross validation. Each player's predicted win shares was outputted from a function fitted on all other players. These values were chosen based on the parameters yielding the smallest out of sample error. The methods and subsequent hyper parameters will be discussed briefly below
 \begin{itemize}
 \item Lasso
 \begin{itemize}
@@ -137,11 +136,11 @@ All models were trained through leave one out cross validation. Each players pre
 \end{itemize}
 \item Support Vector Machine
 \begin{itemize}
-\item Builds a hyper plane (a plane or line with dimension of our predictor matrix) that attempts to minimize the distance from the response value. Rather than minimize the total sum of the errors, the hyper plane is fit so that all errors are less than a given cost value, C, found through cross validation. In this case, the non linear hyper plane had a lower out of sample error.
+\item Builds a hyper plane, a plane or line with dimension of our predictor matrix, that attempts to minimize the distance from the response value. Rather than minimize the total sum of the errors, the hyper plane is fit so that all errors are less than a specified hyper paramater $\epsilon$. If an error is greater than $\epsilon$, it is penalized proportionally to a cost value, C, found through cross validation. In this case, the non linear hyper plane had a lower out of sample error.
 \end{itemize}
 \item Random Forest
 \begin{itemize}
-\item Builds n regression trees and creates a prediction based on the average of all of the trees. To reduce correlation between the trees, m random predictors are chosen when constructing each tree. M is found through cross validation.
+\item Builds "n" regression trees, in this case n was 200, and creates a prediction based on the average of all of the trees. To reduce correlation between the trees, "m" random predictors are chosen when constructing each tree. M is found through cross validation.
 \end{itemize}
 \item Gradient Boosted Trees
 \begin{itemize}
@@ -149,14 +148,13 @@ All models were trained through leave one out cross validation. Each players pre
 \end{itemize}
 \item Stacked
 \begin{itemize}
-\item A full linear regression is performed on all prior predictions using leave one out cross validation.
+\item The stacked model creates a combined prediction for each player from the predictions of each of the other methods discussed above. A linear regresssion on the predictions of the other methods is run for each player with leave one out cross validation. The linear weights assigned to each method for the full model can be found in the appendix.
 \end{itemize}
 \end{itemize}
 # Results
 
-There were many variables to consider for these models. Many statistics in the PrepCircuit dataset were not always valid values; moreover, many statistics in both high school datasets were randomly inaccurate, leading to poor out of sample prediction. Many methods and combination of inputs were trained. Note that some methods were not used for ESPN as they are tailored to data sets with many predictor variables. In this case the ESPN dataset is only one variable, ESPN rating. The best models across the board only used the most reliable and predictive statistics. A full linear regression on all variables used in the models is shown in the appendix.
-
-The most interesting result was that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are super teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to a predictive PrepCircuit points per game. Although the full linear regression performed close to the other methods, it was not used in the stacked model as it was highly correlated with the lasso and ridge models. Below are the cross validated $R^2s$ for the different models. 
+There were many variables to consider for these models. Many statistics in the PrepCircuit dataset were missing; moreover, many statistics in both high school datasets were randomly inaccurate, leading to poor out of sample prediction. For example, in PrepCircuit, Zion Williamson had 0 assists per game. This was an obvious example of inaccurate data, but there were many other examples that were more subtle. The variables used in the final models were only the most predictive and accurate statistics. Many methods and combination of inputs were trained to make these decisions. Note that some methods were not used for ESPN as they are tailored to data sets with many predictor variables. In this case the ESPN dataset is only one variable, ESPN rating. A full linear regression on all variables used in the models is shown in the appendix. The most interesting result was that the AAU points per game was not highly significant, but blocks and steals were. This may seem surprising, but many AAU teams are strong teams which may lead to individual star players sharing the ball more. In contrast, these same star players may be the only capable scorer on their school teams, leading to a predictive PrepCircuit points per game. Although the full linear regression performed close to the other methods after implementing leave one out cross validation, it was not used in the stacked model as it was highly correlated with the lasso and ridge models. Below are the cross validated $R^2s$ for the different models. 
+\newpage
 ```{r, echo = F, eval = T, include=F}
 r2.table = read_csv("~/Honors Thesis/Predictions/All R2.csv")
 colnames(r2.table) = toupper(colnames(r2.table))
@@ -296,7 +294,7 @@ scale_x_continuous(breaks = seq(-3,3, by = .5)) +
 
 The players favoring the full model were similar here as well, but to a slightly lesser degree: Deandre Ayton, Quentin Grimes, Ryan Layman, and Trae Young. Most of the players that the ESPN model predicted substantially better on (more than 1 win share) ended up having very low win shares and a low ESPN rating. The three players favoring the ESPN model the most: KJ Davis, Shandon Brown, and Bailey Patella all had an ESPN rating of 64. Only 4 players were out predicted by more than 1 win share by this ESPN model, compared to 12 by the full model. 
 
-# Last Take
+# Conclusion
 
 It is important to judge the data and its predictive accuracy with some perspective. Original modeling with relatively new high school statistics improved upon a rating system that has been bettering itself for 13 years. The information used was only box score statistics which does not paint the full picture of the game. Even in baseball where statistical modeling in sports is an integral part of the process, the best projection systems incorporate scouting and statistics, and the pure statistics based models rarely beat the combined models despite the individual aspect to baseball.
 
